@@ -1,0 +1,509 @@
+<template>
+  <div class="frens_wrapper">
+    <div class="frens_text">Invite Friends!</div>
+    <div class="total_rewards">
+      <div class="rewards">
+        <v-img :width="24" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
+        <div> {{ userInfo?.totalInviteAmount }}</div>
+      </div>
+      <div class="invitation_ranking" @click="toRanking()">
+        <v-img :width="30" cover src="@/assets/images/svg/frens/report.svg"></v-img>
+        <div>Top 300 Leaders</div>
+        <v-icon size="20" icon="mdi-menu-right-outline"></v-icon>
+      </div>
+    </div>
+    <div class="frens_descriptions">
+      <v-timeline side="end" align="start" line-thickness="2">
+        <v-timeline-item v-for="item in stepTtems" :key="item.id" :dot-color="item.color" size="x-small" line-inset="0">
+          <template v-slot:icon>
+            <span style="color: #fff;">{{ item.id }}</span>
+          </template>
+          <div class="frens_descriptions_text" v-html="item.text"></div>
+        </v-timeline-item>
+      </v-timeline>
+    </div>
+    <div class="invitation_method">
+      <div class="method_item">
+        <v-img :width="40" cover src="@/assets/images/frens/invite_prize.png"></v-img>
+        <div class="method_box">
+          <div class="method_text">Invite a Friend</div>
+          <div class="method_prize">
+            <div class="energy">
+              <span class="dot">·</span>
+              <v-icon color="#FFF100" :size="16" icon="mdi-lightning-bolt"></v-icon>
+              <span>{{ `+ 1` }}</span>
+            </div>
+            <div class="bonus">
+              <v-img :width="16" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
+              <span>{{ `+ 100` }}</span>
+            </div>
+            <div class="text">for you and your friend</div>
+          </div>
+        </div>
+      </div>
+      <div class="method_item">
+        <v-img :width="40" cover src="@/assets/images/frens/invite_prize.png"></v-img>
+        <div class="method_box">
+          <div class="method_text">
+            <span>Invite a Friends with </span>
+            <span style="color:#49B6F6;">Telegram Premium</span>
+          </div>
+          <div class="method_prize">
+            <div class="energy">
+              <span class="dot">·</span>
+              <v-icon color="#FFF100" :size="16" icon="mdi-lightning-bolt"></v-icon>
+              <span>{{ `+ 3` }}</span>
+            </div>
+            <div class="bonus">
+              <v-img :width="16" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
+              <span>{{ `+ 500` }}</span>
+            </div>
+            <div class="text">for you and your friend</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="frens_list">
+      <div class="frens_list_text">{{ `Friend List(${frensTotal})` }}</div>
+      <div class="frens_list_content">
+        <div class="frens_list_item" v-for="(item, index) in frensList" :key="index">
+          <div class="frens_list_item_left">
+            <v-avatar v-if="item.avatar" size="40" :image="item.avatar"></v-avatar>
+            <img v-else width="40" height="40" :avatar="item?.userName" color="#FEC72F" class="avatar">
+            <div class="frens_list_item_left_box">
+              <div class="user_name">1111</div>
+              <div class="user_other">
+                <v-img :width="70" cover :src="levelImages[item.level as keyof typeof levelImages]"></v-img>
+                <div class="user_points">
+                  <v-img :width="16" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
+                  <span>{{ `+ ${item.points}` }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="frens_list_item_right">
+            <div class="frens_list_item_right_time">{{ timeForStr(item.registrationTime, "MM-dd HH:mm:ss") }}</div>
+            <div class="user_prize">
+              <div class="energy">
+                <v-icon color="#FFF100" :size="16" icon="mdi-lightning-bolt"></v-icon>
+                <span>{{ `+ ${item.energyAmount}` }}</span>
+              </div>
+              <div class="bonus">
+                <v-img :width="16" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
+                <span>{{ `+ ${item.gmcAmount}` }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <v-btn class="invite_btn" color="info" height="40" width="80%" @click="inviteToTelegram()" variant="flat"
+      size="small">
+      <v-img :width="24" style="margin-right: 4px;" cover src="@/assets/images/svg/frens/linvite_user.svg"></v-img>
+      <span style="font-size: 20px; text-transform: capitalize;">Invite Friend</span>
+    </v-btn>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { useUserStore } from "@/store/user.js";
+import { getInviteUserList } from "@/services/api/user.js";
+import { shareOnTelegram, timeForStr } from "@/utils";
+
+// 等级图标
+import Level_1 from "@/assets/images/svg/main/level_1.svg";
+import Level_2 from "@/assets/images/svg/main/level_2.svg";
+import Level_3 from "@/assets/images/svg/main/level_3.svg";
+import Level_4 from "@/assets/images/svg/main/level_4.svg";
+import Level_5 from "@/assets/images/svg/main/level_5.svg";
+import Level_6 from "@/assets/images/svg/main/level_6.svg";
+import Level_7 from "@/assets/images/svg/main/level_7.svg";
+import Level_8 from "@/assets/images/svg/main/level_8.svg";
+import Level_9 from "@/assets/images/svg/main/level_9.svg";
+import Level_10 from "@/assets/images/svg/main/level_10.svg";
+
+interface frensInfo {
+  userId: number, //用户ID
+  userName: string, //用户名
+  avatar: string | any, //头像
+  level: number | string, //用户等级
+  points: number | string | any, //用户积分
+  registrationTime: string, //注册时间
+  energyAmount: number | string | any, //能量数量
+  gmcAmount: number | string | any //GMC数量
+  [x: string]: string | number | any;
+}
+
+export default defineComponent({
+  data() {
+    return {
+      stepTtems: [] as Array<any>,
+      frensTotal: 0,
+      frensList: [] as Array<frensInfo>,
+      levelImages: {
+        1: Level_1,
+        2: Level_2,
+        3: Level_3,
+        4: Level_4,
+        5: Level_5,
+        6: Level_6,
+        7: Level_7,
+        8: Level_8,
+        9: Level_9,
+        10: Level_10
+      },
+      page: 1,
+      size: 10,
+      finished: false
+    };
+  },
+  computed: {
+    userInfo() {
+      const { userInfo } = useUserStore();
+      return userInfo;
+    },
+  },
+  created() {
+    this.stepTtems = [
+      {
+        id: 1,
+        color: '#FEC72F',
+        icon: 'mdi-information',
+        text: "Share your invitation link to your frens."
+      },
+      {
+        id: 2,
+        color: '#FEC72F',
+        icon: 'mdi-alert-circle',
+        text: "Your frens join GMCoin and start any Challenge."
+      },
+      {
+        id: 3,
+        color: '#FEC72F',
+        icon: 'mdi-alert-circle',
+        text: "You and your frens will receive bonuses."
+      },
+      {
+        id: 4,
+        color: '#FEC72F',
+        icon: 'mdi-alert-circle',
+        text: "You'll also get an extra <span style='color: #49B6ED;'>1%</span> from each of your frens' check-ins."
+      },
+    ]
+
+    this.fetchInviteUserList();
+  },
+  mounted() {
+    const _this = this;
+    window.addEventListener('scroll', function () {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+        if (!_this.finished) {
+          _this.nextQuery();
+        }
+      }
+    });
+  },
+  methods: {
+    timeForStr: timeForStr,
+    // 获取邀请用户列表
+    async fetchInviteUserList(type = 1, isSearch = true) {
+      if (this.finished) return;
+      let _page = this.page;
+      if (isSearch) {
+        this.finished = false;
+        this.page = 1;
+        _page = 1;
+      }
+
+      const res = await getInviteUserList({
+        page: _page,
+        size: this.size
+      });
+      if (res.code == 200) {
+        this.frensTotal = res.data.total;
+
+        if (res.data.current >= res.data.pages) {
+          this.finished = true;
+        }
+
+        if (type == 1) {
+          this.frensList = res.data.records;
+        } else {
+          this.frensList.push.apply(this.frensList, res.data.records);
+        }
+
+        this.$nextTick(() => {
+          (window as any).LetterAvatar.transform();
+        });
+      }
+    },
+    // 加载更多
+    nextQuery() {
+      this.page++;
+      this.fetchInviteUserList(2, false);
+    },
+    // 邀请
+    inviteToTelegram() {
+      const { inviteCode } = this.userInfo;
+      const inviteUrl = `https://t.me/cyclone384_bot/checking?startapp=${inviteCode}`;
+      shareOnTelegram("111", inviteUrl);
+    },
+    // 打开邀请奖励排行榜
+    toRanking() {
+      this.$router.push({
+        path: "/frensRanking"
+      })
+    }
+  },
+});
+</script>
+<style lang="scss" scoped>
+.frens_wrapper {
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.frens_text {
+  font-weight: bold;
+  font-size: 24px;
+  color: #FDEFD6;
+  text-align: center;
+}
+
+.total_rewards {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(6, 4, 4, 0.6);
+  height: 50px;
+  border-radius: 10px;
+  padding: 0 8px;
+  margin-top: 16px;
+
+  &>div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.rewards {
+  min-width: 80px;
+  flex: 1 0 36%;
+  height: 100%;
+  font-weight: bold;
+  font-size: 16px;
+  color: #FBB11B;
+  border-right: 4px solid #fdefd6;
+
+  .v-img {
+    flex: none;
+    margin-right: 4px;
+  }
+}
+
+.invitation_ranking {
+  flex: 1 0 60%;
+  font-size: 16px;
+  color: #FDEFD6;
+
+  .v-img {
+    flex: none;
+    margin-right: 4px;
+  }
+}
+
+.frens_descriptions {
+  .frens_descriptions_text {
+    font-size: 14px;
+    color: #fff;
+  }
+}
+
+::v-deep .v-timeline-item__opposite {
+  padding-right: 0 !important;
+}
+
+::v-deep .v-timeline-divider {
+  padding-block-start: 10px !important;
+}
+
+::v-deep .v-timeline-item__body {
+  padding-top: 10px !important;
+  padding-left: 10px !important;
+  padding-block-end: 0px !important;
+}
+
+::v-deep .v-timeline {
+  row-gap: 2px !important;
+}
+
+.invitation_method {
+  margin-top: 12px;
+
+  .method_item+.method_item {
+    margin-top: 8px;
+  }
+}
+
+.method_item {
+  background-color: rgba(6, 4, 4, 0.65);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+
+  &>.v-img {
+    flex: none;
+    margin-right: 8px;
+  }
+
+  .method_box {
+    .method_text {
+      font-weight: bold;
+      font-size: 16px;
+      color: #FFFFFF;
+      line-height: 1.2;
+    }
+  }
+
+  .method_prize {
+    display: flex;
+    align-items: center;
+
+    &>div {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+    }
+
+    &>div+div {
+      margin-left: 4px;
+    }
+
+    .energy,
+    .bonus {
+      color: #FBB11B;
+      font-weight: bold;
+
+      .dot {
+        font-size: 20px;
+      }
+
+      .v-img {
+        margin-right: 4px;
+      }
+    }
+
+    .text {
+      color: #fff;
+    }
+  }
+}
+
+.frens_list {
+  padding-top: 8px;
+
+  .frens_list_text {
+    font-weight: bold;
+    font-size: 20px;
+    color: #FDEFD6;
+  }
+}
+
+.frens_list_content {
+  .frens_list_item+.frens_list_item {
+    margin-top: 8px;
+  }
+}
+
+.frens_list_item {
+  background-color: rgba(6, 4, 4, 0.65);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+}
+
+.frens_list_item_left {
+  display: flex;
+  align-items: center;
+
+  &>img,
+  &>v-img {
+    margin-right: 8px;
+  }
+
+  .user_name {
+    font-weight: bold;
+    font-size: 16px;
+    color: #FFFFFF;
+  }
+
+  .user_other {
+    display: flex;
+    align-items: center;
+
+    &>.v-img {
+      margin-right: 8px;
+    }
+  }
+
+  .user_points {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #FBB11B;
+
+    &>.v-img {
+      margin-right: 4px;
+    }
+  }
+}
+
+.frens_list_item_right {
+  .frens_list_item_right_time {
+    font-size: 16px;
+    color: #E1E1E1;
+  }
+
+  .user_prize {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    &>div+div {
+      margin-left: 8px;
+    }
+
+    &>div {
+      display: flex;
+      align-items: center;
+      color: #FBB11B;
+      font-weight: bold;
+      font-size: 14px;
+
+      .v-img {
+        margin-right: 4px;
+      }
+    }
+  }
+}
+
+.invite_btn {
+  position: fixed;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  bottom: 60px;
+  z-index: 2000;
+}
+
+.avatar {
+  border: 4px solid #FBE945;
+  border-radius: 50%;
+}
+</style>
