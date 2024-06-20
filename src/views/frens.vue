@@ -404,6 +404,7 @@ export default defineComponent({
 
 .frens_list {
   padding-top: 8px;
+  padding-bottom: 50px;
 
   .frens_list_text {
     font-weight: bold;

@@ -23,16 +23,23 @@ const challengeRegistration = (params: any) => http.post("/gm-coin-server-web/us
  * @param params
  */
 const challengeCheckIn = (params: any) => http.post("/gm-coin-server-web/user-challenge/checkIn", params);
+
 /**
  * 挑战补签
  * @param params
  */
 const challengeReCheckin = (params: any) => http.post("/gm-coin-server-web/user-challenge/supplementary", params);
+/**
+ * 挑战领取
+ * @param params
+ */
+const challengePickUp = (params: any) => http.post("/gm-coin-server-web/user-challenge/pickUp", params);
 
 export {
   getChallengeList,
   getChallengeDetails,
   challengeRegistration,
   challengeCheckIn,
-  challengeReCheckin
+  challengeReCheckin,
+  challengePickUp
 };

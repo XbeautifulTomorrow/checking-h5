@@ -48,18 +48,7 @@
             <v-img :width="30" cover :src="project[item?.signType as keyof typeof project]"></v-img>
             <!--已报名-->
             <template v-if="challengeInfo?.stage != 'REGISTRATION' && challengeInfo?.userStatus != 2">
-              <template v-if="item?.userStatus == 1 && item?.signType == isNotStart">
-                <!--未开始,倒计时-->
-                <countDown v-slot="timeObj" @onEnd="fetchChallengeDetail()" :time="getCountDown(item)">
-                  <div class="count_down_box">
-                    <div class="count_down_tips">Start in</div>
-                    <div class="count_down_time">
-                      {{ `${timeObj.hh}:${timeObj.mm}:${timeObj.ss}` }}
-                    </div>
-                  </div>
-                </countDown>
-              </template>
-              <div v-if="item?.userStatus == 1 && item?.signType != isNotStart" class="check_in_time">
+              <div v-if="item?.userStatus == 1" class="check_in_time">
                 <!--未开始-->
                 {{ formatTime(item.startDate) }}
               </div>
@@ -169,9 +158,10 @@
       <!-- 已报名 -->
       <template v-else-if="challengeInfo?.userStatus == 1">
         <!--未开始，满积分-->
-        <v-btn class="check_in_btn" height="42" v-if="challengeInfo?.stage == 'REGISTRATION'">
-          <span class="finished">{{ `Check In +${createPoints.time}` }}</span>
-          <v-img :width="24" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
+        <v-btn class="check_in_btn not_started" height="42" readonly v-if="challengeInfo?.stage == 'REGISTRATION'">
+          <countDown class="finished" v-slot="timeObj" @onEnd="fetchChallengeDetail()" :time="getCountDown(isNotStart)">
+            {{ `Next check-in start in ${Number(timeObj.dd) * 24 + Number(timeObj.hh)}:${timeObj.mm}:${timeObj.ss}` }}
+          </countDown>
         </v-btn>
         <!--已开始，计算积分-->
         <v-btn class="check_in_btn" height="42" @click="handleCheckIn()" v-if="challengeInfo?.stage == 'SIGNIN'">
@@ -179,14 +169,20 @@
           <v-img :width="24" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
         </v-btn>
         <!--结束，领取奖励-->
-        <v-btn class="check_in_btn" @click="claimBonus()" v-if="challengeInfo?.stage == 'ENDED'">
-          <span class="finished">{{ `Claim +${challengeInfo?.winAmount}` }}</span>
-          <v-img :width="24" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-        </v-btn>
+        <template v-else>
+          <v-btn v-if="challengeInfo?.userStatus == 4" class="check_in_btn" @click="claimBonus()"
+            :loading="claimLoading">
+            <span class="finished">{{ `Claim +${challengeInfo?.rewardAmount}` }}</span>
+            <v-img :width="24" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
+          </v-btn>
+          <v-btn v-if="challengeInfo?.userStatus == 5" class="check_in_btn not_started" :loading="claimLoading">
+            <span class="finished">{{ `${challengeInfo?.rewardAmount} $GMC claimed` }}</span>
+          </v-btn>
+        </template>
       </template>
       <!-- 失败 -->
       <template v-else-if="challengeInfo?.userStatus == 3">
-        <v-btn class="check_in_btn failed">
+        <v-btn class="check_in_btn failed" readonly>
           <span class="finished">You Failed</span>
         </v-btn>
       </template>
@@ -219,7 +215,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { getChallengeList, getChallengeDetails, challengeRegistration, challengeCheckIn, challengeReCheckin } from '@/services/api/challenge';
+import { getChallengeList, getChallengeDetails, challengeRegistration, challengeCheckIn, challengeReCheckin, challengePickUp } from '@/services/api/challenge';
 import { useUserStore } from "@/store/user.js";
 import { useCheckInStore } from '@/store/check_in.js';
 import { telegramLogin } from "@/services/api/user";
@@ -292,7 +288,8 @@ export default defineComponent({
       showReCheckin: false, // 补签
       showInvite: false, // 邀请弹窗
       reCheckinInfo: {} as ucCheckInVOs,
-      timer: null as number | any // 节流
+      timer: null as number | any, // 节流
+      claimLoading: false // 领取
     };
   },
   components: {
@@ -350,17 +347,17 @@ export default defineComponent({
 
       return false
     },
-    // 是否未开始，第一个未开始的进入倒计时
+    // 第一个未开始的进入倒计时
     isNotStart() {
-      const { challengeInfo: { ucCheckInVOs } } = this;
-      const checkIn = ucCheckInVOs.find(e => e.userStatus == 1);
+      const { challengeInfo: { stage, ucCheckInVOs } } = this;
 
-      // 有未开始
-      if (checkIn) {
-        return checkIn?.signType;
+      // 报名阶段直接获取第一个
+      if (stage == "REGISTRATION") {
+        return ucCheckInVOs[0];
       }
 
-      return ""
+      const checkIn = ucCheckInVOs.find(e => e.userStatus == 1) as ucCheckInVOs;
+      return checkIn;
     }
   },
   async created() {
@@ -450,7 +447,7 @@ export default defineComponent({
       });
 
       if (res.code == 200) {
-        setMessageText("Successful registration!");
+        setMessageText("Challenge has been joined.");
         this.fetchChallengeDetail();
       }
     },
@@ -500,8 +497,19 @@ export default defineComponent({
       }
     },
     // 领取奖金
-    claimBonus() {
-      // 似乎还没接口...
+    async claimBonus() {
+      const { challengeId } = this;
+      this.claimLoading = true;
+      const res = await challengePickUp({
+        challengeId
+      })
+
+      this.claimLoading = false;
+      if (res.code == 200) {
+        const { setMessageText } = useMessageStore()
+        setMessageText("Received successfully");
+        this.fetchChallengeDetail();
+      }
     },
     //上一项
     handlePrev() {
@@ -581,8 +589,13 @@ export default defineComponent({
     // 获取倒计时时间
     getCountDown(event: ucCheckInVOs) {
       const { endDate } = event;
+      console.log(endDate)
+      const { challengeInfo: { stage, startDate } } = this;
       const { currentTime } = useUserStore();
-      const current = new Date(currentTime);
+      const startTime = new Date(startDate).setDate(new Date(startDate).getDate() + 1);
+
+      // 未开始就用创建时间
+      const current = new Date(stage == "REGISTRATION" ? startTime : currentTime);
       const yyyy = current.getFullYear();
       const MM = current.getMonth() + 1 > 10 ? current.getMonth() + 1 : `0${current.getMonth() + 1}`;
       const dd = current.getDate() > 10 ? current.getDate() : `0${current.getDate()}`;
@@ -1012,10 +1025,17 @@ export default defineComponent({
   display: flex;
   align-items: center;
   justify-content: center;
+  letter-spacing: 0;
 
   .v-img {
     margin-left: 4px;
     flex: none;
+  }
+
+  &.not_started {
+    background: linear-gradient(90deg, rgba(155, 154, 153, 1) 0%, rgba(113, 113, 113, 1) 101%);
+    font-weight: 400;
+    color: #C8C1C1;
   }
 
   &.failed {
