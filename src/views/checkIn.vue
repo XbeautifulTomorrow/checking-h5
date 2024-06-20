@@ -327,7 +327,7 @@ export default defineComponent({
     // 是否需要补签
     reSigning() {
       const { challengeInfo: { ucCheckInVOs } } = this;
-      const checkIn = ucCheckInVOs.find(e => e.userStatus == 4);
+      const checkIn = ucCheckInVOs.find(e => e.userStatus == 5);
 
       if (checkIn) {
         if (checkIn.signType == "GM") {
