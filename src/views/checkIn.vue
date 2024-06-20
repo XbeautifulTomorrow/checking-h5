@@ -189,7 +189,7 @@
           <span class="finished">You Failed</span>
         </v-btn>
       </template>
-      <div v-else-if="challengeInfo?.userStatus == 3" class="try_again" @click="currentIndex = 0">Try Again?</div>
+      <div v-if="challengeInfo?.userStatus == 3" class="try_again" @click="currentIndex = 0">Try Again?</div>
     </div>
     <v-dialog v-model="showReCheckin" width="auto">
       <div class="dialog_box">
