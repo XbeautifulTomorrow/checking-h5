@@ -1,8 +1,7 @@
 import axios from "axios";
 import { useUserStore } from "@/store/user.js";
 import config from "./env";
-import { i18n } from "@/locales";
-const { t } = i18n.global;
+import { useMessageStore } from "@/store/message.js";
 const axiosInstance = axios.create({
   baseURL: config.api,
   withCredentials: true,
@@ -45,11 +44,10 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    // ElMessage.closeAll();
-    // ElMessage({
-    //   message: t("errorTips.network_not_available"),
-    //   type: "warning",
-    // });
+
+    const { setMessageText } = useMessageStore();
+    setMessageText("Network is unstable, please check your network.");
+
     return Promise.reject(error);
   }
 );
@@ -73,11 +71,8 @@ const handleRes = ({ response, url, data }: any) => {
     return [false, data.code, data];
   } else {
     if (!notMessage.includes(url)) {
-      // ElMessage.closeAll();
-      // ElMessage({
-      //   message: t("errorTips." + data.messageKey),
-      //   type: "warning",
-      // });
+      const { setMessageText } = useMessageStore();
+      setMessageText(data.message);
     }
 
     if (notMessage.includes(url)) {
@@ -97,11 +92,7 @@ export async function post(url: any, params: object, config = {}) {
       data: res.data,
     });
   } catch (err: any) {
-    // ElMessage.closeAll();
-    // ElMessage({
-    //   message: err,
-    //   type: "warning",
-    // });
+    console.warn(err);
     err.message = "error";
     return err;
   }
