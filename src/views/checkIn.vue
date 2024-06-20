@@ -47,7 +47,7 @@
             </div>
             <v-img :width="40" cover :src="project[item?.signType as keyof typeof project]"></v-img>
             <!--已报名-->
-            <template v-if="challengeInfo?.userStatus != 2">
+            <template v-if="challengeInfo?.stage != 'REGISTRATION' && challengeInfo?.userStatus != 2">
               <template v-if="item?.userStatus == 1 && item?.signType == isNotStart">
                 <!--未开始,倒计时-->
                 <countDown v-slot="timeObj" @onEnd="fetchChallengeDetail()" :time="getCountDown(item)">

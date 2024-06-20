@@ -1,6 +1,5 @@
 <template>
-  <v-bottom-navigation app fixed grow v-model="activeItem" bg-color="rgba(215, 215, 215, 0.65)" :active="activeNav"
-    mode="shift">
+  <v-bottom-navigation app fixed grow v-model="activeItem" bg-color="rgba(215, 215, 215, 0.65)" :active="activeNav">
     <v-btn value="check_in" :to="{ path: '/' }" density="compact" slim min-width="0">
       <v-img :width="20" cover src="@/assets/images/svg/tabr/check_in.svg"></v-img>
       <span>CHECK IN</span>

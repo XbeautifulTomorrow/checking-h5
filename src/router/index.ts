@@ -85,20 +85,20 @@ router.beforeEach(async (to, from, next) => {
 
   const userStore = useUserStore();
   if (!userStore.isLogin) {
-    let tg_certificate = null;
+    let tg_certificate = "";
     if ((window as any).Telegram) {
       tg_certificate = btoa((window as any).Telegram.WebApp.initData);
-    }
 
-    const res = await telegramLogin({
-      tgEncodeStr: tg_certificate,
-      inviteCode: urlParam
-    });
+      const res = await telegramLogin({
+        tgEncodeStr: tg_certificate,
+        inviteCode: urlParam
+      });
 
-    if (res.code == 200) {
-      if (res.data.certificate) {
-        localStorage.setItem("certificate", res.data.certificate);
-        userStore.setLogin(res.data);
+      if (res.code == 200) {
+        if (res.data.certificate) {
+          localStorage.setItem("certificate", res.data.certificate);
+          userStore.setLogin(res.data);
+        }
       }
     }
   }
