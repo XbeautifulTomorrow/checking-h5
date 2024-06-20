@@ -88,7 +88,6 @@ router.beforeEach(async (to, from, next) => {
     let tg_certificate = null;
     if ((window as any).Telegram) {
       tg_certificate = btoa((window as any).Telegram.WebApp.initData);
-      console.log(tg_certificate);
     }
 
     const res = await telegramLogin({

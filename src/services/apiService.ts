@@ -17,21 +17,6 @@ axiosInstance.interceptors.request.use(
       config.headers.certificate = localStorage.getItem("certificate");
     }
 
-    if (sessionStorage.getItem("tweet-verify")) {
-      config.headers["tweet-verify"] = sessionStorage.getItem("tweet-verify");
-    }
-
-    if (sessionStorage.getItem("verify")) {
-      config.headers.verify = sessionStorage.getItem("verify");
-    }
-
-    if (config.url.indexOf("mystery-web-user/auth/getCode") > -1) {
-      config.responseType = "blob";
-    }
-
-    if (config.url.indexOf("mystery-web-user/auth/genQrCode") > -1) {
-      config.responseType = "blob";
-    }
     return config;
   },
   (error) => {
