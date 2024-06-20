@@ -16,12 +16,23 @@ const getChallengeDetails = (params: any) => http.get("/GMCoin-server-web/user-c
  * 挑战报名
  * @param params
  */
-const challengeRegistration = (params: any) => http.get("/GMCoin-server-web/user-challenge/registration", params);
+const challengeRegistration = (params: any) => http.post("/GMCoin-server-web/user-challenge/registration", params);
 
-
+/**
+ * 挑战签到
+ * @param params
+ */
+const challengeCheckIn = (params: any) => http.post("/GMCoin-server-web/user-challenge/checkIn", params);
+/**
+ * 挑战补签
+ * @param params
+ */
+const challengeReCheckin = (params: any) => http.post("/GMCoin-server-web/user-challenge/supplementary", params);
 
 export {
   getChallengeList,
   getChallengeDetails,
-  challengeRegistration
+  challengeRegistration,
+  challengeCheckIn,
+  challengeReCheckin
 };

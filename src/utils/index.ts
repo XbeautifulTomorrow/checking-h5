@@ -267,31 +267,29 @@ function monthFormat(event: string) {
  * @param endTime   结束时间
  * @return
  */
-export function dateDiff(event: string | number | Date) {
-  if (!event) return "ENDED";
+export function dateDiff(event: string) {
+  if (!event) return 0;
+
   const setTime = new Date(event).getTime();
 
   const { currentTime } = useUserStore();
   const nowTime = new Date(currentTime || "").getTime();
-  if (nowTime >= setTime) return "ENDED";
+  if (nowTime >= setTime) return 0;
 
   // 按照传入的格式生成一个simpledateformate对象
   let nd = 1000 * 24 * 60 * 60; // 一天的毫秒数
-  let nh = 1000 * 60 * 60; // 一小时的毫秒数
-  let nm = 1000 * 60; // 一分钟的毫秒数
-  let ns = 1000; // 一秒钟的毫秒数;
+  // let nh = 1000 * 60 * 60; // 一小时的毫秒数
+  // let nm = 1000 * 60; // 一分钟的毫秒数
+  // let ns = 1000; // 一秒钟的毫秒数;
 
   // 获得两个时间的毫秒时间差异
   let diff;
   diff = Number(new bigNumber(setTime).minus(nowTime));
 
   let day = diff / nd; // 计算差多少天
-  // eslint-disable-next-line no-unused-vars
-  let hour = (diff % nd) / nh; // 计算差多少小时
-  // eslint-disable-next-line no-unused-vars
-  let min = ((diff % nd) % nh) / nm; // 计算差多少分钟
-  // eslint-disable-next-line no-unused-vars
-  let sec = (((diff % nd) % nh) % nm) / ns; // 计算差多少秒//输出结果
+  // let hour = (diff % nd) / nh; // 计算差多少小时
+  // let min = ((diff % nd) % nh) / nm; // 计算差多少分钟
+  // let sec = (((diff % nd) % nh) % nm) / ns; // 计算差多少秒//输出结果
 
   return day;
 }

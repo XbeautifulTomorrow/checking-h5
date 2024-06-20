@@ -11,7 +11,7 @@
           <div class="task_item_left">
             <v-img :width="40" cover :src="taskImages[item.abbreviation as keyof typeof taskImages]"></v-img>
             <div class="task_item_reward">
-              <div class="task_name" v-if="item.abbreviation == 'AD'">{{ `${item.fullName} 3/3` }}</div>
+              <div class="task_name" v-if="item.abbreviation == 'AD'">{{ `${item.fullName} 0/3` }}</div>
               <div class="task_name" v-else>{{ item.fullName }}</div>
               <div class="task_bonus">
                 <v-img :width="20" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
@@ -45,8 +45,7 @@
             </div>
             <v-img v-else :width="40" cover src="@/assets/images/svg/earn/3base.svg"></v-img>
             <div class="task_item_reward">
-              <div class="task_name" v-if="item.abbreviation == 'AD'">{{ `${item.fullName} 3/3` }}</div>
-              <div class="task_name" v-else>{{ item.fullName }}</div>
+              <div class="task_name">{{ item.fullName }}</div>
               <div class="task_bonus">
                 <v-icon color="#FFF100" size="20" icon="mdi-lightning-bolt"></v-icon>
                 <div class="bonus">{{ `+ ${item.energyAmount}` }}</div>
@@ -105,7 +104,8 @@ export default defineComponent({
         GM,
         CHALLENGE,
         AD
-      }
+      },
+      timer: null as number | any,
     };
   },
   computed: {
