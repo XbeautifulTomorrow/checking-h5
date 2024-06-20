@@ -219,7 +219,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { getChallengeList, getChallengeDetails, challengeRegistration, challengeCheckIn, challengeReCheckin } from '@/services/api/challenge';
-import { telegramLogin } from "@/services/api/user";
 import { useUserStore } from "@/store/user.js";
 import { useCheckInStore } from '@/store/check_in.js';
 import { useMessageStore } from "@/store/message.js";
@@ -361,23 +360,6 @@ export default defineComponent({
   },
   async created() {
     this.fetchChallengeList();
-    // const userStore = useUserStore();
-    // if (!userStore.isLogin) {
-
-    //   let tg_certificate = ""
-    //   const res = await
-    //     telegramLogin({
-    //       tgEncodeStr: tg_certificate,
-    //       inviteCode: ""
-    //     });
-
-    //   if (res.code == 200) {
-    //     if (res.data.certificate) {
-    //       localStorage.setItem("certificate", res.data.certificate);
-    //       userStore.setLogin(res.data);
-    //     }
-    //   }
-    // }
   },
   methods: {
     // 获取挑战列表
