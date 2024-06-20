@@ -38,11 +38,7 @@ axiosInstance.interceptors.response.use(
 );
 
 const handleRes = ({ response, url, data }: any) => {
-  const { headers } = response;
 
-  if (headers && headers["tweet-verify"]) {
-    sessionStorage.setItem("tweet-verify", headers["tweet-verify"]);
-  }
   // 取得服务器时间
   const { setCurrentTime } = useUserStore();
   if (data && data.localDateTime) {
