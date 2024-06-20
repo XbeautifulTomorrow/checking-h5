@@ -1,7 +1,7 @@
 <template>
   <div class="earn_wrapper">
     <div class="gift_box">
-      <v-img cover src="@/assets/images/earn/gift.png"></v-img>
+      <v-img :width="100" cover src="@/assets/images/earn/gift.png"></v-img>
       <div class="description_text">Earn More $GMC</div>
     </div>
     <div class="task_panel">
@@ -9,18 +9,18 @@
       <div class="task_list">
         <div class="task_item" v-for="(item, index) in dailyTask" :key="index">
           <div class="task_item_left">
-            <v-img :width="40" cover :src="taskImages[item.abbreviation as keyof typeof taskImages]"></v-img>
+            <v-img :width="36" cover :src="taskImages[item.abbreviation as keyof typeof taskImages]"></v-img>
             <div class="task_item_reward">
               <div class="task_name" v-if="item.abbreviation == 'AD'">{{ `${item.fullName} 0/3` }}</div>
               <div class="task_name" v-else>{{ item.fullName }}</div>
               <div class="task_bonus">
-                <v-img :width="20" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
+                <v-img :width="18" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
                 <div class="bonus">{{ `+ ${item.coinAmount}` }}</div>
               </div>
             </div>
           </div>
           <div class="task_item_right">
-            <v-btn :color="item.isFinish ? 'rgb(0,0,0,0)' : 'info'" :loading="item.loading" height="30"
+            <v-btn :color="item.isFinish ? 'rgb(0,0,0,0)' : 'info'" :loading="item.loading" height="24"
               density="compact" @click="completed(item)" :variant="item.isFinish ? 'text' : 'flat'"
               :readonly="item.isFinish">
               <div v-if="!item.isFinish" class="finished">GO</div>
@@ -33,17 +33,17 @@
       </div>
     </div>
     <div class="task_panel">
-      <div class="task_title">Daily Task</div>
+      <div class="task_title">Explore</div>
       <div class="task_list">
         <div class="task_item" v-for="(item, index) in explore" :key="index">
           <div class="task_item_left">
             <div class="telegram_img" v-if="item.abbreviation == 'TGGROUP' || item.abbreviation == 'TGCHANNEL'">
-              <v-img :width="30" cover src="@/assets/images/svg/earn/telegram.svg"></v-img>
+              <v-img :width="26" cover src="@/assets/images/svg/earn/telegram.svg"></v-img>
             </div>
             <div class="telegram_img twitter" v-else-if="item.abbreviation == 'TW' || item.abbreviation == 'TWEET'">
-              <v-img :width="20" cover src="@/assets/images/svg/earn/twitter.svg"></v-img>
+              <v-img :width="16" cover src="@/assets/images/svg/earn/twitter.svg"></v-img>
             </div>
-            <v-img v-else :width="40" cover src="@/assets/images/svg/earn/3base.svg"></v-img>
+            <v-img v-else :width="36" cover src="@/assets/images/svg/earn/3base.svg"></v-img>
             <div class="task_item_reward">
               <div class="task_name">{{ item.fullName }}</div>
               <div class="task_bonus">
@@ -53,7 +53,7 @@
             </div>
           </div>
           <div class="task_item_right">
-            <v-btn :color="item.isFinish ? 'rgb(0,0,0,0)' : 'info'" :loading="item.loading" height="30"
+            <v-btn :color="item.isFinish ? 'rgb(0,0,0,0)' : 'info'" :loading="item.loading" height="24"
               density="compact" @click="completed(item)" :variant="item.isFinish ? 'text' : 'flat'"
               :readonly="item.isFinish">
               <div v-if="!item.isFinish" class="finished">GO</div>
@@ -206,24 +206,22 @@ export default defineComponent({
   position: relative;
 
   .v-img {
-    width: 180px;
-    height: auto;
     flex: none;
   }
 
   .description_text {
     position: absolute;
     width: 100%;
-    bottom: 0;
+    bottom: -10px;
     text-align: center;
     font-weight: 700;
-    font-size: 20px;
+    font-size: 16px;
     color: #F7F7F7;
   }
 }
 
 .task_panel {
-  margin-top: 24px;
+  margin-top: 12px;
 
   .task_title {
     font-size: 20px;
@@ -255,19 +253,19 @@ export default defineComponent({
 
   .v-img {
     flex: none;
-    margin-right: 12px;
+    margin-right: 8px;
   }
 }
 
 .telegram_img {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #49b6f6;
   border-radius: 10px;
-  margin-right: 12px;
+  margin-right: 8px;
 
   &.twitter {
     background-color: #000;
@@ -283,11 +281,14 @@ export default defineComponent({
   .task_name {
     font-size: 14px;
     font-weight: bold;
+    line-height: 1.2;
   }
 
   .task_bonus {
     display: flex;
     align-items: center;
+    font-size: 14px;
+    line-height: 1.2;
 
     .v-img {
       flex: none;

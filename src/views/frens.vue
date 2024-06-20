@@ -24,7 +24,9 @@
     </div>
     <div class="invitation_method">
       <div class="method_item">
-        <v-img :width="40" cover src="@/assets/images/frens/invite_prize.png"></v-img>
+        <div class="method_item_img">
+          <v-img :width="40" cover src="@/assets/images/frens/invite_prize.png"></v-img>
+        </div>
         <div class="method_box">
           <div class="method_text">Invite a Friend</div>
           <div class="method_prize">
@@ -42,7 +44,9 @@
         </div>
       </div>
       <div class="method_item">
-        <v-img :width="40" cover src="@/assets/images/frens/invite_prize.png"></v-img>
+        <div class="method_item_img">
+          <v-img :width="50" cover src="@/assets/images/frens/telegram_premium_prize.png"></v-img>
+        </div>
         <div class="method_box">
           <div class="method_text">
             <span>Invite a Friends with </span>
@@ -73,7 +77,7 @@
             <div class="frens_list_item_left_box">
               <div class="user_name">1111</div>
               <div class="user_other">
-                <v-img :width="70" cover :src="levelImages[item.level as keyof typeof levelImages]"></v-img>
+                <v-img :width="60" cover :src="levelImages[item.level as keyof typeof levelImages]"></v-img>
                 <div class="user_points">
                   <v-img :width="16" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
                   <span>{{ `+ ${item.points}` }}</span>
@@ -97,8 +101,7 @@
         </div>
       </div>
     </div>
-    <v-btn class="invite_btn" color="info" height="40" width="80%" @click="inviteToTelegram()" variant="flat"
-      size="small">
+    <v-btn class="invite_btn" height="32" width="70%" @click="inviteToTelegram()" rounded="lg" size="small">
       <v-img :width="24" style="margin-right: 4px;" cover src="@/assets/images/svg/frens/linvite_user.svg"></v-img>
       <span style="font-size: 20px; text-transform: capitalize;">Invite Friend</span>
     </v-btn>
@@ -279,13 +282,7 @@ export default defineComponent({
   height: 50px;
   border-radius: 10px;
   padding: 0 8px;
-  margin-top: 16px;
-
-  &>div {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  margin-top: 4px;
 }
 
 .rewards {
@@ -297,6 +294,9 @@ export default defineComponent({
   color: #FBB11B;
   border-right: 4px solid #fdefd6;
 
+  display: flex;
+  align-items: center;
+
   .v-img {
     flex: none;
     margin-right: 4px;
@@ -307,6 +307,9 @@ export default defineComponent({
   flex: 1 0 60%;
   font-size: 16px;
   color: #FDEFD6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   .v-img {
     flex: none;
@@ -354,9 +357,17 @@ export default defineComponent({
   align-items: center;
   padding: 8px;
 
-  &>.v-img {
-    flex: none;
+  .method_item_img {
+    width: 50px;
+    height: 50px;
     margin-right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .v-img {
+      flex: none;
+    }
   }
 
   .method_box {
@@ -501,6 +512,8 @@ export default defineComponent({
   margin: 0 auto;
   bottom: 60px;
   z-index: 2000;
+  background-color: #49b6f6;
+  color: white;
 }
 
 .avatar {

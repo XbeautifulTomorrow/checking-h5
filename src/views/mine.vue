@@ -1,8 +1,8 @@
 <template>
   <div class="mine_wrapper">
     <div class="user_box">
-      <v-avatar v-if="userInfo?.avatar" size="70" :image="userInfo?.avatar"></v-avatar>
-      <img v-else width="70" height="70" :avatar="userInfo?.userName || 'avatar'" color="#FEC72F" class="avatar">
+      <v-avatar v-if="userInfo?.avatar" size="50" :image="userInfo?.avatar"></v-avatar>
+      <img v-else width="50" height="50" :avatar="userInfo?.userName || 'avatar'" color="#FEC72F" class="avatar">
       <div class="min_text">Constantin</div>
       <div class="points">
         <v-img :width="20" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
@@ -25,7 +25,8 @@
           <div class="level_item_left">
             <div class="level_num">
               <div class="num">{{ `Lvl ${item.level}` }}</div>
-              <v-img :width="80" cover :src="levelImages[item.level as keyof typeof levelImages]"></v-img>
+              <v-img :width="70" :class="[index > 3 && 'level_img']" cover
+                :src="levelImages[item.level as keyof typeof levelImages]"></v-img>
             </div>
             <div class="level_item_reward">
               <div class="level_bonus">
@@ -35,11 +36,12 @@
             </div>
           </div>
           <div class="level_item_right">
-            <v-btn :color="item.isLocked ? 'rgb(0,0,0,0)' : 'info'" :loading="item.loading" height="30" width="86"
+            <v-btn :color="item.isLocked ? 'rgb(0,0,0,0)' : 'info'" :loading="item.loading" height="24" width="100"
               density="compact" @click="levelUp(item)" :variant="item.isLocked ? 'elevated' : 'flat'"
               :disabled="item.isLocked" size="x-small">
+              <v-img v-if="!item.isLocked" :width="18" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
               <div v-if="!item.isLocked" class="finished">{{ item.upgradeAmount }}</div>
-              <div v-else-if="item.isLocked" class="finished">Unlocked</div>
+              <div v-if="item.isLocked" class="finished">Unlocked</div>
             </v-btn>
           </div>
         </div>
@@ -154,7 +156,7 @@ export default defineComponent({
   margin: 0 auto;
 
   .min_text {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
     color: #F7F7F7;
   }
@@ -185,20 +187,19 @@ export default defineComponent({
 }
 
 .level_panel {
-  padding-top: 16px;
+  padding-top: 12px;
 
   .level_text {
     font-weight: bold;
-    font-size: 24px;
+    font-size: 20px;
     color: #FDEFD6;
   }
 }
 
 .level_panel {
-  margin-top: 24px;
 
   .level_title {
-    font-size: 20px;
+    font-size: 16px;
     font-weight: bold;
     color: #fff;
   }
@@ -207,6 +208,10 @@ export default defineComponent({
 .level_list {
   &>.level_item+.level_item {
     margin-top: 8px;
+  }
+
+  &>.level_item:nth-child(2) {
+    margin-top: 0;
   }
 }
 
@@ -222,6 +227,7 @@ export default defineComponent({
 
 .level_description {
   background-color: transparent;
+  padding: 0px 8px;
 }
 
 .level_item_left {
@@ -233,12 +239,16 @@ export default defineComponent({
     margin-right: 8px;
     box-sizing: border-box;
 
+    .level_img {
+      margin-top: -8px;
+    }
+
     .num {
       box-sizing: border-box;
       text-align: right;
-      padding-right: 16px;
+      padding-right: 12px;
       margin-bottom: -4px;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: bold;
     }
   }
@@ -253,7 +263,7 @@ export default defineComponent({
   .level_bonus {
     display: flex;
     align-items: center;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: bold;
     color: #FBB11B;
 
