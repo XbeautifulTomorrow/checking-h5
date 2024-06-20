@@ -72,7 +72,6 @@
 import { defineComponent } from 'vue';
 import { useUserStore } from "@/store/user.js";
 import { getTaskList, completeTask } from "@/services/api/task.js";
-
 import { shareOnTelegram } from "@/utils";
 
 interface taskInfo {
@@ -141,7 +140,8 @@ export default defineComponent({
     // 完成任务
     completed(event: any) {
       event.loading = true;
-      setTimeout(async () => {
+      if (this.timer) clearTimeout(this.timer);
+      this.timer = setTimeout(async () => {
         const res = await completeTask({
           taskId: event.id
         });
@@ -163,7 +163,7 @@ export default defineComponent({
         // 分享拉新
         const { inviteCode } = this.userInfo;
 
-        shareOnTelegram("111", `https://t.me/cyclone384_bot/checking?startapp=${inviteCode}`);
+        shareOnTelegram("Test text", `https://t.me/cyclone384_bot/checking?startapp=${inviteCode}`);
       } else if (event == "GM") {
         // 去签到
         this.$router.push('/');

@@ -91,7 +91,8 @@ export default defineComponent({
         9: Level_9,
         10: Level_10
       },
-      levelList: [] as Array<levelInfo>
+      levelList: [] as Array<levelInfo>,
+      timer: null as number | any
     };
   },
   computed: {
@@ -109,6 +110,9 @@ export default defineComponent({
       const res = await getLevelList({});
       if (res.code == 200) {
         this.levelList = res.data;
+        this.levelList.forEach((item: any) => {
+          item.loading = false;
+        });
       }
     },
     async levelUp(event: any) {
@@ -119,10 +123,12 @@ export default defineComponent({
         return
       }
 
+      event.loading = true;
       const res = await levelUpgrade({
         levelId: event.id
       });
 
+      event.loading = false;
       if (res.code == 200) {
         setMessageText("Upgrade successful");
         this.fetchLevelList();

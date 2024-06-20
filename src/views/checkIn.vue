@@ -524,7 +524,7 @@ export default defineComponent({
       const { inviteCode } = this.userInfo;
       const inviteUrl = `https://t.me/cyclone384_bot/checking?startapp=${inviteCode}`;
       this.showInvite = false;
-      shareOnTelegram("111", inviteUrl);
+      shareOnTelegram("Test text", inviteUrl);
     },
     // 根据当前状态获取样式
     challengeStatus(event: ucCheckInVOs) {

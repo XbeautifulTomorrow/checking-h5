@@ -247,7 +247,7 @@ export default defineComponent({
     inviteToTelegram() {
       const { inviteCode } = this.userInfo;
       const inviteUrl = `https://t.me/cyclone384_bot/checking?startapp=${inviteCode}`;
-      shareOnTelegram("111", inviteUrl);
+      shareOnTelegram("Test text", inviteUrl);
     },
     // 打开邀请奖励排行榜
     toRanking() {
