@@ -511,7 +511,7 @@ export default defineComponent({
     // 根据当前状态获取样式
     challengeStatus(event: ucCheckInVOs) {
       const { challengeInfo } = this;
-      if (challengeInfo?.userStatus != 2) {
+      if (challengeInfo?.stage != "REGISTRATION" && challengeInfo?.userStatus != 2) {
         const { userStatus } = event;
 
         if (userStatus == 3) {
