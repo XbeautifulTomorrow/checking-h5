@@ -8,7 +8,7 @@
         <v-img v-else :width="40" style="background-color: #fff;border-radius: 6px;" cover
           src="@/assets/images/svg/logo.svg"></v-img>
       </template>
-      <v-app-bar-title class="ms-1" style="color: #fff;">{{ title }}</v-app-bar-title>
+      <v-app-bar-title class="ms-1" style="color: #fff;font-size: 16px">{{ title }}</v-app-bar-title>
       <template v-slot:append>
         <div class="t"></div>
         <div class="energy_box">
@@ -29,8 +29,8 @@
             </v-fab>
           </div>
         </div>
-        <v-avatar v-if="userInfo.avatar" size="40" :image="userInfo.avatar"></v-avatar>
-        <img v-else width="40" height="40" :avatar="userInfo.userName || 'avatar'" color="#FEC72F" class="avatar">
+        <v-avatar v-if="userInfo.avatar" size="32" :image="userInfo.avatar"></v-avatar>
+        <img v-else width="32" height="32" :avatar="userInfo.userName || 'avatar'" color="#FEC72F" class="avatar">
       </template>
     </v-app-bar>
   </div>
@@ -93,11 +93,14 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .back_btn {
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   border: 1px solid #000;
   background-color: #49B6F6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .energy_box {
@@ -116,6 +119,8 @@ export default defineComponent({
     color: #000;
 
     .energy_val {
+      font-size: 12px;
+      font-weight: bold;
       padding: 0 4px;
     }
   }
