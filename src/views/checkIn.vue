@@ -361,23 +361,23 @@ export default defineComponent({
   },
   async created() {
     this.fetchChallengeList();
-    const userStore = useUserStore();
-    if (!userStore.isLogin) {
+    // const userStore = useUserStore();
+    // if (!userStore.isLogin) {
 
-      let tg_certificate = "dXNlcj0lN0IlMjJpZCUyMiUzQTUwODA1ODkxNTIlMkMlMjJmaXJzdF9uYW1lJTIyJTNBJTIyQXN0cmFlYSUyMiUyQyUyMmxhc3RfbmFtZSUyMiUzQSUyMiUyMiUyQyUyMnVzZXJuYW1lJTIyJTNBJTIyYXN0cmFlYV9sZXZzJTIyJTJDJTIybGFuZ3VhZ2VfY29kZSUyMiUzQSUyMnpoLWhhbnMlMjIlMkMlMjJhbGxvd3Nfd3JpdGVfdG9fcG0lMjIlM0F0cnVlJTdEJmNoYXRfaW5zdGFuY2U9LTE0OTM1Mjg2MTg3OTkwMjE4NTEmY2hhdF90eXBlPXByaXZhdGUmYXV0aF9kYXRlPTE3MTg3NzY3MTgmaGFzaD1jMWVlMzYwMjFlNWQzNTM2MjJkMzVmZTk5NDJhOTFjOTY5NWNiYjFmMWUzMGYzOWYzYTI2MTYyOTIwN2JiMDU2"
-      const res = await
-        telegramLogin({
-          tgEncodeStr: tg_certificate,
-          inviteCode: ""
-        });
+    //   let tg_certificate = ""
+    //   const res = await
+    //     telegramLogin({
+    //       tgEncodeStr: tg_certificate,
+    //       inviteCode: ""
+    //     });
 
-      if (res.code == 200) {
-        if (res.data.certificate) {
-          localStorage.setItem("certificate", res.data.certificate);
-          userStore.setLogin(res.data);
-        }
-      }
-    }
+    //   if (res.code == 200) {
+    //     if (res.data.certificate) {
+    //       localStorage.setItem("certificate", res.data.certificate);
+    //       userStore.setLogin(res.data);
+    //     }
+    //   }
+    // }
   },
   methods: {
     // 获取挑战列表
