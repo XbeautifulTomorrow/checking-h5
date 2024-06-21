@@ -134,7 +134,7 @@
             <v-img :width="24" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
           </v-btn>
           <v-btn v-if="challengeInfo?.userStatus == 5" class="check_in_btn not_started" :loading="claimLoading">
-            <span class="finished">{{ `${Number(challengeInfo?.rewardAmount).toLocaleString()} $GMC claimed` }}</span>
+            <span class="finished">{{ `${Number(challengeInfo?.rewardAmount).toLocaleString()} $GMC Claimed` }}</span>
           </v-btn>
         </template>
       </div>
