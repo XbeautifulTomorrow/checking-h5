@@ -107,36 +107,34 @@
         </v-text-field>
         <!-- 已报名 -->
         <template v-else-if="challengeInfo?.userStatus == 1">
-          <template v-if="challengeInfo?.stage != 'ENDED'">
-            <!--可以签到，计算积分-->
-            <v-btn class="check_in_btn" height="42" @click="handleCheckIn()" v-if="checkStart">
-              <span class="finished">{{ `Check In +${Number(createPoints.time).toLocaleString()}` }}</span>
-              <v-img :width="24" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
-            </v-btn>
-            <!--其他状态，或者已经过了签到时间-->
-            <v-btn class=" check_in_btn not_started" height="42" readonly v-else>
-              <countDown class="finished" v-slot="timeObj" @onEnd="fetchChallengeDetail()"
-                :time="getCountDown(isNotStart)">
-                {{ `Next check-in start in ${timeObj.hh}:${timeObj.mm}:${timeObj.ss}` }}
-              </countDown>
-            </v-btn>
-          </template>
-          <!--结束，领取奖励-->
-          <template v-else>
-            <v-btn v-if="challengeInfo?.userStatus == 4" class="check_in_btn" @click="claimBonus()"
-              :loading="claimLoading">
-              <span class="finished">{{ `Claim +${Number(challengeInfo?.rewardAmount).toLocaleString()}` }}</span>
-              <v-img :width="24" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-            </v-btn>
-            <v-btn v-if="challengeInfo?.userStatus == 5" class="check_in_btn not_started" :loading="claimLoading">
-              <span class="finished">{{ `${Number(challengeInfo?.rewardAmount).toLocaleString()} $GMC claimed` }}</span>
-            </v-btn>
-          </template>
+          <!--可以签到，计算积分-->
+          <v-btn class="check_in_btn" height="42" @click="handleCheckIn()" v-if="checkStart">
+            <span class="finished">{{ `Check In +${Number(createPoints.time).toLocaleString()}` }}</span>
+            <v-img :width="24" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
+          </v-btn>
+          <!--其他状态，或者已经过了签到时间-->
+          <v-btn class=" check_in_btn not_started" height="42" readonly v-else>
+            <countDown class="finished" v-slot="timeObj" @onEnd="fetchChallengeDetail()"
+              :time="getCountDown(isNotStart)">
+              {{ `Next check-in start in ${timeObj.hh}:${timeObj.mm}:${timeObj.ss}` }}
+            </countDown>
+          </v-btn>
         </template>
         <!-- 失败 -->
         <template v-else-if="challengeInfo?.userStatus == 3">
           <v-btn class="check_in_btn failed" readonly>
             <span class="finished">You Failed</span>
+          </v-btn>
+        </template>
+        <!--结束，领取奖励-->
+        <template v-else-if="challengeInfo?.userStatus > 3">
+          <v-btn v-if="challengeInfo?.userStatus == 4" class="check_in_btn" @click="claimBonus()"
+            :loading="claimLoading">
+            <span class="finished">{{ `Claim +${Number(challengeInfo?.rewardAmount).toLocaleString()}` }}</span>
+            <v-img :width="24" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
+          </v-btn>
+          <v-btn v-if="challengeInfo?.userStatus == 5" class="check_in_btn not_started" :loading="claimLoading">
+            <span class="finished">{{ `${Number(challengeInfo?.rewardAmount).toLocaleString()} $GMC claimed` }}</span>
           </v-btn>
         </template>
       </div>
