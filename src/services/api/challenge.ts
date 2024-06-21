@@ -33,7 +33,7 @@ const challengeReCheckin = (params: any) => http.post("/gm-coin-server-web/user-
  * 挑战领取
  * @param params
  */
-const challengePickUp = (params: any) => http.post("/gm-coin-server-web/user-challenge/pickUp", params);
+const challengePickUp = (params: any) => http.get("/gm-coin-server-web/user-challenge/pickUp", params);
 
 export {
   getChallengeList,
