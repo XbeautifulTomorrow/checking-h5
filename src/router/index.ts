@@ -86,7 +86,7 @@ router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore();
 
   if (userStore.isLogin) {
-    await validateToken({});
+    validateToken({});
   } else {
     let tg_certificate = "";
     if ((window as any).Telegram) {
