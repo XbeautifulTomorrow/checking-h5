@@ -174,7 +174,7 @@
           </div>
         </div>
       </div>
-      <div class="leaderboard_item you" v-if="challengeInfo?.userStatus == 1">
+      <div class="leaderboard_item you" v-if="challengeInfo?.userStatus != 2">
         <div class="ranking">
           <v-img :width="24" v-if="challengeInfo?.ranking - 1 == 0"
             src="@/assets/images/svg/check_in/leaderboard_0.svg"></v-img>
