@@ -67,10 +67,13 @@
               <div v-else-if="item?.userStatus == 3" class="check_in_time">
                 <div class="points">
                   <div>{{ item?.points ? Number(item.points).toLocaleString() : "--" }}</div>
-                  <v-img :width="24" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
+                  <v-img :width="16" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
                 </div>
               </div>
               <!--补签-->
+              <div v-else-if="item?.userStatus == 4 && challengeInfo?.stage == 'REGISTRATION'" class="check_in_time">
+                <span>--</span>
+              </div>
               <div v-else-if="item?.userStatus == 4 && challengeInfo?.stage == 'SIGNIN'"
                 class="check_in_time re_checkin" @click="openReCheckin(item)">
                 <span>Re-Checkin</span>
@@ -142,9 +145,9 @@
         <div class="title">Check-in Leaderboard</div>
         <div class="val">
           <v-img :width="16" src="@/assets/images/svg/check_in/user.svg"></v-img>
-          <span>{{ challengeInfo?.notEliminatedNumber }}</span>
+          <span>{{ Number(challengeInfo?.notEliminatedNumber).toLocaleString() }}</span>
           <span>/</span>
-          <span style="color: #C3C0C0;">{{ challengeInfo?.totalNumber }}</span>
+          <span style="color: #C3C0C0;">{{ Number(challengeInfo?.totalNumber).toLocaleString() }}</span>
         </div>
       </div>
       <div class="ranking_box">
@@ -759,7 +762,7 @@ export default defineComponent({
 
 .activity_info {
   margin: 0 8px 8px;
-  border-radius: 16px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -807,7 +810,7 @@ export default defineComponent({
   margin: 8px;
   background-color: rgba(255, 255, 255, 1);
   border: none;
-  border-radius: 20px;
+  border-radius: 14px;
 }
 
 .check_in_hint {
@@ -932,6 +935,7 @@ export default defineComponent({
 
   .check_in {
     font-size: 14px;
+    font-weight: bold;
     color: #FE2E75;
   }
 }
@@ -954,7 +958,7 @@ export default defineComponent({
 .rankings_panel {
   margin: 8px 8px 4px;
   background-color: rgba(243, 59, 89, 1);
-  border-radius: 20px;
+  border-radius: 14px;
   padding: 8px 0 8px;
   box-sizing: border-box;
 }

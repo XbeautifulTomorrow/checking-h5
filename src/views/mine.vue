@@ -14,8 +14,8 @@
       <div class="level_list">
         <div class="level_item level_description">
           <div class="level_item_left">
-            <div class="v-img" style="width: 80px;">Level</div>
-            <div class="level_item_reward">Entry Limits</div>
+            <div class="v-btn finished" style="width: 80px;">Level</div>
+            <div class="v-btn finished">Entry Limits</div>
           </div>
           <div class="level_item_right">
             <div class="v-btn finished">Level Up</div>
@@ -221,7 +221,7 @@ export default defineComponent({
 
 .level_item {
   background-color: rgba(6, 4, 4, 0.65);
-  border-radius: 20px;
+  border-radius: 14px;
   padding: 8px 16px 8px 8px;
   box-sizing: border-box;
   display: flex;
@@ -256,6 +256,12 @@ export default defineComponent({
       font-weight: bold;
     }
   }
+
+  .finished {
+    font-size: 14px;
+    color: #fff;
+    text-transform: capitalize;
+  }
 }
 
 .level_item_reward {
@@ -279,13 +285,14 @@ export default defineComponent({
 }
 
 .level_item_right {
+  width: 100px;
 
   .v-btn {
     color: #fff;
   }
 
   .finished {
-    font-size: 12px;
+    font-size: 14px;
     color: #fff;
     text-transform: capitalize;
   }

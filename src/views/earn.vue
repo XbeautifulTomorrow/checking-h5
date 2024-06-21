@@ -240,7 +240,7 @@ export default defineComponent({
 
 .task_item {
   background-color: rgba(6, 4, 4, 0.65);
-  border-radius: 20px;
+  border-radius: 14px;
   padding: 8px 16px 8px 8px;
   box-sizing: border-box;
   display: flex;

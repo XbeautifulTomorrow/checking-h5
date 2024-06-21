@@ -7,7 +7,7 @@
         <div> {{ Number(userInfo?.totalInviteAmount).toLocaleString() }}</div>
       </div>
       <div class="invitation_ranking" @click="toRanking()">
-        <v-img :width="30" cover src="@/assets/images/svg/frens/report.svg"></v-img>
+        <v-img :width="40" cover src="@/assets/images/svg/frens/report.svg"></v-img>
         <div>Top 300 Leaders</div>
         <v-icon size="20" icon="mdi-menu-right-outline"></v-icon>
       </div>
@@ -25,7 +25,7 @@
     <div class="invitation_method">
       <div class="method_item">
         <div class="method_item_img">
-          <v-img :width="40" cover src="@/assets/images/frens/invite_prize.png"></v-img>
+          <v-img :width="50" cover src="@/assets/images/frens/invite_prize.png"></v-img>
         </div>
         <div class="method_box">
           <div class="method_text">Invite a Friend</div>
@@ -45,12 +45,14 @@
       </div>
       <div class="method_item">
         <div class="method_item_img">
-          <v-img :width="50" cover src="@/assets/images/frens/telegram_premium_prize.png"></v-img>
+          <v-img :width="60" cover src="@/assets/images/frens/telegram_premium_prize.png"></v-img>
         </div>
         <div class="method_box">
           <div class="method_text">
-            <span>Invite a Friends with </span>
-            <span style="color:#49B6F6;">Telegram Premium</span>
+            <div>
+              <span>Invite a Friends with </span>
+              <span style="color:#49B6F6;">Telegram Premium</span>
+            </div>
           </div>
           <div class="method_prize">
             <div class="energy">
@@ -352,14 +354,14 @@ export default defineComponent({
 
 .method_item {
   background-color: rgba(6, 4, 4, 0.65);
-  border-radius: 16px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   padding: 8px;
 
   .method_item_img {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     margin-right: 8px;
     display: flex;
     align-items: center;
@@ -372,16 +374,20 @@ export default defineComponent({
 
   .method_box {
     .method_text {
+      display: flex;
+      align-items: center;
+      height: 36px;
       font-weight: bold;
       font-size: 16px;
       color: #FFFFFF;
-      line-height: 1.2;
+      line-height: 1;
     }
   }
 
   .method_prize {
     display: flex;
     align-items: center;
+    line-height: 1;
 
     &>div {
       display: flex;
