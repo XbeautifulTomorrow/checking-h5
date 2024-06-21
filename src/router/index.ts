@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { setSessionStore } from "@/utils";
+import { setSessionStore, getLocalStore } from "@/utils";
 import { useUserStore } from "@/store/user.js";
 import { validateToken, telegramLogin } from "@/services/api/user";
 
@@ -85,9 +85,9 @@ router.beforeEach(async (to, from, next) => {
 
   const userStore = useUserStore();
 
-  await validateToken({});
-
-  if (!userStore.isLogin) {
+  if (userStore.isLogin) {
+    await validateToken({});
+  } else {
     let tg_certificate = "";
     if ((window as any).Telegram) {
       tg_certificate = btoa((window as any).Telegram.WebApp.initData);
