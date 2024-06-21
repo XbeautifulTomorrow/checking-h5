@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { useUserStore } from "@/store/user.js";
 import { setSessionStore } from "@/utils";
 
 //1. 定义要使用到的路由组件  （一定要使用文件的全名，得包含文件后缀名）
