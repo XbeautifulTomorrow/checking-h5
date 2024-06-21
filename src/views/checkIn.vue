@@ -11,7 +11,7 @@
         </div>
         <div class="prize_pool">
           <v-img :width="28" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-          <div class="prize_num">{{ `$ ${Number(currentChallenge?.prizePool || "0").toLocaleString()}` }}</div>
+          <div class="prize_num">{{ `${Number(prizePoolNum || 0).toLocaleString()}` }}</div>
         </div>
       </div>
       <div class="right_btn" @click="handleNext()">
@@ -26,7 +26,7 @@
           <span>{{ `Keep check in for ` }}</span>
           <span style="font-weight: bold;">{{ `${daysRemaining} ${daysRemaining > 1 ? 'days' : 'day'} ` }}</span>
           <span>{{ `to win ` }}</span>
-          <span style="font-weight: bold;">{{ Number(winBonuNum).toLocaleString() }}</span>
+          <span style="font-weight: bold;">{{ Number(winBonuNum || 0).toLocaleString() }}</span>
           <span>{{ ` $GMC!` }}</span>
         </span>
       </div>
@@ -295,10 +295,12 @@ export default defineComponent({
     return {
       challengeList: [] as Array<challenge>,
       challengeInfo: {
-        winAmount: 0
+        winAmount: 0,
+        prizePool: 0
       } as challengeDetails,
       currentIndex: 0,
       bonusNum: null as number | any,
+      prizePoolNum: 0,
       winBonuNum: 0,
       page: 1,
       size: 10,
@@ -755,6 +757,26 @@ export default defineComponent({
 
       animate()
     },
+    "challengeInfo.prizePool"(newValue, oldValue) {
+      new TWEEN.Tween({
+        number: oldValue
+      })
+        .to({
+          number: newValue
+        }, 1000)
+        .onUpdate(tween => {
+          this.prizePoolNum = tween.number.toFixed(0)
+        })
+        .start()
+
+      function animate() {
+        if (TWEEN.update()) {
+          requestAnimationFrame(animate)
+        }
+      }
+
+      animate()
+    },
   },
   beforeUnmount() {
     this.clearTimerFun();
@@ -808,6 +830,10 @@ export default defineComponent({
       font-size: 20px;
       font-weight: bold;
       color: #fff;
+
+      .v-img {
+        margin-right: 4px;
+      }
     }
   }
 }
