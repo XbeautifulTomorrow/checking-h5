@@ -51,7 +51,8 @@ export default defineComponent({
   },
   created() {
     if (this.isLogin) {
-      this.fetchUserInfo();
+      const userStore = useUserStore();
+      userStore.fetchUserInfo();
     }
   },
   computed: {
@@ -66,16 +67,6 @@ export default defineComponent({
   },
   methods: {
     getUserInfo: getUserInfo,
-    async fetchUserInfo() {
-      const res = await getUserInfo({});
-      if (res.code == 200) {
-        const userStore = useUserStore();
-        userStore.setUserInfo(res.data);
-        this.$nextTick(() => {
-          (window as any).LetterAvatar.transform();
-        });
-      }
-    },
     toMain() {
       const checkInStore = useCheckInStore();
       checkInStore.setChallengeId(null);
@@ -85,7 +76,8 @@ export default defineComponent({
   watch: {
     isLogin(val) {
       if (val) {
-        this.fetchUserInfo();
+        const userStore = useUserStore();
+        userStore.fetchUserInfo();
       }
     }
   },

@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { getLocalStore, setSessionStore, getSessionStore } from "@/utils";
-// import { productionOfThirdPartyCoin, getWithdrawalChain } from "@/services/api/user";
+import { getUserInfo } from "@/services/api/user";
 import { en, zhHant } from 'vuetify/locale'
 import { getLang } from "@/locales/index";
 // import router from "@/router/index";
@@ -63,11 +63,14 @@ export const useUserStore = defineStore("user", {
       this.logInfo = data;
       this.isLogin = true;
     },
-    setUserInfo(data: any) {
-      this.userInfo = data;
-    },
     setLoad(data: any) {
       this.loadLog = data;
+    },
+    async fetchUserInfo() {
+      const res = await getUserInfo({});
+      if (res.code == 200) {
+        this.userInfo = res.data;
+      }
     },
     setLocale(data: any) {
       this.locale = data == "en_US" ? en : zhHant;
@@ -89,5 +92,5 @@ export const useUserStore = defineStore("user", {
       // window.location.href = "/";
     },
 
-  },
+  }
 });

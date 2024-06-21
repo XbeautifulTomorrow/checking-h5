@@ -133,6 +133,8 @@ export default defineComponent({
       event.loading = false;
       if (res.code == 200) {
         setMessageText("Upgrade successful");
+        const userStore = useUserStore();
+        userStore.fetchUserInfo();
         this.fetchLevelList();
       }
     }

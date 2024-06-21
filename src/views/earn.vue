@@ -149,6 +149,8 @@ export default defineComponent({
         if (res.code == 200) {
           if (res.data) {
             // 任务完成了，重新获取列表
+            const userStore = useUserStore();
+            userStore.fetchUserInfo();
             this.fetchChallengeList();
           } else {
             // 做任务

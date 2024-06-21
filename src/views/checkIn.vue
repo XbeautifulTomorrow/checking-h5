@@ -47,7 +47,7 @@
             </div>
             <v-img :width="30" cover :src="project[item?.signType as keyof typeof project]"></v-img>
             <!--已报名-->
-            <template v-if="challengeInfo?.stage != 'REGISTRATION' && challengeInfo?.userStatus != 2">
+            <template v-if="challengeInfo?.userStatus != 2">
               <div v-if="item?.userStatus == 1" class="check_in_time">
                 <!--未开始-->
                 {{ formatTime(item.startDate) }}
@@ -157,17 +157,19 @@
       </v-text-field>
       <!-- 已报名 -->
       <template v-else-if="challengeInfo?.userStatus == 1">
-        <!--未开始，满积分-->
-        <v-btn class="check_in_btn not_started" height="42" readonly v-if="challengeInfo?.stage == 'REGISTRATION'">
-          <countDown class="finished" v-slot="timeObj" @onEnd="fetchChallengeDetail()" :time="getCountDown(isNotStart)">
-            {{ `Next check-in start in ${Number(timeObj.dd) * 24 + Number(timeObj.hh)}:${timeObj.mm}:${timeObj.ss}` }}
+        <template v-if="challengeInfo?.stage != 'ENDED'"">
+        <!--未开始，或者已经过了签到时间-->
+        <v-btn class=" check_in_btn not_started" height="42" readonly v-if="isNotStart?.userStatus != 2">
+          <countDown class="finished" v-slot="timeObj" :time="getCountDown(isNotStart)">
+            {{ `Next check-in start in ${timeObj.hh}:${timeObj.mm}:${timeObj.ss}` }}
           </countDown>
-        </v-btn>
-        <!--已开始，计算积分-->
-        <v-btn class="check_in_btn" height="42" @click="handleCheckIn()" v-if="challengeInfo?.stage == 'SIGNIN'">
-          <span class="finished">{{ `Check In +${createPoints.time}` }}</span>
-          <v-img :width="24" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
-        </v-btn>
+          </v-btn>
+          <!--已开始，计算积分-->
+          <v-btn class="check_in_btn" height="42" @click="handleCheckIn()" v-else>
+            <span class="finished">{{ `Check In +${createPoints.time}` }}</span>
+            <v-img :width="24" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
+          </v-btn>
+        </template>
         <!--结束，领取奖励-->
         <template v-else>
           <v-btn v-if="challengeInfo?.userStatus == 4" class="check_in_btn" @click="claimBonus()"
@@ -349,12 +351,7 @@ export default defineComponent({
     },
     // 第一个未开始的进入倒计时
     isNotStart() {
-      const { challengeInfo: { stage, ucCheckInVOs } } = this;
-
-      // 报名阶段直接获取第一个
-      if (stage == "REGISTRATION") {
-        return ucCheckInVOs[0];
-      }
+      const { challengeInfo: { ucCheckInVOs } } = this;
 
       const checkIn = ucCheckInVOs.find(e => e.userStatus == 1) as ucCheckInVOs;
       return checkIn;
@@ -448,6 +445,8 @@ export default defineComponent({
 
       if (res.code == 200) {
         setMessageText("Challenge has been joined.");
+        const userStore = useUserStore();
+        userStore.fetchUserInfo();
         this.fetchChallengeDetail();
       }
     },
@@ -467,6 +466,8 @@ export default defineComponent({
 
           if (res.code == 200) {
             setMessageText("Check in successfully");
+            const userStore = useUserStore();
+            userStore.fetchUserInfo();
             this.fetchChallengeDetail();
           }
         }
@@ -485,14 +486,19 @@ export default defineComponent({
     // 补签
     async handleReCheckin() {
       const { reCheckinInfo } = this;
-      const { setMessageText } = useMessageStore()
+      const { setMessageText } = useMessageStore();
+
       const res = await challengeReCheckin({
         challengeId: reCheckinInfo.challengeId,
         signType: reCheckinInfo.signType
       });
 
       if (res.code == 200) {
+        this.showReCheckin = false;
+
         setMessageText("Re-check in successfully");
+        const userStore = useUserStore();
+        userStore.fetchUserInfo();
         this.fetchChallengeDetail();
       }
     },
@@ -508,6 +514,8 @@ export default defineComponent({
       if (res.code == 200) {
         const { setMessageText } = useMessageStore()
         setMessageText("Received successfully");
+        const userStore = useUserStore();
+        userStore.fetchUserInfo();
         this.fetchChallengeDetail();
       }
     },
@@ -541,7 +549,7 @@ export default defineComponent({
     // 根据当前状态获取样式
     challengeStatus(event: ucCheckInVOs) {
       const { challengeInfo } = this;
-      if (challengeInfo?.stage != "REGISTRATION" && challengeInfo?.userStatus != 2) {
+      if (challengeInfo?.userStatus != 2) {
         const { userStatus } = event;
 
         if (userStatus == 3) {
@@ -588,18 +596,15 @@ export default defineComponent({
     },
     // 获取倒计时时间
     getCountDown(event: ucCheckInVOs) {
-      const { endDate } = event;
-      console.log(endDate)
-      const { challengeInfo: { stage, startDate } } = this;
+      const { startDate } = event;
       const { currentTime } = useUserStore();
-      const startTime = new Date(startDate).setDate(new Date(startDate).getDate() + 1);
 
       // 未开始就用创建时间
-      const current = new Date(stage == "REGISTRATION" ? startTime : currentTime);
+      const current = new Date(currentTime);
       const yyyy = current.getFullYear();
       const MM = current.getMonth() + 1 > 10 ? current.getMonth() + 1 : `0${current.getMonth() + 1}`;
       const dd = current.getDate() > 10 ? current.getDate() : `0${current.getDate()}`;
-      const endTime = new Date(`${yyyy}-${MM}-${dd} ${endDate}`).toString();
+      const endTime = new Date(`${yyyy}-${MM}-${dd} ${startDate}`).toString();
       return endTime;
     },
     // 倒计时
