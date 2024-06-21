@@ -23,7 +23,9 @@
       <!--已报名-->
       <div class="check_in_hint" v-if="challengeInfo?.userStatus == 1">
         <span>
-          <span>{{ `Keep check in for ${daysRemaining} days to win ` }}</span>
+          <span>{{ `Keep check in for ` }}</span>
+          <span style="font-weight: bold;">{{ daysRemaining }}</span>
+          <span>{{ ` days to win ` }}</span>
           <span style="font-weight: bold;">{{ Number(winBonuNum).toLocaleString() }}</span>
           <span>{{ ` $GMC!` }}</span>
         </span>
@@ -337,8 +339,7 @@ export default defineComponent({
       if (times > time) return 0;
       const days = time.getDate() - times.getDate() + 1;
 
-      // 大于7天时，返回7天
-      return days >= 7 ? 7 : days;
+      return days;
     },
     // 获胜额外奖励
     winBonus() {
@@ -1031,6 +1032,7 @@ export default defineComponent({
 
     .user_name {
       width: 50px;
+      font-weight: bold;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -1044,6 +1046,7 @@ export default defineComponent({
   align-items: center;
   justify-content: center;
   font-size: 14px;
+  font-weight: bold;
   line-height: 1;
   color: #fff;
 
@@ -1058,6 +1061,7 @@ export default defineComponent({
   align-items: center;
   justify-content: center;
   font-size: 14px;
+  font-weight: bold;
   line-height: 1;
   color: #FFAD2E;
 
