@@ -54,7 +54,7 @@
               </div>
               <template v-else-if="item?.userStatus == 2">
                 <!--可签到倒计时-->
-                <countDown v-slot="timeObj" @onEnd="fetchChallengeDetail()" :time="getCountDown(item)">
+                <countDown v-slot="timeObj" @onEnd="fetchChallengeDetail()" :time="getCountDown(item, 2)">
                   <span class="check_in">{{ `${timeObj.mm}:${timeObj.ss} Left` }}</span>
                 </countDown>
               </template>
@@ -157,17 +157,19 @@
       </v-text-field>
       <!-- 已报名 -->
       <template v-else-if="challengeInfo?.userStatus == 1">
-        <template v-if="challengeInfo?.stage != 'ENDED'"">
-        <!--未开始，或者已经过了签到时间-->
-        <v-btn class=" check_in_btn not_started" height="42" readonly v-if="isNotStart?.userStatus != 2">
-          <countDown class="finished" v-slot="timeObj" :time="getCountDown(isNotStart)">
-            {{ `Next check-in start in ${timeObj.hh}:${timeObj.mm}:${timeObj.ss}` }}
-          </countDown>
-          </v-btn>
-          <!--已开始，计算积分-->
-          <v-btn class="check_in_btn" height="42" @click="handleCheckIn()" v-else>
+        <template v-if="challengeInfo?.stage != 'ENDED'">
+
+          <!--可以签到，计算积分-->
+          <v-btn class="check_in_btn" height="42" @click="handleCheckIn()" v-if="checkStart">
             <span class="finished">{{ `Check In +${createPoints.time}` }}</span>
             <v-img :width="24" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
+          </v-btn>
+          <!--其他状态，或者已经过了签到时间-->
+          <v-btn class=" check_in_btn not_started" height="42" readonly v-else>
+            <countDown class="finished" v-slot="timeObj" @onEnd="fetchChallengeDetail()"
+              :time="getCountDown(isNotStart)">
+              {{ `Next check-in start in ${timeObj.hh}:${timeObj.mm}:${timeObj.ss}` }}
+            </countDown>
           </v-btn>
         </template>
         <!--结束，领取奖励-->
@@ -220,7 +222,7 @@ import { defineComponent } from 'vue';
 import { getChallengeList, getChallengeDetails, challengeRegistration, challengeCheckIn, challengeReCheckin, challengePickUp } from '@/services/api/challenge';
 import { useUserStore } from "@/store/user.js";
 import { useCheckInStore } from '@/store/check_in.js';
-import { telegramLogin } from "@/services/api/user";
+// import { telegramLogin } from "@/services/api/user";
 import { useMessageStore } from "@/store/message.js";
 import { timeForStr, shareOnTelegram } from "@/utils";
 import countDown from "@/components/countDown/index.vue";
@@ -355,27 +357,33 @@ export default defineComponent({
 
       const checkIn = ucCheckInVOs.find(e => e.userStatus == 1) as ucCheckInVOs;
       return checkIn;
+    },
+    // 第一个已开始的进入倒计时
+    checkStart() {
+      const { challengeInfo: { ucCheckInVOs } } = this;
+      const checkIn = ucCheckInVOs.findIndex(e => e.userStatus == 2) > -1;
+      return checkIn;
     }
   },
   async created() {
     this.fetchChallengeList();
-    const userStore = useUserStore();
-    if (!userStore.isLogin) {
+    // const userStore = useUserStore();
+    // if (!userStore.isLogin) {
 
-      let tg_certificate = "dXNlcj0lN0IlMjJpZCUyMiUzQTUwODA1ODkxNTIlMkMlMjJmaXJzdF9uYW1lJTIyJTNBJTIyQXN0cmFlYSUyMiUyQyUyMmxhc3RfbmFtZSUyMiUzQSUyMiUyMiUyQyUyMnVzZXJuYW1lJTIyJTNBJTIyYXN0cmFlYV9sZXZzJTIyJTJDJTIybGFuZ3VhZ2VfY29kZSUyMiUzQSUyMnpoLWhhbnMlMjIlMkMlMjJhbGxvd3Nfd3JpdGVfdG9fcG0lMjIlM0F0cnVlJTdEJmNoYXRfaW5zdGFuY2U9Mzc0NjIwODk0NDcyMzg5MDQ3OSZjaGF0X3R5cGU9c3VwZXJncm91cCZhdXRoX2RhdGU9MTcxODg3MDQwNiZoYXNoPTYzZWE2Zjc3Y2RjZTFmNjUwOGEyNGQwOWUyNWZkNTExNWVkOGI5ZTk2MzY3NjVkM2EyNDI3ZjMxYmJlZmUxNDc="
-      const res = await
-        telegramLogin({
-          tgEncodeStr: tg_certificate,
-          inviteCode: ""
-        });
+    //   let tg_certificate = "dXNlcj0lN0IlMjJpZCUyMiUzQTUwODA1ODkxNTIlMkMlMjJmaXJzdF9uYW1lJTIyJTNBJTIyQXN0cmFlYSUyMiUyQyUyMmxhc3RfbmFtZSUyMiUzQSUyMiUyMiUyQyUyMnVzZXJuYW1lJTIyJTNBJTIyYXN0cmFlYV9sZXZzJTIyJTJDJTIybGFuZ3VhZ2VfY29kZSUyMiUzQSUyMnpoLWhhbnMlMjIlMkMlMjJhbGxvd3Nfd3JpdGVfdG9fcG0lMjIlM0F0cnVlJTdEJmNoYXRfaW5zdGFuY2U9Mzc0NjIwODk0NDcyMzg5MDQ3OSZjaGF0X3R5cGU9c3VwZXJncm91cCZhdXRoX2RhdGU9MTcxODg3MDQwNiZoYXNoPTYzZWE2Zjc3Y2RjZTFmNjUwOGEyNGQwOWUyNWZkNTExNWVkOGI5ZTk2MzY3NjVkM2EyNDI3ZjMxYmJlZmUxNDc="
+    //   const res = await
+    //     telegramLogin({
+    //       tgEncodeStr: tg_certificate,
+    //       inviteCode: ""
+    //     });
 
-      if (res.code == 200) {
-        if (res.data.certificate) {
-          localStorage.setItem("certificate", res.data.certificate);
-          userStore.setLogin(res.data);
-        }
-      }
-    }
+    //   if (res.code == 200) {
+    //     if (res.data.certificate) {
+    //       localStorage.setItem("certificate", res.data.certificate);
+    //       userStore.setLogin(res.data);
+    //     }
+    //   }
+    // }
   },
   methods: {
     // 获取挑战列表
@@ -595,8 +603,8 @@ export default defineComponent({
       }
     },
     // 获取倒计时时间
-    getCountDown(event: ucCheckInVOs) {
-      const { startDate } = event;
+    getCountDown(event: ucCheckInVOs, type = 1) {
+      const { startDate, endDate } = event;
       const { currentTime } = useUserStore();
 
       // 未开始就用创建时间
@@ -604,7 +612,7 @@ export default defineComponent({
       const yyyy = current.getFullYear();
       const MM = current.getMonth() + 1 > 10 ? current.getMonth() + 1 : `0${current.getMonth() + 1}`;
       const dd = current.getDate() > 10 ? current.getDate() : `0${current.getDate()}`;
-      const endTime = new Date(`${yyyy}-${MM}-${dd} ${startDate}`).toString();
+      const endTime = new Date(`${yyyy}-${MM}-${dd} ${type == 1 ? startDate : endDate}`).toString();
       return endTime;
     },
     // 倒计时
@@ -613,7 +621,7 @@ export default defineComponent({
       const { challengeInfo: { ucCheckInVOs } } = this;
       const checkIn = ucCheckInVOs.find(e => e.userStatus == 2);
       if (checkIn) {
-        that.createPoints.time = this.dateDiff(this.getCountDown(checkIn));
+        that.createPoints.time = this.dateDiff(this.getCountDown(checkIn, 2));
       } else return
 
       if (that.createPoints.timer) this.clearTimerFun();
