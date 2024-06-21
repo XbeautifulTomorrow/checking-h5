@@ -3,7 +3,7 @@
     <div class="user_box">
       <v-avatar v-if="userInfo?.avatar" size="50" :image="userInfo?.avatar"></v-avatar>
       <img v-else width="50" height="50" :avatar="userInfo?.userName || 'avatar'" color="#FEC72F" class="avatar">
-      <div class="min_text">Constantin</div>
+      <div class="min_text">{{ userInfo?.userName }}</div>
       <div class="points">
         <v-img :width="20" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
         <span>{{ Number(userInfo?.pointAmount || 0).toLocaleString() }}</span>
@@ -38,11 +38,11 @@
             </div>
           </div>
           <div class="level_item_right">
-            <v-btn :color="item.isLocked ? 'rgb(0,0,0,0)' : '#49B6F6'" :loading="item.loading" height="24" width="100"
-              density="compact" @click="levelUp(item)" :variant="item.isLocked ? 'elevated' : 'flat'"
-              :disabled="item.isLocked" size="x-small">
+            <v-btn :color="item?.isLocked ? 'rgb(0,0,0,0)' : '#49B6F6'" :loading="item.loading" height="24" width="100"
+              density="compact" @click="levelUp(item)" :variant="item?.isLocked ? 'elevated' : 'flat'"
+              :disabled="item?.isLocked" size="x-small" v-if="item?.level <= userInfo?.level + 1">
               <v-img v-if="!item.isLocked" :width="18" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-              <div v-if="!item.isLocked" class="finished">{{ Number(item.upgradeAmount).toLocaleString() }}</div>
+              <div v-if="!item.isLocked" class="finished">{{ Number(item?.upgradeAmount).toLocaleString() }}</div>
               <div v-if="item.isLocked" class="finished">Unlocked</div>
             </v-btn>
           </div>
