@@ -18,8 +18,7 @@ import store from './store/index';
 
 // Composables
 import { createApp } from 'vue';
-const pinia = createPinia()
-
+const pinia = createPinia();
 
 const app = createApp(App);
 app.config.globalProperties.$dayjs = dayjs;

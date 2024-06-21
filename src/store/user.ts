@@ -89,7 +89,7 @@ export const useUserStore = defineStore("user", {
       this.isLogin = false;
       this.userInfo = {} as userInterface;
       window.NavigationPreloadManager;
-      // window.location.href = "/";
+      window.location.href = "/";
     },
 
   }

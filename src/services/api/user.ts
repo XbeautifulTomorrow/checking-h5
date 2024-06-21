@@ -4,6 +4,11 @@ import * as http from "@/services/apiService";
  * Telegram登录。
  * @param params
  */
+const validateToken = (params: any) => http.get("/gm-coin-server-web/tg-user/validate", params);
+/**
+ * Telegram登录。
+ * @param params
+ */
 const telegramLogin = (params: any) => http.post("/gm-coin-server-web/tg-user/login", params);
 
 /**
@@ -37,6 +42,7 @@ const getInviteUserList = (params: any) => http.get("/gm-coin-server-web/user/in
 const getInviteRankingList = (params: any) => http.get("/gm-coin-server-web/user/inviteRanking", params);
 
 export {
+  validateToken,
   telegramLogin,
   getUserInfo,
   getLevelList,

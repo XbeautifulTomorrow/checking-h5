@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { setSessionStore } from "@/utils";
 import { useUserStore } from "@/store/user.js";
-import { telegramLogin } from "@/services/api/user";
+import { validateToken, telegramLogin } from "@/services/api/user";
 
 //1. 定义要使用到的路由组件  （一定要使用文件的全名，得包含文件后缀名）
 import activity from '@/views/activity.vue';
@@ -84,6 +84,9 @@ router.beforeEach(async (to, from, next) => {
   }
 
   const userStore = useUserStore();
+
+  await validateToken({});
+
   if (!userStore.isLogin) {
     let tg_certificate = "";
     if ((window as any).Telegram) {
