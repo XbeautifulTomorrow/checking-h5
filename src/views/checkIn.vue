@@ -345,12 +345,10 @@ export default defineComponent({
       const ranking = cpRankingVOs.find(e => e.userId == userId);
       return ranking ? ranking.winAmount : 0;
     },
-    // 是否需要补签
+    // 失败提示
     reSigning() {
       const { challengeInfo: { ucCheckInVOs } } = this;
       const checkIn = ucCheckInVOs.find(e => e.userStatus == 5);
-
-      console.log(111)
 
       if (checkIn) {
         if (checkIn.signType == "GM") {
