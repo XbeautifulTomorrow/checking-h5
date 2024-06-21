@@ -444,6 +444,8 @@ export default defineComponent({
             }
 
             this.currentIndex = index;
+            const { setChallengeId } = useCheckInStore();
+            setChallengeId(this.challengeList[index].challengeId);
           }
 
           return
