@@ -556,7 +556,7 @@ export default defineComponent({
     },
     // 领取奖金
     async claimBonus() {
-      const { challengeId } = this;
+      const { currentChallenge: { challengeId } } = this;
       this.claimLoading = true;
       const res = await challengePickUp({
         challengeId
