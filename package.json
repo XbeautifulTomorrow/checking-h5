@@ -45,7 +45,6 @@
     "vite-plugin-compression": "^0.5.1",
     "vite-plugin-imp": "^2.4.0",
     "vite-plugin-mkcert": "^1.17.5",
-    "vite-plugin-pwa": "^0.20.0",
     "vite-plugin-vuetify": "^2.0.3",
     "vue-tsc": "^2.0.6"
   }

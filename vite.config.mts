@@ -11,7 +11,6 @@ const timestamp = new Date().getTime();
 // Utilities
 import { defineConfig } from 'vite';
 import { fileURLToPath, URL } from 'node:url';
-import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -23,8 +22,6 @@ export default defineConfig({
     Vue({
       template: { transformAssetUrls },
     }),
-    VitePWA(),
-    // https://github.com/vuetifyjs/vuetify-loader/tree/master/packages/vite-plugin#readme
     Vuetify(),
     Components(),
     ViteFonts({
@@ -73,6 +70,33 @@ export default defineConfig({
       output: {
         //去掉注释内容
         comments: true,
+      },
+    },
+    rollupOptions: {
+      output: {
+        //入口文件输出配置
+        entryFileNames: `assets/js/[name]-[hash]-${timestamp}.js`, // 自定义文件名，使用时间戳保证唯一性
+        //代码分割后的文件输出配置
+        chunkFileNames: `assets/js/[name]-[hash]-${timestamp}.js`, // 自定义文件名，使用时间戳保证唯一性
+        //静态资源输出配置
+        assetFileNames(assetInfo) {
+          //css文件单独输出到css文件夹
+          if (assetInfo.name.endsWith(".css")) {
+            return `assets/css/[name]-[hash].css`;
+          }
+          //图片文件单独输出到img文件夹
+          else if (
+            [".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp"].some((ext) =>
+              assetInfo.name.endsWith(ext)
+            )
+          ) {
+            return `assets/images/[name]-[hash].[ext]`;
+          }
+          //其他资源输出到assets文件夹
+          else {
+            return `assets/[name]-[hash].[ext]`;
+          }
+        },
       },
     },
     chunkSizeWarningLimit: 2000, // 调整区块大小警告限制
