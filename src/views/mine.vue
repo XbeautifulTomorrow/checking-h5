@@ -6,7 +6,7 @@
       <div class="min_text">Constantin</div>
       <div class="points">
         <v-img :width="20" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
-        <span>{{ userInfo?.pointAmount }}</span>
+        <span>{{ Number(userInfo?.pointAmount || 0).toLocaleString() }}</span>
       </div>
     </div>
     <div class="level_panel">
@@ -31,16 +31,18 @@
             <div class="level_item_reward">
               <div class="level_bonus">
                 <v-img :width="20" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-                <div class="bonus">{{ `${item.minAmount} - ${item.maxAmount}` }}</div>
+                <div class="bonus">
+                  {{ `${Number(item.minAmount).toLocaleString()} - ${Number(item.maxAmount).toLocaleString()}` }}
+                </div>
               </div>
             </div>
           </div>
           <div class="level_item_right">
-            <v-btn :color="item.isLocked ? 'rgb(0,0,0,0)' : 'info'" :loading="item.loading" height="24" width="100"
+            <v-btn :color="item.isLocked ? 'rgb(0,0,0,0)' : '#49B6F6'" :loading="item.loading" height="24" width="100"
               density="compact" @click="levelUp(item)" :variant="item.isLocked ? 'elevated' : 'flat'"
               :disabled="item.isLocked" size="x-small">
               <v-img v-if="!item.isLocked" :width="18" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-              <div v-if="!item.isLocked" class="finished">{{ item.upgradeAmount }}</div>
+              <div v-if="!item.isLocked" class="finished">{{ Number(item.upgradeAmount).toLocaleString() }}</div>
               <div v-if="item.isLocked" class="finished">Unlocked</div>
             </v-btn>
           </div>

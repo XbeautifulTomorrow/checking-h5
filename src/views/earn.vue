@@ -1,7 +1,7 @@
 <template>
   <div class="earn_wrapper">
     <div class="gift_box">
-      <v-img :width="100" cover src="@/assets/images/earn/gift.png"></v-img>
+      <v-img :width="180" cover src="@/assets/images/earn/gift.png"></v-img>
       <div class="description_text">Earn More $GMC</div>
     </div>
     <div class="task_panel">
@@ -15,12 +15,12 @@
               <div class="task_name" v-else>{{ item.fullName }}</div>
               <div class="task_bonus">
                 <v-img :width="18" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-                <div class="bonus">{{ `+ ${item.coinAmount}` }}</div>
+                <div class="bonus">{{ `+ ${Number(item.coinAmount).toLocaleString()}` }}</div>
               </div>
             </div>
           </div>
           <div class="task_item_right">
-            <v-btn :color="item.isFinish ? 'rgb(0,0,0,0)' : 'info'" :loading="item.loading" height="24"
+            <v-btn :color="item.isFinish ? 'rgb(0,0,0,0)' : '#49B6F6'" :loading="item.loading" height="24"
               density="compact" @click="completed(item)" :variant="item.isFinish ? 'text' : 'flat'"
               :readonly="item.isFinish">
               <div v-if="!item.isFinish" class="finished">GO</div>
@@ -53,7 +53,7 @@
             </div>
           </div>
           <div class="task_item_right">
-            <v-btn :color="item.isFinish ? 'rgb(0,0,0,0)' : 'info'" :loading="item.loading" height="24"
+            <v-btn :color="item.isFinish ? 'rgb(0,0,0,0)' : '#49B6F6'" :loading="item.loading" height="24"
               density="compact" @click="completed(item)" :variant="item.isFinish ? 'text' : 'flat'"
               :readonly="item.isFinish">
               <div v-if="!item.isFinish" class="finished">GO</div>
@@ -214,10 +214,10 @@ export default defineComponent({
   .description_text {
     position: absolute;
     width: 100%;
-    bottom: -10px;
+    bottom: -8px;
     text-align: center;
     font-weight: 700;
-    font-size: 16px;
+    font-size: 20px;
     color: #F7F7F7;
   }
 }
@@ -265,7 +265,7 @@ export default defineComponent({
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #49b6f6;
+  background-color: #49B6F6;
   border-radius: 10px;
   margin-right: 8px;
 

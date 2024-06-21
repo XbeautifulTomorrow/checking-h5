@@ -4,7 +4,7 @@
     <div class="total_rewards">
       <div class="rewards">
         <v-img :width="24" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-        <div> {{ userInfo?.totalInviteAmount }}</div>
+        <div> {{ Number(userInfo?.totalInviteAmount).toLocaleString() }}</div>
       </div>
       <div class="invitation_ranking" @click="toRanking()">
         <v-img :width="30" cover src="@/assets/images/svg/frens/report.svg"></v-img>
@@ -75,12 +75,12 @@
             <v-avatar v-if="item.avatar" size="40" :image="item.avatar"></v-avatar>
             <img v-else width="40" height="40" :avatar="item?.userName" color="#FEC72F" class="avatar">
             <div class="frens_list_item_left_box">
-              <div class="user_name">1111</div>
+              <div class="user_name">{{ item?.userName }}</div>
               <div class="user_other">
                 <v-img :width="60" cover :src="levelImages[item.level as keyof typeof levelImages]"></v-img>
-                <div class="user_points">
+                <div class="user_points" v-if="item?.points">
                   <v-img :width="16" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
-                  <span>{{ `+ ${item.points}` }}</span>
+                  <span>{{ `${Number(item?.points).toLocaleString()}` }}</span>
                 </div>
               </div>
             </div>
@@ -88,13 +88,13 @@
           <div class="frens_list_item_right">
             <div class="frens_list_item_right_time">{{ timeForStr(item.registrationTime, "MM-dd HH:mm:ss") }}</div>
             <div class="user_prize">
-              <div class="energy">
+              <div class="energy" v-if="item?.energyAmount">
                 <v-icon color="#FFF100" :size="16" icon="mdi-lightning-bolt"></v-icon>
-                <span>{{ `+ ${item.energyAmount}` }}</span>
+                <span>{{ `+ ${item?.energyAmount}` }}</span>
               </div>
-              <div class="bonus">
+              <div class="bonus" v-if="item?.gmcAmount">
                 <v-img :width="16" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-                <span>{{ `+ ${item.gmcAmount}` }}</span>
+                <span>{{ `+ ${Number(item?.gmcAmount).toLocaleString()}` }}</span>
               </div>
             </div>
           </div>

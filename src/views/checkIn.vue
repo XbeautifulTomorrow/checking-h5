@@ -11,7 +11,7 @@
         </div>
         <div class="prize_pool">
           <v-img :width="28" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-          <div class="prize_num">{{ `$${currentChallenge?.prizePool || "0"}` }}</div>
+          <div class="prize_num">{{ `$ ${Number(currentChallenge?.prizePool || "0").toLocaleString()}` }}</div>
         </div>
       </div>
       <div class="right_btn" @click="handleNext()">
@@ -22,10 +22,11 @@
     <div class="check_in_panel">
       <!--已报名-->
       <div class="check_in_hint" v-if="challengeInfo?.userStatus == 1">
-        <span v-if="!reSigning">
-          {{ `Keep check in for ${daysRemaining} days to win ${challengeInfo?.winAmount} $GMC!` }}
+        <span>
+          <span>{{ `Keep check in for ${daysRemaining} days to win ` }}</span>
+          <span style="font-weight: bold;">{{ Number(winBonuNum).toLocaleString() }}</span>
+          <span>{{ ` $GMC!` }}</span>
         </span>
-        <span v-else>{{ reSigning }}</span>
       </div>
       <!--未报名-->
       <div class="check_in_hint" v-if="challengeInfo?.userStatus == 2">
@@ -38,6 +39,10 @@
         <span v-if="challengeInfo?.stage == 'ENDED'">
           This challenge is closed.
         </span>
+      </div>
+      <!--失败-->
+      <div class="check_in_hint" v-if="challengeInfo?.userStatus == 3">
+        <span>{{ reSigning }}</span>
       </div>
       <div class="check_in_items">
         <div class="check_in_item" v-for="(item, index) in challengeInfo?.ucCheckInVOs" :key="index">
@@ -55,24 +60,25 @@
               <template v-else-if="item?.userStatus == 2">
                 <!--可签到倒计时-->
                 <countDown v-slot="timeObj" @onEnd="fetchChallengeDetail()" :time="getCountDown(item, 2)">
-                  <span class="check_in">{{ `${timeObj.mm}:${timeObj.ss} Left` }}</span>
+                  <span class="check_in">{{ `${timeObj.mm}m${timeObj.ss}s Left` }}</span>
                 </countDown>
               </template>
               <!--已签到，显示获得积分-->
               <div v-else-if="item?.userStatus == 3" class="check_in_time">
                 <div class="points">
-                  <div>{{ item?.points || "--" }}</div>
+                  <div>{{ item?.points ? Number(item.points).toLocaleString() : "--" }}</div>
                   <v-img :width="24" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
                 </div>
               </div>
               <!--补签-->
-              <div v-else-if="item?.userStatus == 4" class="check_in_time re_checkin" @click="openReCheckin(item)">
+              <div v-else-if="item?.userStatus == 4 && challengeInfo?.stage == 'SIGNIN'"
+                class="check_in_time re_checkin" @click="openReCheckin(item)">
                 <span>Re-Checkin</span>
               </div>
               <!--失败-->
               <div v-else-if="item?.userStatus == 5" class="check_in_time fail">FAIL</div>
             </template>
-            <!--未报名，不显示其他选项-->
+            <!--未报名-->
             <template v-else>
               <div class="check_in_time">
                 {{ formatTime(item.startDate) }}
@@ -84,6 +90,51 @@
     </div>
     <div class="interval_panel">
       <div class="interval"></div>
+      <div class="join_panel">
+        <!-- 未报名 -->
+        <v-text-field class="" v-model="bonusNum" :placeholder="formatPlaceholder()" variant="solo"
+          density="comfortable" :readonly="challengeInfo?.stage != 'REGISTRATION'" v-if="challengeInfo?.userStatus == 2"
+          rounded="10px">
+          <template v-slot:append-inner>
+            <div v-if="challengeInfo?.stage == 'REGISTRATION'" class="join_btn" @click="handleRegistration()">Join</div>
+            <div v-else class="join_btn disabled">Join</div>
+          </template>
+        </v-text-field>
+        <!-- 已报名 -->
+        <template v-else-if="challengeInfo?.userStatus == 1">
+          <template v-if="challengeInfo?.stage != 'ENDED'">
+            <!--可以签到，计算积分-->
+            <v-btn class="check_in_btn" height="42" @click="handleCheckIn()" v-if="checkStart">
+              <span class="finished">{{ `Check In +${Number(createPoints.time).toLocaleString()}` }}</span>
+              <v-img :width="24" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
+            </v-btn>
+            <!--其他状态，或者已经过了签到时间-->
+            <v-btn class=" check_in_btn not_started" height="42" readonly v-else>
+              <countDown class="finished" v-slot="timeObj" @onEnd="fetchChallengeDetail()"
+                :time="getCountDown(isNotStart)">
+                {{ `Next check-in start in ${timeObj.hh}:${timeObj.mm}:${timeObj.ss}` }}
+              </countDown>
+            </v-btn>
+          </template>
+          <!--结束，领取奖励-->
+          <template v-else>
+            <v-btn v-if="challengeInfo?.userStatus == 4" class="check_in_btn" @click="claimBonus()"
+              :loading="claimLoading">
+              <span class="finished">{{ `Claim +${Number(challengeInfo?.rewardAmount).toLocaleString()}` }}</span>
+              <v-img :width="24" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
+            </v-btn>
+            <v-btn v-if="challengeInfo?.userStatus == 5" class="check_in_btn not_started" :loading="claimLoading">
+              <span class="finished">{{ `${Number(challengeInfo?.rewardAmount).toLocaleString()} $GMC claimed` }}</span>
+            </v-btn>
+          </template>
+        </template>
+        <!-- 失败 -->
+        <template v-else-if="challengeInfo?.userStatus == 3">
+          <v-btn class="check_in_btn failed" readonly>
+            <span class="finished">You Failed</span>
+          </v-btn>
+        </template>
+      </div>
       <div class="interval"></div>
     </div>
     <div class="rankings_panel">
@@ -111,11 +162,11 @@
             </div>
             <div class="bonus">
               <v-img :width="24" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-              <div class="val">{{ `+${item?.winAmount}` }}</div>
+              <div class="val">{{ `+${Number(item?.winAmount).toLocaleString()}` }}</div>
             </div>
           </div>
           <div class="points">
-            <div>{{ item?.points || "--" }}</div>
+            <div>{{ Number(item?.points || 0).toLocaleString() }}</div>
             <v-img :width="24" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
           </div>
         </div>
@@ -136,61 +187,18 @@
           </div>
           <div class="bonus" v-if="challengeInfo?.ranking < 4">
             <v-img :width="24" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-            <div class="val">{{ `+${winBonus}` }}</div>
+            <div class="val">{{ `+${Number(winBonus || 0).toLocaleString()}` }}</div>
           </div>
         </div>
 
         <div class="points">
-          <div>{{ challengeInfo?.totalPoints || "--" }}</div>
+          <div>{{ Number(challengeInfo?.totalPoints || 0).toLocaleString() }}</div>
           <v-img :width="24" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
         </div>
       </div>
     </div>
-    <div class="join_panel">
-      <!-- 未报名 -->
-      <v-text-field class="" v-model="bonusNum" :placeholder="formatPlaceholder()" variant="solo" density="comfortable"
-        :readonly="challengeInfo?.stage != 'REGISTRATION'" v-if="challengeInfo?.userStatus == 2" rounded="10px">
-        <template v-slot:append-inner>
-          <div v-if="challengeInfo?.stage == 'REGISTRATION'" class="join_btn" @click="handleRegistration()">Join</div>
-          <div v-else class="join_btn disabled">Join</div>
-        </template>
-      </v-text-field>
-      <!-- 已报名 -->
-      <template v-else-if="challengeInfo?.userStatus == 1">
-        <template v-if="challengeInfo?.stage != 'ENDED'">
-
-          <!--可以签到，计算积分-->
-          <v-btn class="check_in_btn" height="42" @click="handleCheckIn()" v-if="checkStart">
-            <span class="finished">{{ `Check In +${createPoints.time}` }}</span>
-            <v-img :width="24" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
-          </v-btn>
-          <!--其他状态，或者已经过了签到时间-->
-          <v-btn class=" check_in_btn not_started" height="42" readonly v-else>
-            <countDown class="finished" v-slot="timeObj" @onEnd="fetchChallengeDetail()"
-              :time="getCountDown(isNotStart)">
-              {{ `Next check-in start in ${timeObj.hh}:${timeObj.mm}:${timeObj.ss}` }}
-            </countDown>
-          </v-btn>
-        </template>
-        <!--结束，领取奖励-->
-        <template v-else>
-          <v-btn v-if="challengeInfo?.userStatus == 4" class="check_in_btn" @click="claimBonus()"
-            :loading="claimLoading">
-            <span class="finished">{{ `Claim +${challengeInfo?.rewardAmount}` }}</span>
-            <v-img :width="24" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-          </v-btn>
-          <v-btn v-if="challengeInfo?.userStatus == 5" class="check_in_btn not_started" :loading="claimLoading">
-            <span class="finished">{{ `${challengeInfo?.rewardAmount} $GMC claimed` }}</span>
-          </v-btn>
-        </template>
-      </template>
-      <!-- 失败 -->
-      <template v-else-if="challengeInfo?.userStatus == 3">
-        <v-btn class="check_in_btn failed" readonly>
-          <span class="finished">You Failed</span>
-        </v-btn>
-      </template>
-      <div v-if="challengeInfo?.userStatus == 3" class="try_again" @click="currentIndex = 0">Try Again?</div>
+    <div v-if="challengeInfo?.userStatus == 3" class="try_again" @click="currentIndex = 0">
+      <span>Try Again?</span>
     </div>
     <v-dialog v-model="showReCheckin" width="auto">
       <div class="dialog_box">
@@ -222,9 +230,11 @@ import { defineComponent } from 'vue';
 import { getChallengeList, getChallengeDetails, challengeRegistration, challengeCheckIn, challengeReCheckin, challengePickUp } from '@/services/api/challenge';
 import { useUserStore } from "@/store/user.js";
 import { useCheckInStore } from '@/store/check_in.js';
-// import { telegramLogin } from "@/services/api/user";
 import { useMessageStore } from "@/store/message.js";
-import { timeForStr, shareOnTelegram } from "@/utils";
+import { timeForStr, shareOnTelegram, getLocalStore } from "@/utils";
+import { validateToken, telegramLogin } from "@/services/api/user";
+import TWEEN from '@tweenjs/tween.js';
+
 import countDown from "@/components/countDown/index.vue";
 
 import GM from "@/assets/images/svg/check_in/GM.svg";
@@ -264,6 +274,7 @@ interface challenge {
 interface challengeDetails {
   stage: string;
   prizePool: number;
+  winAmount: number | string | any;
   ucCheckInVOs: Array<ucCheckInVOs>;
   cpRankingVOs: Array<cpRankingVOs>;
   [x: string]: string | number | any;
@@ -273,9 +284,12 @@ export default defineComponent({
   data() {
     return {
       challengeList: [] as Array<challenge>,
-      challengeInfo: {} as challengeDetails,
+      challengeInfo: {
+        winAmount: 0
+      } as challengeDetails,
       currentIndex: 0,
       bonusNum: null as number | any,
+      winBonuNum: 0,
       page: 1,
       size: 10,
       project: {
@@ -292,8 +306,7 @@ export default defineComponent({
       showReCheckin: false, // 补签
       showInvite: false, // 邀请弹窗
       reCheckinInfo: {} as ucCheckInVOs,
-      timer: null as number | any, // 节流
-      claimLoading: false // 领取
+      claimLoading: false // 领取加载
     };
   },
   components: {
@@ -335,6 +348,8 @@ export default defineComponent({
       const { challengeInfo: { ucCheckInVOs } } = this;
       const checkIn = ucCheckInVOs.find(e => e.userStatus == 5);
 
+      console.log(111)
+
       if (checkIn) {
         if (checkIn.signType == "GM") {
           return "You didn't get up today?"
@@ -363,27 +378,46 @@ export default defineComponent({
       const { challengeInfo: { ucCheckInVOs } } = this;
       const checkIn = ucCheckInVOs.findIndex(e => e.userStatus == 2) > -1;
       return checkIn;
+    },
+    // 获取第一个挑战
+    firstStart() {
+      const { challengeInfo: { ucCheckInVOs } } = this;
+      if (ucCheckInVOs.length > 0) {
+        return ucCheckInVOs[0]
+      }
+
+      return {} as ucCheckInVOs;
     }
   },
   async created() {
     this.fetchChallengeList();
-    // const userStore = useUserStore();
-    // if (!userStore.isLogin) {
+    const userStore = useUserStore();
 
-    //   let tg_certificate = "dXNlcj0lN0IlMjJpZCUyMiUzQTUwODA1ODkxNTIlMkMlMjJmaXJzdF9uYW1lJTIyJTNBJTIyQXN0cmFlYSUyMiUyQyUyMmxhc3RfbmFtZSUyMiUzQSUyMiUyMiUyQyUyMnVzZXJuYW1lJTIyJTNBJTIyYXN0cmFlYV9sZXZzJTIyJTJDJTIybGFuZ3VhZ2VfY29kZSUyMiUzQSUyMnpoLWhhbnMlMjIlMkMlMjJhbGxvd3Nfd3JpdGVfdG9fcG0lMjIlM0F0cnVlJTdEJmNoYXRfaW5zdGFuY2U9Mzc0NjIwODk0NDcyMzg5MDQ3OSZjaGF0X3R5cGU9c3VwZXJncm91cCZhdXRoX2RhdGU9MTcxODg3MDQwNiZoYXNoPTYzZWE2Zjc3Y2RjZTFmNjUwOGEyNGQwOWUyNWZkNTExNWVkOGI5ZTk2MzY3NjVkM2EyNDI3ZjMxYmJlZmUxNDc="
-    //   const res = await
-    //     telegramLogin({
-    //       tgEncodeStr: tg_certificate,
-    //       inviteCode: ""
-    //     });
+    if (userStore.isLogin) {
+      validateToken({});
+    } else {
 
-    //   if (res.code == 200) {
-    //     if (res.data.certificate) {
-    //       localStorage.setItem("certificate", res.data.certificate);
-    //       userStore.setLogin(res.data);
-    //     }
-    //   }
-    // }
+      let tg_certificate: any;
+      if ((window as any).Telegram) {
+        tg_certificate = btoa((window as any).Telegram.WebApp.initData);
+        console.log(tg_certificate);
+      }
+
+      const inviteCode = getLocalStore("certificate");
+      const res = await telegramLogin({
+        tgEncodeStr: tg_certificate,
+        inviteCode: inviteCode
+      });
+
+      if (res.code == 200) {
+        if (res.data.certificate) {
+          localStorage.setItem("certificate", res.data.certificate);
+          userStore.setLogin(res.data);
+          // 加载
+          userStore.fetchUserInfo();
+        }
+      }
+    }
   },
   methods: {
     // 获取挑战列表
@@ -398,38 +432,48 @@ export default defineComponent({
           const index = this.challengeList.findIndex(e => e.challengeId == this.challengeId);
 
           if (index > -1) {
+            if (index == this.currentIndex) {
+              if (this.challengeList.length > 0) {
+                const userStore = useUserStore();
+                if (userStore.isLogin) {
+                  this.fetchChallengeDetail();
+                }
+              }
+
+              return
+            }
+
             this.currentIndex = index;
-          } else {
-            this.currentIndex = 0;
           }
+
+          return
         }
 
         if (this.challengeList.length > 0) {
-          this.fetchChallengeDetail();
+          const userStore = useUserStore();
+          if (userStore.isLogin) {
+            this.fetchChallengeDetail();
+          }
         }
       }
     },
     // 获取挑战详情
-    fetchChallengeDetail() {
-      if (this.timer) clearTimeout(this.timer);
-      this.timer = setTimeout(async () => {
-        const { currentChallenge } = this;
-        if (!currentChallenge) return;
-        const { challengeId } = currentChallenge;
+    async fetchChallengeDetail() {
+      const { currentChallenge } = this;
+      if (!currentChallenge) return;
+      const { challengeId } = currentChallenge;
 
-        const res = await getChallengeDetails({
-          challengeId
-        });
-        if (res.code == 200) {
-          this.challengeInfo = res.data;
-          this.timerFun();
+      const res = await getChallengeDetails({
+        challengeId
+      });
+      if (res.code == 200) {
+        this.challengeInfo = res.data;
+        this.timerFun();
+      }
 
-          this.$nextTick(() => {
-            (window as any).LetterAvatar.transform();
-          });
-        }
-      }, 10);
-
+      this.$nextTick(() => {
+        (window as any).LetterAvatar.transform();
+      });
     },
     // 挑战报名
     async handleRegistration() {
@@ -455,7 +499,7 @@ export default defineComponent({
         setMessageText("Challenge has been joined.");
         const userStore = useUserStore();
         userStore.fetchUserInfo();
-        this.fetchChallengeDetail();
+        this.fetchChallengeList();
       }
     },
     // 挑战签到
@@ -476,7 +520,7 @@ export default defineComponent({
             setMessageText("Check in successfully");
             const userStore = useUserStore();
             userStore.fetchUserInfo();
-            this.fetchChallengeDetail();
+            this.fetchChallengeList();
           }
         }
       }
@@ -507,7 +551,7 @@ export default defineComponent({
         setMessageText("Re-check in successfully");
         const userStore = useUserStore();
         userStore.fetchUserInfo();
-        this.fetchChallengeDetail();
+        this.fetchChallengeList();
       }
     },
     // 领取奖金
@@ -524,7 +568,7 @@ export default defineComponent({
         setMessageText("Received successfully");
         const userStore = useUserStore();
         userStore.fetchUserInfo();
-        this.fetchChallengeDetail();
+        this.fetchChallengeList();
       }
     },
     //上一项
@@ -604,13 +648,13 @@ export default defineComponent({
     },
     // 获取倒计时时间
     getCountDown(event: ucCheckInVOs, type = 1) {
-      const { startDate, endDate } = event;
-      const { isNotStart } = this; // 是否有未开始的，没有就用次日时间
+      const { firstStart } = this;
+      const { startDate, endDate } = event || firstStart;
       const { currentTime } = useUserStore();
       const startTime = new Date(currentTime).setDate(new Date(currentTime).getDate() + 1);
 
       // 未开始就用创建时间
-      const current = new Date(isNotStart ? currentTime : startTime);
+      const current = new Date(event ? currentTime : startTime);
       const yyyy = current.getFullYear();
       const MM = current.getMonth() + 1 > 10 ? current.getMonth() + 1 : `0${current.getMonth() + 1}`;
       const dd = current.getDate() > 10 ? current.getDate() : `0${current.getDate()}`;
@@ -631,7 +675,7 @@ export default defineComponent({
         that.createPoints.time--;
         if (that.createPoints.time < 1) {
           that.createPoints.time = 1800;
-          that.fetchChallengeDetail();
+          that.fetchChallengeList();
         }
       }, 1000);
     },
@@ -676,9 +720,32 @@ export default defineComponent({
 
       if (this.challengeList.length > 0) {
         // 每次更新重新获取排行榜
-        this.fetchChallengeDetail();
+        const userStore = useUserStore();
+        if (userStore.isLogin) {
+          this.fetchChallengeList();
+        }
       }
-    }
+    },
+    "challengeInfo.winAmount"(newValue, oldValue) {
+      new TWEEN.Tween({
+        number: oldValue
+      })
+        .to({
+          number: newValue
+        }, 1000)
+        .onUpdate(tween => {
+          this.winBonuNum = tween.number.toFixed(0)
+        })
+        .start()
+
+      function animate() {
+        if (TWEEN.update()) {
+          requestAnimationFrame(animate)
+        }
+      }
+
+      animate()
+    },
   },
   beforeUnmount() {
     this.clearTimerFun();
@@ -747,7 +814,7 @@ export default defineComponent({
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 0;
+  height: 38px;
   font-size: 14px;
   color: #FE2E75;
 }
@@ -870,7 +937,7 @@ export default defineComponent({
 }
 
 .interval_panel {
-  margin: -16px 8px;
+  margin: -16px 8px -16px;
   padding: 0 8px;
   display: flex;
   align-items: center;
@@ -878,17 +945,17 @@ export default defineComponent({
 
   .interval {
     width: 6px;
-    height: 24px;
+    height: 80px;
     background: linear-gradient(90deg, rgba(251, 234, 203, 1) 0%, rgba(253, 190, 175, 1) 103%);
     border-radius: 10px;
   }
 }
 
 .rankings_panel {
-  margin: 8px;
+  margin: 8px 8px 4px;
   background-color: rgba(243, 59, 89, 1);
   border-radius: 20px;
-  padding: 8px 0 0;
+  padding: 8px 0 8px;
   box-sizing: border-box;
 }
 
@@ -941,6 +1008,8 @@ export default defineComponent({
     display: flex;
     align-items: center;
     justify-content: center;
+    font-weight: bold;
+    color: white;
   }
 
   .user {
@@ -994,7 +1063,8 @@ export default defineComponent({
 }
 
 .join_panel {
-  margin: 16px 8px 0;
+  flex: 1;
+  margin: 0 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1026,6 +1096,10 @@ export default defineComponent({
 
   ::v-deep .v-field--appended {
     padding-inline-end: 4px;
+  }
+
+  ::v-deep .v-input__details {
+    display: none;
   }
 }
 
@@ -1060,12 +1134,19 @@ export default defineComponent({
 }
 
 .try_again {
-  display: inline-block;
-  padding: 4px 16px;
+  display: block;
   margin-top: 8px;
-  font-size: 16px;
-  color: #FFFFFF;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &>span {
+    display: inline-block;
+    padding: 4px 16px;
+    font-size: 16px;
+    color: #FFFFFF;
+    text-align: center;
+  }
 }
 
 @keyframes light {

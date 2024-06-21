@@ -15,7 +15,7 @@
           <v-icon color="#FFF100" :size="20" icon="mdi-lightning-bolt"></v-icon>
           <div class="energy_item">
             <div class="energy_val">{{ userInfo.energyAmount }}</div>
-            <v-fab color="#49B6F6" size="24" icon="mdi-plus" elevation="0">
+            <v-fab color="#49B6F6" size="24" icon="mdi-plus" elevation="0" rounded="lg">
               <v-icon color="#fff" size="20"></v-icon>
             </v-fab>
           </div>
@@ -23,8 +23,8 @@
         <div class="energy_box">
           <v-img :width="20" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
           <div class="energy_item">
-            <div class="energy_val">{{ userInfo.gmcAmount }}</div>
-            <v-fab color="#49B6F6" size="24" icon="mdi-plus" elevation="0">
+            <div class="energy_val">{{ Number(userInfo?.gmcAmount || 0).toLocaleString() }}</div>
+            <v-fab color="#49B6F6" size="24" icon="mdi-plus" elevation="0" rounded="lg">
               <v-icon color="#fff" size="20"></v-icon>
             </v-fab>
           </div>
@@ -79,6 +79,10 @@ export default defineComponent({
         const userStore = useUserStore();
         userStore.fetchUserInfo();
       }
+    },
+    "$route.path"() {
+      const userStore = useUserStore();
+      userStore.fetchUserInfo();
     }
   },
 });

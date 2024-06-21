@@ -9,6 +9,7 @@
   "dependencies": {
     "@babel/core": "^7.24.7",
     "@mdi/font": "6.2.95",
+    "@tweenjs/tween.js": "^23.1.2",
     "axios": "^1.7.2",
     "bignumber.js": "^9.1.2",
     "core-js": "^3.37.1",

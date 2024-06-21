@@ -5,12 +5,12 @@
       <div class="title">GM Kings</div>
       <div class="description">Invite more frens to get here</div>
       <div class="invite_btns">
-        <v-btn class="invite_btn" color="info" height="32" width="220" @click="inviteToTelegram()" variant="flat"
+        <v-btn class="invite_btn" color="#49B6F6" height="32" width="220" @click="inviteToTelegram()" variant="flat"
           size="small">
           <v-img :width="24" style="margin-right: 4px;" cover src="@/assets/images/svg/frens/linvite_user.svg"></v-img>
-          <span style="font-size: 20px; text-transform: capitalize;">Invite Friend</span>
+          <span style="font-size: 20px; text-transform: capitalize;color: white;">Invite Friend</span>
         </v-btn>
-        <v-btn style="margin-left: 12px;" color="info" height="32" @click="copyInvite()" variant="flat" size="small">
+        <v-btn style="margin-left: 12px;" color="#49B6F6" height="32" @click="copyInvite()" variant="flat" size="small">
           <v-icon icon="mdi-content-copy" size="20" color="#fff"></v-icon>
         </v-btn>
       </div>
@@ -31,7 +31,7 @@
             <div class="frens_relevant">
               <div class="frens_num">{{ `${item.totalNumber} Frens` }}</div>
               <div class="frens_prize">
-                <span>{{ `+ ${item.gmcAmount}` }}</span>
+                <span>{{ `+ ${Number(item.gmcAmount).toLocaleString()}` }}</span>
                 <v-img :width="16" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
               </div>
             </div>
@@ -73,6 +73,9 @@ export default defineComponent({
       const { userInfo } = useUserStore();
       return userInfo;
     },
+  },
+  created() {
+    this.fetchInviteUserList();
   },
   methods: {
     // 获取邀请用户列表
@@ -213,8 +216,11 @@ export default defineComponent({
 
   .user_name {
     font-weight: bold;
-    font-size: 20px;
+    font-size: 18px;
     color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .frens_relevant {
