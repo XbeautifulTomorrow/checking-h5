@@ -31,7 +31,7 @@
         </span>
       </div>
       <!--未报名-->
-      <div class="check_in_hint" v-if="challengeInfo?.userStatus == 2">
+      <div class="check_in_hint" v-else-if="challengeInfo?.userStatus == 2">
         <span v-if="challengeInfo?.stage == 'REGISTRATION'">
           Check in for 7 days to win.
         </span>
@@ -43,7 +43,7 @@
         </span>
       </div>
       <!--失败-->
-      <div class="check_in_hint" v-if="challengeInfo?.userStatus == 3">
+      <div class="check_in_hint" v-else-if="challengeInfo?.userStatus == 3">
         <span>{{ reSigning }}</span>
       </div>
       <div class="check_in_hint" v-else>
@@ -149,7 +149,7 @@
     </div>
     <div class="rankings_panel">
       <div class="leaderboard_title">
-        <div class="title">Check-in Leaderboard</div>
+        <div class="title">GM Leaderboard</div>
         <div class="val">
           <v-img :width="16" src="@/assets/images/svg/check_in/user.svg"></v-img>
           <span>{{ Number(challengeInfo?.notEliminatedNumber).toLocaleString() }}</span>
@@ -164,8 +164,8 @@
             <v-img :width="24" v-if="index == 1" src="@/assets/images/svg/check_in/leaderboard_1.svg"></v-img>
             <v-img :width="24" v-if="index == 2" src="@/assets/images/svg/check_in/leaderboard_2.svg"></v-img>
             <div class="user">
-              <v-avatar v-if="item?.avatar" size="24" :image="item?.avatar"></v-avatar>
-              <img v-else width="24" height="24" :avatar="item?.userName" color="#FEC72F" class="avatar">
+              <v-avatar v-if="item?.avatar" size="30" :image="item?.avatar"></v-avatar>
+              <img v-else width="30" height="30" :avatar="item?.userName" color="#FEC72F" class="avatar">
               <div class="user_name">
                 {{ item?.userName }}
               </div>
@@ -191,8 +191,8 @@
             src="@/assets/images/svg/check_in/leaderboard_2.svg"></v-img>
           <div v-else class="ranking_num">{{ challengeInfo?.ranking || 1 }}</div>
           <div class="user">
-            <v-avatar v-if="challengeInfo?.avatar" size="24" :image="userInfo.avatar"></v-avatar>
-            <img v-else width="24" height="24" :avatar="challengeInfo?.userName" color="#FEC72F" class="avatar">
+            <v-avatar v-if="challengeInfo?.avatar" size="30" :image="userInfo.avatar"></v-avatar>
+            <img v-else width="30" height="30" :avatar="challengeInfo?.userName" color="#FEC72F" class="avatar">
             <div class="user_name">YOU</div>
           </div>
           <div class="bonus" v-if="challengeInfo?.ranking < 4">
@@ -615,7 +615,7 @@ export default defineComponent({
 
         if (userStatus == 3) {
           return "signed_in";
-        } else if (userStatus == 4) {
+        } else if (challengeInfo?.stage == 'SIGNIN' && userStatus == 4) {
           return "re_checkin";
         } else {
           return "";
