@@ -24,8 +24,8 @@
       <div class="check_in_hint" v-if="challengeInfo?.userStatus == 1">
         <span>
           <span>{{ `Keep check in for ` }}</span>
-          <span style="font-weight: bold;">{{ daysRemaining }}</span>
-          <span>{{ ` days to win ` }}</span>
+          <span style="font-weight: bold;">{{ `${daysRemaining} ${daysRemaining > 1 ? 'days' : 'day'} ` }}</span>
+          <span>{{ `to win ` }}</span>
           <span style="font-weight: bold;">{{ Number(winBonuNum).toLocaleString() }}</span>
           <span>{{ ` $GMC!` }}</span>
         </span>
@@ -171,7 +171,7 @@
             </div>
           </div>
           <div class="points">
-            <div>{{ Number(item?.points || 0).toLocaleString() }}</div>
+            <div class="points_num">{{ Number(item?.points || 0).toLocaleString() }}</div>
             <v-img :width="24" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
           </div>
         </div>
@@ -1065,8 +1065,13 @@ export default defineComponent({
   line-height: 1;
   color: #FFAD2E;
 
+  .points_num {
+    padding-top: 4px;
+  }
+
   .v-img {
     margin-left: 4px;
+    flex: none;
   }
 }
 
