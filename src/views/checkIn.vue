@@ -46,6 +46,13 @@
       <div class="check_in_hint" v-if="challengeInfo?.userStatus == 3">
         <span>{{ reSigning }}</span>
       </div>
+      <div class="check_in_hint" v-else>
+        <span>
+          <span>{{ `Congratulations, you have won ` }}</span>
+          <span style="font-weight: bold;">{{ Number(challengeInfo.rewardAmount).toLocaleString() }}</span>
+          <span>{{ ` $GMC!` }}</span>
+        </span>
+      </div>
       <div class="check_in_items">
         <div class="check_in_item" v-for="(item, index) in challengeInfo?.ucCheckInVOs" :key="index">
           <div :class="['check_in_main', challengeStatus(item)]">
@@ -193,7 +200,6 @@
             <div class="val">{{ `+${Number(winBonus || 0).toLocaleString()}` }}</div>
           </div>
         </div>
-
         <div class="points">
           <div>{{ Number(challengeInfo?.totalPoints || 0).toLocaleString() }}</div>
           <v-img :width="24" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
@@ -278,6 +284,7 @@ interface challengeDetails {
   stage: string;
   prizePool: number;
   winAmount: number | string | any;
+  rewardAmount: number | string | any;
   ucCheckInVOs: Array<ucCheckInVOs>;
   cpRankingVOs: Array<cpRankingVOs>;
   [x: string]: string | number | any;
