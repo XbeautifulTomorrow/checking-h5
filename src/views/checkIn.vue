@@ -605,10 +605,12 @@ export default defineComponent({
     // 获取倒计时时间
     getCountDown(event: ucCheckInVOs, type = 1) {
       const { startDate, endDate } = event;
+      const { isNotStart } = this; // 是否有未开始的，没有就用次日时间
       const { currentTime } = useUserStore();
+      const startTime = new Date(currentTime).setDate(new Date(currentTime).getDate() + 1);
 
       // 未开始就用创建时间
-      const current = new Date(currentTime);
+      const current = new Date(isNotStart ? currentTime : startTime);
       const yyyy = current.getFullYear();
       const MM = current.getMonth() + 1 > 10 ? current.getMonth() + 1 : `0${current.getMonth() + 1}`;
       const dd = current.getDate() > 10 ? current.getDate() : `0${current.getDate()}`;
