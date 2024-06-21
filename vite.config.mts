@@ -4,6 +4,7 @@ import Vue from '@vitejs/plugin-vue';
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 import ViteFonts from 'unplugin-fonts/vite';
 import mkcert from "vite-plugin-mkcert";
+const pkg = require("./package.json")
 
 // 时间戳
 const timestamp = new Date().getTime();
@@ -74,10 +75,33 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return id
+              .toString()
+              .split('node_modules/')[1]
+              .split('/')[0]
+              .toString()
+          }
+        },
         //入口文件输出配置
-        entryFileNames: `assets/js/[name]-[hash]-${timestamp}.js`, // 自定义文件名，使用时间戳保证唯一性
+        entryFileNames: ({ name }) => {
+          const { dependencies } = pkg;
+          if (Object.keys(dependencies).indexOf(name) > -1) {
+            return `assets/js/[name]-[hash].js`; // 第三方库不添加时间戳
+          } else {
+            return `assets/js/[name]-[hash]-${timestamp}.js`; // 自定义文件名，使用时间戳保证唯一性
+          }
+        },
         //代码分割后的文件输出配置
-        chunkFileNames: `assets/js/[name]-[hash]-${timestamp}.js`, // 自定义文件名，使用时间戳保证唯一性
+        chunkFileNames: ({ name }) => {
+          const { dependencies } = pkg;
+          if (Object.keys(dependencies).indexOf(name) > -1) {
+            return `assets/js/[name]-[hash].js`; // 第三方库不添加时间戳
+          } else {
+            return `assets/js/[name]-[hash]-${timestamp}.js`; // 自定义文件名，使用时间戳保证唯一性
+          }
+        },
         //静态资源输出配置
         assetFileNames(assetInfo) {
           //css文件单独输出到css文件夹
