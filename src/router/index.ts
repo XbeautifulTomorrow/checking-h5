@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { setSessionStore, getLocalStore } from "@/utils";
+import { setSessionStore } from "@/utils";
 import { useUserStore } from "@/store/user.js";
 import { validateToken, telegramLogin } from "@/services/api/user";
 
