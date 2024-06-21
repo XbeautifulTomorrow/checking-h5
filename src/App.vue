@@ -4,7 +4,7 @@
     <v-main>
       <router-view></router-view>
     </v-main>
-    <BottomNav class="nav_panel"></BottomNav>
+    <BottomNav></BottomNav>
     <v-snackbar v-model="showMessage" :timeout="3000">
       {{ messageText }}
       <template v-slot:actions>
@@ -59,11 +59,5 @@ export default defineComponent({
 <style lang="scss" scoped>
 .main {
   background: linear-gradient(180deg, #ff197c 0%, #fd4c6b 48%, #ff6b6f 100%)
-}
-
-.nav_panel {
-  padding: 0 16px !important;
-  box-sizing: border-box;
-  width: auto !important;
 }
 </style>
