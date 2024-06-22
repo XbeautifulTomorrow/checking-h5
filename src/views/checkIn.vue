@@ -240,7 +240,7 @@ import { getChallengeList, getChallengeDetails, challengeRegistration, challenge
 import { useUserStore } from "@/store/user.js";
 import { useCheckInStore } from '@/store/check_in.js';
 import { useMessageStore } from "@/store/message.js";
-import { timeForStr, shareOnTelegram, getLocalStore } from "@/utils";
+import { timeForStr, shareOnTelegram, getSessionStore } from "@/utils";
 import { validateToken, telegramLogin } from "@/services/api/user";
 import TWEEN from '@tweenjs/tween.js';
 
@@ -412,7 +412,7 @@ export default defineComponent({
         console.log(tg_certificate);
       }
 
-      const inviteCode = getLocalStore("certificate");
+      const inviteCode = getSessionStore("inviteCode");
       const res = await telegramLogin({
         tgEncodeStr: tg_certificate,
         inviteCode: inviteCode
