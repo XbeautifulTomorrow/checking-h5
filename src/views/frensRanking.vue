@@ -95,7 +95,7 @@ export default defineComponent({
       if (res.code == 200) {
         this.frensRankingTotal = res.data.total;
 
-        if (res.data.current >= res.data.pages) {
+        if (res.data.current >= res.data.pages && this.page * this.size >= 300) {
           this.finished = true;
         }
 

@@ -482,12 +482,24 @@ export default defineComponent({
           return
         }
 
-        if (this.challengeList.length > 0) {
-          const userStore = useUserStore();
-          if (userStore.isLogin) {
-            this.fetchChallengeDetail();
+        const isSignUp = this.challengeList.findIndex(e => e.userStatus == 1);
+        if (isSignUp > -1) {
+
+          if (isSignUp == this.currentIndex) {
+            const { setChallengeId } = useCheckInStore();
+            setChallengeId(this.challengeList[isSignUp].challengeId);
+            const userStore = useUserStore();
+            if (userStore.isLogin) {
+              this.fetchChallengeDetail();
+            }
+
+            return
           }
+
+          this.currentIndex = isSignUp;
         }
+
+
       }
     },
     // 获取挑战详情
@@ -1088,7 +1100,7 @@ export default defineComponent({
     }
 
     .user_name {
-      width: 50px;
+      width: 60px;
       font-weight: bold;
       white-space: nowrap;
       overflow: hidden;
