@@ -22,11 +22,11 @@
           </div>
           <div class="challenge_bonus">
             <v-img :width="20" src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-            <div class="bonus_num">{{ item?.prizePool || 0 }}</div>
+            <div class="bonus_num">{{ Number(item?.prizePool || 0).toLocaleString() }}</div>
           </div>
           <div class="challenge_user">
             <v-img :width="20" src="@/assets/images/svg/active/user.svg"></v-img>
-            <div class="bonus_num">{{ item?.totalNumber || 0 }}</div>
+            <div class="bonus_num">{{ Number(item?.totalNumber || 0).toLocaleString() }}</div>
           </div>
         </div>
       </div>

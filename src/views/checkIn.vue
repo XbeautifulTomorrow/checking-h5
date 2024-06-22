@@ -414,11 +414,9 @@ export default defineComponent({
     },
   },
   async created() {
-    this.fetchChallengeList();
     const userStore = useUserStore();
-
     if (userStore.isLogin) {
-      validateToken({});
+      await validateToken({});
     } else {
 
       let tg_certificate: any;
@@ -442,6 +440,9 @@ export default defineComponent({
         }
       }
     }
+
+
+    this.fetchChallengeList();
   },
   methods: {
     // 获取挑战列表
