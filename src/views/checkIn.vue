@@ -195,7 +195,7 @@
             src="@/assets/images/svg/check_in/leaderboard_1.svg"></v-img>
           <v-img :width="40" v-else-if="challengeInfo?.ranking - 1 == 2"
             src="@/assets/images/svg/check_in/leaderboard_2.svg"></v-img>
-          <div v-else class="ranking_num">{{ challengeInfo?.userStatus == 3 ? "--" : challengeInfo?.ranking || 1 }}
+          <div v-else class="ranking_num">{{ challengeInfo?.ranking || "--" }}
           </div>
           <div class="user">
             <v-avatar v-if="challengeInfo?.avatar" size="30" :image="userInfo.avatar"></v-avatar>
