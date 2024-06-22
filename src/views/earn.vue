@@ -218,7 +218,7 @@ export default defineComponent({
     text-align: center;
     font-weight: 700;
     font-size: 20px;
-    color: #F7F7F7;
+    color: #FDEFD6;
   }
 }
 
@@ -228,7 +228,7 @@ export default defineComponent({
   .task_title {
     font-size: 20px;
     font-weight: bold;
-    color: #fff;
+    color: #FDEFD6;
   }
 }
 

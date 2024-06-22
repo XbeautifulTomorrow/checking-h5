@@ -292,7 +292,7 @@ export default defineComponent({
   flex: 1 0 36%;
   height: 100%;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 18px;
   color: #FBB11B;
   border-right: 4px solid #fdefd6;
 

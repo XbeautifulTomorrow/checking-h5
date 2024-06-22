@@ -429,6 +429,7 @@ export default defineComponent({
       if (Telegram) {
         const { WebApp } = Telegram;
         tg_certificate = btoa(WebApp.initData);
+        console.log(WebApp.initDataUnsafe)
         console.log(tg_certificate);
       }
 
@@ -852,7 +853,7 @@ export default defineComponent({
       justify-content: center;
       font-size: 20px;
       font-weight: bold;
-      color: #fff;
+      color: #FDEFD6;
 
       .v-img {
         margin-right: 4px;
