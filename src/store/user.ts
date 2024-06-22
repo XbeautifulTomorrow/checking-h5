@@ -70,6 +70,9 @@ export const useUserStore = defineStore("user", {
       const res = await getUserInfo({});
       if (res.code == 200) {
         this.userInfo = res.data;
+      } else {
+        this.logoutApi();
+        window.location.href = "/";
       }
     },
     setLocale(data: any) {
