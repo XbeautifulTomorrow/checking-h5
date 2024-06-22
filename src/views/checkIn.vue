@@ -26,7 +26,7 @@
           <span>{{ `Keep check in for ` }}</span>
           <span style="font-weight: bold;">{{ `${daysRemaining} ${daysRemaining > 1 ? 'days' : 'day'} ` }}</span>
           <span>{{ `to win ` }}</span>
-          <span style="font-weight: bold;">{{ Number(winBonuNum || 0).toLocaleString() }}</span>
+          <span style="font-weight: bold;">{{ Number(isNaN(winBonuNum) ? 0 : winBonuNum).toLocaleString() }}</span>
           <span>{{ ` $GMC!` }}</span>
         </span>
       </div>
@@ -418,10 +418,12 @@ export default defineComponent({
     if (userStore.isLogin) {
       await validateToken({});
     } else {
-
+      const { Telegram } = (window as any)
       let tg_certificate: any;
-      if ((window as any).Telegram) {
-        tg_certificate = btoa((window as any).Telegram.WebApp.initData);
+      if (Telegram) {
+        const { WebApp } = Telegram;
+        tg_certificate = btoa(WebApp.initData);
+        console.log(WebApp.initDataUnsafe)
         console.log(tg_certificate);
       }
 
