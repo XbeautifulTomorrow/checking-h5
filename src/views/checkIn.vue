@@ -122,9 +122,10 @@
           <!--其他状态，或者已经过了签到时间-->
           <v-btn class=" check_in_btn not_started" height="42" readonly v-else>
             <countDown class="finished" v-slot="timeObj" @onEnd="fetchChallengeDetail()"
-              :time="getCountDown(isNotStart)">
+              :time="getCountDown(isNotStart)" v-if="isLastDay">
               {{ `Next check-in start in ${timeObj.hh}:${timeObj.mm}:${timeObj.ss}` }}
             </countDown>
+            <span v-else class="finished">Challenge complete, reward coming soon.</span>
           </v-btn>
         </template>
         <!-- 失败 -->
@@ -396,7 +397,21 @@ export default defineComponent({
       }
 
       return {} as ucCheckInVOs;
-    }
+    },
+    // 是否最后一天，并且所有签到已完成
+    isLastDay() {
+      const { challengeInfo: { ucCheckInVOs, endDate } } = this;
+      const checkIn = ucCheckInVOs.findIndex(e => e.userStatus > 3) > -1;
+      if (checkIn) {
+        const { currentTime } = useUserStore();
+        const taskDay = new Date(endDate).getDate();
+        const currentDay = new Date(currentTime).getDate();
+
+        return taskDay <= currentDay
+      }
+
+      return false
+    },
   },
   async created() {
     this.fetchChallengeList();
@@ -1138,11 +1153,11 @@ export default defineComponent({
     }
   }
 
-  ::v-deep .v-field--appended {
+  :deep(.v-field--appended) {
     padding-inline-end: 4px;
   }
 
-  ::v-deep .v-input__details {
+  :deep(.v-input__details) {
     display: none;
   }
 }

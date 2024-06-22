@@ -326,21 +326,21 @@ export default defineComponent({
   }
 }
 
-::v-deep .v-timeline-item__opposite {
+:deep(.v-timeline-item__opposite) {
   padding-right: 0 !important;
 }
 
-::v-deep .v-timeline-divider {
+:deep(.v-timeline-divider) {
   padding-block-start: 10px !important;
 }
 
-::v-deep .v-timeline-item__body {
+:deep(.v-timeline-item__body) {
   padding-top: 10px !important;
   padding-left: 10px !important;
   padding-block-end: 0px !important;
 }
 
-::v-deep .v-timeline {
+:deep(.v-timeline) {
   row-gap: 2px !important;
 }
 
