@@ -428,6 +428,7 @@ export default defineComponent({
       let tg_certificate: any;
       if (Telegram) {
         const { WebApp } = Telegram;
+        WebApp.setBackgroundColor("#FF197C")
         tg_certificate = btoa(WebApp.initData);
         console.log(WebApp.initDataUnsafe)
         console.log(tg_certificate);

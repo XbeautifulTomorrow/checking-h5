@@ -14,10 +14,7 @@
     </div>
     <div class="frens_descriptions">
       <v-timeline side="end" align="start" line-thickness="2">
-        <v-timeline-item v-for="item in stepTtems" :key="item.id" :dot-color="item.color" size="x-small" line-inset="0">
-          <template v-slot:icon>
-            <span style="color: #fff;">{{ item.id }}</span>
-          </template>
+        <v-timeline-item v-for="item in stepTtems" :key="item.id" :dot-color="item.color" size="10" line-inset="0">
           <div class="frens_descriptions_text" v-html="item.text"></div>
         </v-timeline-item>
       </v-timeline>
@@ -173,25 +170,25 @@ export default defineComponent({
     this.stepTtems = [
       {
         id: 1,
-        color: '#FEC72F',
+        color: '#FDEFD6',
         icon: 'mdi-information',
         text: "Share your invitation link to your frens."
       },
       {
         id: 2,
-        color: '#FEC72F',
+        color: '#FDEFD6',
         icon: 'mdi-alert-circle',
         text: "Your frens join GMCoin and start any Challenge."
       },
       {
         id: 3,
-        color: '#FEC72F',
+        color: '#FDEFD6',
         icon: 'mdi-alert-circle',
         text: "You and your frens will receive bonuses."
       },
       {
         id: 4,
-        color: '#FEC72F',
+        color: '#FDEFD6',
         icon: 'mdi-alert-circle',
         text: "You'll also get an extra <span style='color: #49B6ED;'>1%</span> from each of your frens' check-ins."
       },
@@ -322,7 +319,7 @@ export default defineComponent({
 .frens_descriptions {
   .frens_descriptions_text {
     font-size: 14px;
-    color: #fff;
+    color: #FDEFD6;
   }
 }
 
