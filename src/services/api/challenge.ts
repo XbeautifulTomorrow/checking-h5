@@ -7,6 +7,13 @@ import * as http from "@/services/apiService";
 const getChallengeList = (params: any) => http.get("/gm-coin-server-web/challenge/list", params);
 
 /**
+ * 挑战导航
+ * @param params
+ */
+const getChallengeNav = (params: any) => http.get("/gm-coin-server-web/challenge/nav/list", params);
+
+
+/**
  * 挑战详情
  * @param params
  */
@@ -37,6 +44,7 @@ const challengePickUp = (params: any) => http.get("/gm-coin-server-web/user-chal
 
 export {
   getChallengeList,
+  getChallengeNav,
   getChallengeDetails,
   challengeRegistration,
   challengeCheckIn,

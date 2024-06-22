@@ -76,7 +76,7 @@
               <div v-else-if="item?.userStatus == 3" class="check_in_time">
                 <div class="points">
                   <div>{{ item?.points ? Number(item.points).toLocaleString() : "--" }}</div>
-                  <v-img :width="16" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
+                  <v-img :width="20" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
                 </div>
               </div>
               <!--补签-->
@@ -108,8 +108,13 @@
           density="comfortable" :readonly="challengeInfo?.stage != 'REGISTRATION'" v-if="challengeInfo?.userStatus == 2"
           rounded="10px">
           <template v-slot:append-inner>
-            <div v-if="challengeInfo?.stage == 'REGISTRATION'" class="join_btn" @click="handleRegistration()">Join</div>
-            <div v-else class="join_btn disabled">Join</div>
+            <v-btn v-if="challengeInfo?.stage == 'REGISTRATION'" :loading="joinLoading" class="join_btn"
+              @click="handleRegistration()">
+              <span class="finished">Join</span>
+            </v-btn>
+            <v-btn v-else class="join_btn disabled">
+              <span class="finished">Join</span>
+            </v-btn>
           </template>
         </v-text-field>
         <!-- 已报名 -->
@@ -161,9 +166,9 @@
       <div class="ranking_box">
         <div class="leaderboard_item" v-for="(item, index) in challengeInfo?.cpRankingVOs" :key="index">
           <div class="ranking">
-            <v-img :width="24" v-if="index == 0" src="@/assets/images/svg/check_in/leaderboard_0.svg"></v-img>
-            <v-img :width="24" v-if="index == 1" src="@/assets/images/svg/check_in/leaderboard_1.svg"></v-img>
-            <v-img :width="24" v-if="index == 2" src="@/assets/images/svg/check_in/leaderboard_2.svg"></v-img>
+            <v-img :width="30" v-if="index == 0" src="@/assets/images/svg/check_in/leaderboard_0.svg"></v-img>
+            <v-img :width="30" v-if="index == 1" src="@/assets/images/svg/check_in/leaderboard_1.svg"></v-img>
+            <v-img :width="30" v-if="index == 2" src="@/assets/images/svg/check_in/leaderboard_2.svg"></v-img>
             <div class="user">
               <v-avatar v-if="item?.avatar" size="30" :image="item?.avatar"></v-avatar>
               <img v-else width="30" height="30" :avatar="item?.userName" color="#FEC72F" class="avatar">
@@ -177,20 +182,21 @@
             </div>
           </div>
           <div class="points">
-            <div class="points_num">{{ Number(item?.points || 0).toLocaleString() }}</div>
-            <v-img :width="24" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
+            <div>{{ Number(item?.points || 0).toLocaleString() }}</div>
+            <v-img :width="16" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
           </div>
         </div>
       </div>
       <div class="leaderboard_item you" v-if="challengeInfo?.userStatus != 2">
         <div class="ranking">
-          <v-img :width="24" v-if="challengeInfo?.ranking - 1 == 0"
+          <v-img :width="40" v-if="challengeInfo?.ranking - 1 == 0"
             src="@/assets/images/svg/check_in/leaderboard_0.svg"></v-img>
-          <v-img :width="24" v-else-if="challengeInfo?.ranking - 1 == 1"
+          <v-img :width="40" v-else-if="challengeInfo?.ranking - 1 == 1"
             src="@/assets/images/svg/check_in/leaderboard_1.svg"></v-img>
-          <v-img :width="24" v-else-if="challengeInfo?.ranking - 1 == 2"
+          <v-img :width="40" v-else-if="challengeInfo?.ranking - 1 == 2"
             src="@/assets/images/svg/check_in/leaderboard_2.svg"></v-img>
-          <div v-else class="ranking_num">{{ challengeInfo?.ranking || 1 }}</div>
+          <div v-else class="ranking_num">{{ challengeInfo?.userStatus == 3 ? "--" : challengeInfo?.ranking || 1 }}
+          </div>
           <div class="user">
             <v-avatar v-if="challengeInfo?.avatar" size="30" :image="userInfo.avatar"></v-avatar>
             <img v-else width="30" height="30" :avatar="challengeInfo?.userName" color="#FEC72F" class="avatar">
@@ -203,7 +209,7 @@
         </div>
         <div class="points">
           <div>{{ Number(challengeInfo?.totalPoints || 0).toLocaleString() }}</div>
-          <v-img :width="24" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
+          <v-img :width="16" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
         </div>
       </div>
     </div>
@@ -237,7 +243,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { getChallengeList, getChallengeDetails, challengeRegistration, challengeCheckIn, challengeReCheckin, challengePickUp } from '@/services/api/challenge';
+import { getChallengeNav, getChallengeDetails, challengeRegistration, challengeCheckIn, challengeReCheckin, challengePickUp } from '@/services/api/challenge';
 import { useUserStore } from "@/store/user.js";
 import { useCheckInStore } from '@/store/check_in.js';
 import { useMessageStore } from "@/store/message.js";
@@ -319,6 +325,7 @@ export default defineComponent({
       showReCheckin: false, // 补签
       showInvite: false, // 邀请弹窗
       reCheckinInfo: {} as ucCheckInVOs,
+      joinLoading: false, // 报名加载
       claimLoading: false // 领取加载
     };
   },
@@ -406,8 +413,7 @@ export default defineComponent({
         const { currentTime } = useUserStore();
         const taskDay = new Date(endDate).getDate();
         const currentDay = new Date(currentTime).getDate();
-
-        return taskDay <= currentDay
+        return taskDay > currentDay
       }
 
       return false
@@ -423,7 +429,6 @@ export default defineComponent({
       if (Telegram) {
         const { WebApp } = Telegram;
         tg_certificate = btoa(WebApp.initData);
-        console.log(WebApp.initDataUnsafe)
         console.log(tg_certificate);
       }
 
@@ -449,12 +454,9 @@ export default defineComponent({
   methods: {
     // 获取挑战列表
     async fetchChallengeList() {
-      const res = await getChallengeList({
-        page: this.page,
-        size: this.size
-      });
+      const res = await getChallengeNav({});
       if (res.code == 200) {
-        this.challengeList = res.data.records;
+        this.challengeList = res.data;
         if (this.challengeId) {
           const index = this.challengeList.findIndex(e => e.challengeId == this.challengeId);
 
@@ -519,12 +521,15 @@ export default defineComponent({
         return
       }
 
+      this.joinLoading = true;
       const res = await challengeRegistration({
         challengeId: currentChallenge?.challengeId,
         amount: Math.floor(bonusNum)
       });
 
+      this.joinLoading = false;
       if (res.code == 200) {
+        this.bonusNum = null;
         setMessageText("Challenge has been joined.");
         const userStore = useUserStore();
         userStore.fetchUserInfo();
@@ -964,7 +969,7 @@ export default defineComponent({
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    font-size: 18px;
     line-height: 1;
     color: #FFAD2E;
 
@@ -1057,13 +1062,14 @@ export default defineComponent({
   align-items: center;
 
   .ranking_num {
-    width: 24px;
-    height: 24px;
+    width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
     color: white;
+    font-size: 12px;
   }
 
   .user {
@@ -1113,10 +1119,6 @@ export default defineComponent({
   font-weight: bold;
   line-height: 1;
   color: #FFAD2E;
-
-  .points_num {
-    padding-top: 4px;
-  }
 
   .v-img {
     margin-left: 4px;

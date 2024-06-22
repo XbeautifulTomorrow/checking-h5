@@ -32,11 +32,11 @@
           <div class="method_prize">
             <div class="energy">
               <span class="dot">·</span>
-              <v-icon color="#FFF100" :size="16" icon="mdi-lightning-bolt"></v-icon>
+              <v-icon color="#FFF100" :size="18" icon="mdi-lightning-bolt"></v-icon>
               <span>{{ `+ 1` }}</span>
             </div>
             <div class="bonus">
-              <v-img :width="16" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
+              <v-img :width="18" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
               <span>{{ `+ 100` }}</span>
             </div>
             <div class="text">for you and your friend</div>
@@ -57,11 +57,11 @@
           <div class="method_prize">
             <div class="energy">
               <span class="dot">·</span>
-              <v-icon color="#FFF100" :size="16" icon="mdi-lightning-bolt"></v-icon>
+              <v-icon color="#FFF100" :size="18" icon="mdi-lightning-bolt"></v-icon>
               <span>{{ `+ 3` }}</span>
             </div>
             <div class="bonus">
-              <v-img :width="16" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
+              <v-img :width="18" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
               <span>{{ `+ 500` }}</span>
             </div>
             <div class="text">for you and your friend</div>
@@ -81,7 +81,7 @@
               <div class="user_other">
                 <v-img :width="60" cover :src="levelImages[item.level as keyof typeof levelImages]"></v-img>
                 <div class="user_points" v-if="item?.points">
-                  <v-img :width="16" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
+                  <v-img :width="18" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
                   <span>{{ `${Number(item?.points).toLocaleString()}` }}</span>
                 </div>
               </div>
@@ -91,11 +91,11 @@
             <div class="frens_list_item_right_time">{{ timeForStr(item.registrationTime, "MM-dd HH:mm:ss") }}</div>
             <div class="user_prize">
               <div class="energy" v-if="item?.energyAmount">
-                <v-icon color="#FFF100" :size="16" icon="mdi-lightning-bolt"></v-icon>
+                <v-icon color="#FFF100" :size="18" icon="mdi-lightning-bolt"></v-icon>
                 <span>{{ `+ ${item?.energyAmount}` }}</span>
               </div>
               <div class="bonus" v-if="item?.gmcAmount">
-                <v-img :width="16" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
+                <v-img :width="18" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
                 <span>{{ `+ ${Number(item?.gmcAmount).toLocaleString()}` }}</span>
               </div>
             </div>
