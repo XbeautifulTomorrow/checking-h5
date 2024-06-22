@@ -72,7 +72,6 @@ export const useUserStore = defineStore("user", {
         this.userInfo = res.data;
       } else {
         this.logoutApi();
-        window.location.href = "/";
       }
     },
     setLocale(data: any) {

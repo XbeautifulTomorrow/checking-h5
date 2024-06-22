@@ -176,7 +176,7 @@
                 {{ item?.userName }}
               </div>
             </div>
-            <div class="bonus">
+            <div class="bonus" v-if="item?.winAmount">
               <v-img :width="24" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
               <div class="val">{{ `+${Number(item?.winAmount).toLocaleString()}` }}</div>
             </div>
@@ -430,7 +430,6 @@ export default defineComponent({
         const { WebApp } = Telegram;
         WebApp.setHeaderColor("#FF197C")
         tg_certificate = btoa(WebApp.initData);
-        console.log(WebApp.initDataUnsafe)
         console.log(tg_certificate);
       }
 
@@ -449,7 +448,6 @@ export default defineComponent({
         }
       }
     }
-
 
     this.fetchChallengeList();
   },
