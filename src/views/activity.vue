@@ -15,7 +15,10 @@
               </div>
               <div class="challenge_bonus">
                 <v-img :width="16" src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-                <div class="bonus_num">{{ unitConversion(item.amount || 0) }}</div>
+                <div :class="['bonus_num', item.userStatus == 3 && 'fail']">
+                  <span v-if="item.userStatus == 3">{{ `- ${unitConversion(item.amount || 0)}` }}</span>
+                  <span v-else>{{ unitConversion(item.amount || 0) }}</span>
+                </div>
               </div>
               <div :class="['challenge_user', userStatus(item.userStatus)]" v-if="item.userStatus != 3">
                 <v-img :width="16" v-if="item.userStatus == 1" src="@/assets/images/svg/active/in_game.svg"></v-img>
@@ -388,6 +391,10 @@ export default defineComponent({
     background-color: #000;
     color: #FFAD2E;
     font-weight: bold;
+
+    .fail {
+      color: #A8A7A7;
+    }
   }
 
   .challenge_user {
