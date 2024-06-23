@@ -250,8 +250,7 @@ import { getChallengeNav, getChallengeDetails, challengeRegistration, challengeC
 import { useUserStore } from "@/store/user.js";
 import { useCheckInStore } from '@/store/check_in.js';
 import { useMessageStore } from "@/store/message.js";
-import { timeForStr, shareOnTelegram, getSessionStore } from "@/utils";
-import { validateToken, telegramLogin } from "@/services/api/user";
+import { timeForStr, shareOnTelegram } from "@/utils";
 import TWEEN from '@tweenjs/tween.js';
 
 import countDown from "@/components/countDown/index.vue";
@@ -423,34 +422,6 @@ export default defineComponent({
     },
   },
   async created() {
-    const userStore = useUserStore();
-    if (userStore.isLogin) {
-      await validateToken({});
-    } else {
-      const { Telegram } = (window as any)
-      let tg_certificate: any;
-      if (Telegram) {
-        const { WebApp } = Telegram;
-        WebApp.setHeaderColor("#FF197C")
-        tg_certificate = btoa(WebApp.initData);
-        console.log(tg_certificate);
-      }
-
-      const inviteCode = getSessionStore("inviteCode");
-      const res = await telegramLogin({
-        tgEncodeStr: tg_certificate,
-        inviteCode: inviteCode
-      });
-
-      if (res.code == 200) {
-        if (res.data.certificate) {
-          localStorage.setItem("certificate", res.data.certificate);
-          userStore.setLogin(res.data);
-          // 加载
-          userStore.fetchUserInfo();
-        }
-      }
-    }
 
     this.fetchChallengeList();
   },

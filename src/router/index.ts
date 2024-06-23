@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useUserStore } from "@/store/user.js";
+import { validateToken, telegramLogin } from "@/services/api/user";
 import { setSessionStore } from "@/utils";
 
 //1. 定义要使用到的路由组件  （一定要使用文件的全名，得包含文件后缀名）
@@ -81,10 +83,32 @@ router.beforeEach(async (to, from, next) => {
     setSessionStore('inviteCode', urlParam);
   }
 
-  const { Telegram } = (window as any)
-  if (Telegram) {
-    const { WebApp } = Telegram;
-    WebApp.setHeaderColor("#FF197C");
+  const userStore = useUserStore();
+  if (userStore.isLogin) {
+    validateToken({});
+  } else {
+    const { Telegram } = (window as any)
+    let tg_certificate: any;
+    if (Telegram) {
+      const { WebApp } = Telegram;
+      WebApp.setHeaderColor("#FF197C")
+      tg_certificate = btoa(WebApp.initData);
+      console.log(tg_certificate);
+    }
+
+    const res = await telegramLogin({
+      tgEncodeStr: tg_certificate,
+      inviteCode: urlParam
+    });
+
+    if (res.code == 200) {
+      if (res.data.certificate) {
+        localStorage.setItem("certificate", res.data.certificate);
+        userStore.setLogin(res.data);
+        // 加载
+        userStore.fetchUserInfo();
+      }
+    }
   }
 
   next();
