@@ -107,14 +107,14 @@
         <div class="frens_list_item" v-for="(item, index) in frensList" :key="index">
           <div class="frens_list_item_left">
             <v-avatar v-if="item.avatar" size="40" :image="item.avatar"></v-avatar>
-            <img v-else width="40" height="40" :avatar="item?.userName" color="#3D3D3D" class="avatar">
+            <img v-else width="40" height="40" :avatar="item.userName" color="#3D3D3D" class="avatar">
             <div class="frens_list_item_left_box">
-              <div class="user_name">{{ item?.userName }}</div>
+              <div :class="['user_name', item.isMember && 'premium']">{{ item.userName }}</div>
               <div class="user_other">
                 <v-img :width="60" cover :src="levelImages[item.level as keyof typeof levelImages]"></v-img>
-                <div class="user_points" v-if="item?.points">
+                <div class="user_points" v-if="item.points">
                   <v-img :width="18" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
-                  <span>{{ `${Number(item?.points).toLocaleString()}` }}</span>
+                  <span>{{ `${Number(item.points).toLocaleString()}` }}</span>
                 </div>
               </div>
             </div>
@@ -122,13 +122,13 @@
           <div class="frens_list_item_right">
             <div class="frens_list_item_right_time">{{ timeForStr(item.registrationTime, "MM-dd HH:mm:ss") }}</div>
             <div class="user_prize">
-              <div class="energy" v-if="item?.energyAmount">
+              <div class="energy" v-if="item.energyAmount">
                 <v-icon color="#FFF100" :size="18" icon="mdi-lightning-bolt"></v-icon>
-                <span>{{ `+ ${item?.energyAmount}` }}</span>
+                <span>{{ `+ ${item.energyAmount}` }}</span>
               </div>
-              <div class="bonus" v-if="item?.gmcAmount">
+              <div class="bonus" v-if="item.gmcAmount">
                 <v-img :width="18" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-                <span>{{ `+ ${Number(item?.gmcAmount).toLocaleString()}` }}</span>
+                <span>{{ `+ ${Number(item.gmcAmount).toLocaleString()}` }}</span>
               </div>
             </div>
           </div>
@@ -169,6 +169,7 @@ interface frensInfo {
   registrationTime: string, //注册时间
   energyAmount: number | string | any, //能量数量
   gmcAmount: number | string | any //GMC数量
+  isMember: boolean; // 是否是会员
   [x: string]: string | number | any;
 }
 
@@ -510,6 +511,10 @@ export default defineComponent({
     font-weight: bold;
     font-size: 16px;
     color: #FFFFFF;
+
+    &.premium {
+      color: #49B6F6;
+    }
   }
 
   .user_other {

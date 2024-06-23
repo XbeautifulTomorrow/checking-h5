@@ -56,40 +56,40 @@
       <div class="check_in_items">
         <div class="check_in_item" v-for="(item, index) in challengeInfo?.ucCheckInVOs" :key="index">
           <div :class="['check_in_main', challengeStatus(item)]"
-            @click="item?.userStatus == 4 && challengeInfo?.stage == 'SIGNIN' ? openReCheckin(item) : null">
+            @click="item.userStatus == 4 && challengeInfo?.stage == 'SIGNIN' ? openReCheckin(item) : null">
             <div class="check_in_title">
               {{ getProject(item) }}
             </div>
-            <v-img :width="30" cover :src="project[item?.signType as keyof typeof project]"></v-img>
+            <v-img :width="30" cover :src="project[item.signType as keyof typeof project]"></v-img>
             <!--已报名-->
             <template v-if="challengeInfo?.userStatus != 2">
-              <div v-if="item?.userStatus == 1" class="check_in_time">
+              <div v-if="item.userStatus == 1" class="check_in_time">
                 <!--未开始-->
                 {{ formatTime(item.startDate) }}
               </div>
-              <template v-else-if="item?.userStatus == 2">
+              <template v-else-if="item.userStatus == 2">
                 <!--可签到倒计时-->
                 <countDown v-slot="timeObj" @onEnd="fetchChallengeDetail()" :time="getCountDown(item, 2)">
                   <span class="check_in">{{ `${timeObj.mm}m${timeObj.ss}s Left` }}</span>
                 </countDown>
               </template>
               <!--已签到，显示获得积分-->
-              <div v-else-if="item?.userStatus == 3" class="check_in_time">
+              <div v-else-if="item.userStatus == 3" class="check_in_time">
                 <div class="points">
-                  <span>{{ item?.points ? Number(item.points).toLocaleString() : "--" }}</span>
+                  <span>{{ item.points ? Number(item.points).toLocaleString() : "--" }}</span>
                   <v-img :width="18" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
                 </div>
               </div>
               <!--补签-->
-              <div v-else-if="item?.userStatus == 4 && challengeInfo?.stage == 'REGISTRATION'" class="check_in_time">
+              <div v-else-if="item.userStatus == 4 && challengeInfo?.stage == 'REGISTRATION'" class="check_in_time">
                 <span>--</span>
               </div>
-              <div v-else-if="item?.userStatus == 4 && challengeInfo?.stage == 'SIGNIN'"
-                class="check_in_time re_checkin" @click="openReCheckin(item)">
+              <div v-else-if="item.userStatus == 4 && challengeInfo?.stage == 'SIGNIN'" class="check_in_time re_checkin"
+                @click="openReCheckin(item)">
                 <span>Re-Checkin</span>
               </div>
               <!--失败-->
-              <div v-else-if="item?.userStatus == 5" class="check_in_time fail">FAIL</div>
+              <div v-else-if="item.userStatus == 5" class="check_in_time fail">FAIL</div>
             </template>
             <!--未报名-->
             <template v-else>
@@ -172,19 +172,19 @@
             <v-img :width="30" v-else-if="index == 2" src="@/assets/images/svg/check_in/leaderboard_2.svg"></v-img>
             <div v-else class="ranking_num">{{ index + 1 }}</div>
             <div class="user">
-              <v-avatar v-if="item?.avatar" size="30" :image="item?.avatar"></v-avatar>
-              <img v-else width="30" height="30" :avatar="item?.userName" color="#3D3D3D" class="avatar">
+              <v-avatar v-if="item.avatar" size="30" :image="item.avatar"></v-avatar>
+              <img v-else width="30" height="30" :avatar="item.userName" color="#3D3D3D" class="avatar">
               <div class="user_name">
-                {{ item?.userName }}
+                {{ item.userName }}
               </div>
             </div>
             <div class="bonus" v-if="index < 3">
               <v-img :width="24" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-              <div class="val">{{ `+${Number(item?.winAmount).toLocaleString()}` }}</div>
+              <div class="val">{{ `+${Number(item.winAmount).toLocaleString()}` }}</div>
             </div>
           </div>
           <div class="points">
-            <div>{{ item?.points ? Number(item?.points || 0).toLocaleString() : "--" }}</div>
+            <div>{{ item.points ? Number(item.points || 0).toLocaleString() : "--" }}</div>
             <v-img :width="16" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
           </div>
         </div>

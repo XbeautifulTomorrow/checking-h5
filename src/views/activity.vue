@@ -35,15 +35,15 @@
         <div class="avatar_right"></div>
         <div class="challenge_info" @click="toChallenge(item)">
           <div :class="['challenge_time', item.stage]">
-            {{ `${item?.startDateStr || "-"} - ${item?.endDateStr || "-"}` }}
+            {{ `${item.startDateStr || "-"} - ${item.endDateStr || "-"}` }}
           </div>
           <div class="challenge_bonus">
             <v-img :width="20" src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-            <div class="bonus_num">{{ Number(item?.prizePool || 0).toLocaleString() }}</div>
+            <div class="bonus_num">{{ Number(item.prizePool || 0).toLocaleString() }}</div>
           </div>
           <div class="challenge_user">
             <v-img :width="20" src="@/assets/images/svg/active/user.svg"></v-img>
-            <div class="bonus_num">{{ Number(item?.totalNumber || 0).toLocaleString() }}</div>
+            <div class="bonus_num">{{ Number(item.totalNumber || 0).toLocaleString() }}</div>
           </div>
         </div>
       </div>
