@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="showRules" width="auto">
+  <v-dialog v-model="showRules" width="auto" transition="dialog-bottom-transition">
     <div class="dialog_box">
       <div class="rules_title">GMCoin Rules</div>
       <div class="rules_panel">
@@ -98,83 +98,52 @@
         </span>
       </div>
       <div class="rules_footer">
-        <v-btn :class="['ready_btn', !createReady.time && 'active']" height="32" rounded="lg" size="small"
-          :readonly="createReady.time > 0" @click="handleReady()">
-          <span class="finished" v-if="createReady.time">{{ `I'm Ready (${createReady.time})` }}</span>
-          <span v-else class="finished">{{ `I'm Ready` }}</span v-else>
+        <v-btn :class="['ready_btn', 'active']" width="160" height="32" rounded="lg" size="small"
+          @click="handleReady()">
+          <span class="finished">Close</span>
         </v-btn>
-        <div class="selected_box" @click="isAgain = !isAgain">
-          <v-img :width="18" style="margin-right: 4px;" cover :src="isAgain ? selected : not_selected"></v-img>
-          <span class="finished"> Don't show it again</span>
-        </div>
       </div>
     </div>
   </v-dialog>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
-import not_selected from "@/assets/images/svg/airdrop/not_selected.svg";
-import selected from "@/assets/images/svg/airdrop/selected.svg";
-import { getLocalStore, setLocalStore } from "@/utils"
+import { useCheckInStore } from '@/store/check_in.js';
 
 export default defineComponent({
   data() {
-    return {
-      showRules: true,
-      isAgain: false,
-      selected,
-      not_selected,
-      createReady: {
-        time: 5,
-        timer: null as number | any
-      },
-    }
+    return {}
   },
-  created() {
-    const isAgain = getLocalStore("isAgain");
-    if (isAgain) {
-      this.showRules = false;
-    } else {
-      this.timerFun();
-    }
+  computed: {
+    showRules: {
+      get() {
+        const { showRules } = useCheckInStore();
+        return showRules
+      },
+      set(val: boolean) {
+        const { setShowRules } = useCheckInStore();
+        setShowRules(val)
+      }
+    },
   },
   methods: {
     handleReady() {
       this.showRules = false;
-
-      if (this.isAgain) {
-        setLocalStore("isAgain", "1");
-      }
     },
-    // 倒计时
-    timerFun() {
-      let that = this;
-
-      if (that.createReady.timer) this.clearTimerFun();
-      this.createReady.time = 5;
-      that.createReady.timer = setInterval(() => {
-        that.createReady.time--;
-        if (that.createReady.time < 1) {
-          this.clearTimerFun();
-        }
-      }, 1000);
-    },
-    // 清除计时器
-    clearTimerFun() {
-      const { createReady: { timer } } = this;
-      clearInterval(timer);
-      this.createReady.timer = null;
-    },
-  },
-  beforeUnmount() {
-    this.clearTimerFun();
-  },
+  }
 })
 </script>
 <style lang="scss" scoped>
+:deep(.v-overlay__content) {
+  margin: 0 !important;
+  max-width: max-content !important;
+  bottom: 0;
+}
+
 .dialog_box {
+  width: 100%;
   background-color: #000;
-  border-radius: 10px;
+  border-radius: 16px 16px 0 0;
   padding: 16px;
   display: flex;
   align-items: center;
@@ -193,7 +162,7 @@ export default defineComponent({
 }
 
 .rules_panel {
-  max-height: 300px;
+  max-height: 50vh;
   overflow-y: scroll;
   font-size: 14px;
   text-align: left;

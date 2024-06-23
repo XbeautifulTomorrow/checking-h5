@@ -219,6 +219,10 @@
     <div v-if="challengeInfo?.userStatus == 3" class="try_again" @click="currentIndex = 0">
       <span>Try Again?</span>
     </div>
+    <div class="rules_btn" @click="handleRules()">
+      <span class="help">?</span>
+      <span class="rules_text">RULE</span>
+    </div>
     <v-dialog v-model="showReCheckin" width="auto">
       <div class="dialog_box">
         <div class="dialog_text">Re-check in will cost energy.</div>
@@ -619,6 +623,11 @@ export default defineComponent({
         // 返回列表
         this.$router.push('/activity');
       }
+    },
+    // 显示规则
+    handleRules() {
+      const { setShowRules } = useCheckInStore();
+      setShowRules(true);
     },
     // 邀请
     inviteToTelegram() {
@@ -1229,6 +1238,44 @@ export default defineComponent({
 
   to {
     border-color: rgba(251, 129, 162, 0.1);
+  }
+}
+
+.rules_btn {
+  position: fixed;
+  top: 200px;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border-radius: 8px 0 0 8px;
+
+  .help {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    border-radius: 50%;
+    background-color: white;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.6);
+    margin-bottom: 4px;
+  }
+
+  .rules_text {
+    display: block;
+    word-wrap: break-word;
+    width: 14px;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 1;
+    text-align: center;
+    color: white;
   }
 }
 
