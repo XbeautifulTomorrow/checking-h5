@@ -115,7 +115,8 @@ export default defineComponent({
 .main {
   background: linear-gradient(180deg, #ff197c 0%, #fd4c6b 48%, #ff6b6f 100%)
 }
-
+</style>
+<style>
 /* 谷歌，元素隐藏必须设置宽度  不然无效 */
 *::-webkit-scrollbar {
   display: none;
