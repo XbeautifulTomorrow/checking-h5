@@ -2,7 +2,7 @@
   <div class="mine_wrapper">
     <div class="user_box">
       <v-avatar v-if="userInfo?.avatar" size="50" :image="userInfo?.avatar"></v-avatar>
-      <img v-else width="50" height="50" :avatar="userInfo?.userName || 'avatar'" color="#FEC72F" class="avatar">
+      <img v-else width="50" height="50" :avatar="userInfo?.userName || 'avatar'" color="#3D3D3D" class="avatar">
       <div class="min_text">{{ userInfo?.userName }}</div>
       <div class="points">
         <v-img :width="20" cover src="@/assets/images/svg/check_in/points.svg"></v-img>

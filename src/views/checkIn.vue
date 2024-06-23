@@ -26,7 +26,7 @@
           <span>{{ `Keep check in for ` }}</span>
           <span style="font-weight: bold;">{{ `${daysRemaining} ${daysRemaining > 1 ? 'days' : 'day'} ` }}</span>
           <span>{{ `to win ` }}</span>
-          <span style="font-weight: bold;">{{ Number(isNaN(winBonuNum) ? 0 : winBonuNum).toLocaleString() }}</span>
+          <span style="font-weight: bold;">{{ Number(winBonuNum || 0).toLocaleString() }}</span>
           <span>{{ ` $GMC!` }}</span>
         </span>
       </div>
@@ -75,8 +75,8 @@
               <!--已签到，显示获得积分-->
               <div v-else-if="item?.userStatus == 3" class="check_in_time">
                 <div class="points">
-                  <div>{{ item?.points ? Number(item.points).toLocaleString() : "--" }}</div>
-                  <v-img :width="20" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
+                  <span>{{ item?.points ? Number(item.points).toLocaleString() : "--" }}</span>
+                  <v-img :width="18" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
                 </div>
               </div>
               <!--补签-->
@@ -171,35 +171,35 @@
             <v-img :width="30" v-if="index == 2" src="@/assets/images/svg/check_in/leaderboard_2.svg"></v-img>
             <div class="user">
               <v-avatar v-if="item?.avatar" size="30" :image="item?.avatar"></v-avatar>
-              <img v-else width="30" height="30" :avatar="item?.userName" color="#FEC72F" class="avatar">
+              <img v-else width="30" height="30" :avatar="item?.userName" color="#3D3D3D" class="avatar">
               <div class="user_name">
                 {{ item?.userName }}
               </div>
             </div>
-            <div class="bonus" v-if="item?.winAmount">
+            <div class="bonus" v-if="index < 3">
               <v-img :width="24" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
               <div class="val">{{ `+${Number(item?.winAmount).toLocaleString()}` }}</div>
             </div>
           </div>
           <div class="points">
-            <div>{{ Number(item?.points || 0).toLocaleString() }}</div>
+            <div>{{ item?.points ? Number(item?.points || 0).toLocaleString() : "--" }}</div>
             <v-img :width="16" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
           </div>
         </div>
       </div>
       <div class="leaderboard_item you" v-if="challengeInfo?.userStatus != 2">
         <div class="ranking">
-          <v-img :width="40" v-if="challengeInfo?.ranking - 1 == 0"
+          <v-img :width="30" v-if="challengeInfo?.ranking - 1 == 0"
             src="@/assets/images/svg/check_in/leaderboard_0.svg"></v-img>
-          <v-img :width="40" v-else-if="challengeInfo?.ranking - 1 == 1"
+          <v-img :width="30" v-else-if="challengeInfo?.ranking - 1 == 1"
             src="@/assets/images/svg/check_in/leaderboard_1.svg"></v-img>
-          <v-img :width="40" v-else-if="challengeInfo?.ranking - 1 == 2"
+          <v-img :width="30" v-else-if="challengeInfo?.ranking - 1 == 2"
             src="@/assets/images/svg/check_in/leaderboard_2.svg"></v-img>
           <div v-else class="ranking_num">{{ challengeInfo?.ranking || "--" }}
           </div>
           <div class="user">
             <v-avatar v-if="challengeInfo?.avatar" size="30" :image="userInfo.avatar"></v-avatar>
-            <img v-else width="30" height="30" :avatar="challengeInfo?.userName" color="#FEC72F" class="avatar">
+            <img v-else width="30" height="30" :avatar="challengeInfo?.userName" color="#3D3D3D" class="avatar">
             <div class="user_name">YOU</div>
           </div>
           <div class="bonus" v-if="challengeInfo?.ranking < 4">
@@ -208,7 +208,7 @@
           </div>
         </div>
         <div class="points">
-          <div>{{ Number(challengeInfo?.totalPoints || 0).toLocaleString() }}</div>
+          <div>{{ challengeInfo?.totalPoints ? Number(challengeInfo?.totalPoints || 0).toLocaleString() : "--" }}</div>
           <v-img :width="16" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
         </div>
       </div>
@@ -252,6 +252,7 @@ import { validateToken, telegramLogin } from "@/services/api/user";
 import TWEEN from '@tweenjs/tween.js';
 
 import countDown from "@/components/countDown/index.vue";
+import challengData from "./challengData.json";
 
 import GM from "@/assets/images/svg/check_in/GM.svg";
 import BREAKFAST from "@/assets/images/svg/check_in/BREAKFAST.svg";
@@ -408,12 +409,12 @@ export default defineComponent({
     // 是否最后一天，并且所有签到已完成
     isLastDay() {
       const { challengeInfo: { ucCheckInVOs, endDate } } = this;
-      const checkIn = ucCheckInVOs.findIndex(e => e.userStatus > 3) > -1;
+      const checkIn = ucCheckInVOs.findIndex(e => e.userStatus > 2) > -1;
       if (checkIn) {
         const { currentTime } = useUserStore();
         const taskDay = new Date(endDate).getDate();
         const currentDay = new Date(currentTime).getDate();
-        return taskDay > currentDay
+        return taskDay >= currentDay;
       }
 
       return false
@@ -502,6 +503,14 @@ export default defineComponent({
     },
     // 获取挑战详情
     async fetchChallengeDetail() {
+
+      this.challengeInfo = challengData.data;
+      this.timerFun();
+
+      this.$nextTick(() => {
+        (window as any).LetterAvatar.transform();
+      });
+      return
       const { currentChallenge } = this;
       if (!currentChallenge) return;
       const { challengeId } = currentChallenge;
@@ -512,11 +521,11 @@ export default defineComponent({
       if (res.code == 200) {
         this.challengeInfo = res.data;
         this.timerFun();
-      }
 
-      this.$nextTick(() => {
-        (window as any).LetterAvatar.transform();
-      });
+        this.$nextTick(() => {
+          (window as any).LetterAvatar.transform();
+        });
+      }
     },
     // 挑战报名
     async handleRegistration() {
@@ -711,6 +720,11 @@ export default defineComponent({
     timerFun() {
       let that = this;
       const { challengeInfo: { ucCheckInVOs } } = this;
+
+      // 已报名
+      if (this.challengeInfo?.userStatus != 1) return;
+
+      // 有可签到项
       const checkIn = ucCheckInVOs.find(e => e.userStatus == 2);
       if (checkIn) {
         that.createPoints.time = this.dateDiff(this.getCountDown(checkIn, 2));
@@ -720,7 +734,7 @@ export default defineComponent({
       that.createPoints.timer = setInterval(() => {
         that.createPoints.time--;
         if (that.createPoints.time < 1) {
-          that.createPoints.time = 1800;
+          this.clearTimerFun();
           that.fetchChallengeList();
         }
       }, 1000);
@@ -977,6 +991,7 @@ export default defineComponent({
   }
 
   .points {
+    height: 100%;
     margin-left: 4px;
     display: flex;
     align-items: center;
@@ -984,6 +999,10 @@ export default defineComponent({
     font-size: 18px;
     line-height: 1;
     color: #FFAD2E;
+
+    span {
+      margin-bottom: -2px;
+    }
 
     .v-img {
       margin-left: 4px;
@@ -1051,11 +1070,6 @@ export default defineComponent({
       margin-right: 4px;
     }
   }
-}
-
-.avatar {
-  border: 4px solid #FBE945;
-  border-radius: 50%;
 }
 
 .leaderboard_item {
@@ -1287,5 +1301,10 @@ export default defineComponent({
 
 .finished {
   text-transform: none;
+}
+
+.avatar {
+  border: 4px solid #FFAD2E;
+  border-radius: 50%;
 }
 </style>

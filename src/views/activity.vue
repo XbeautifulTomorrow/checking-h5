@@ -5,14 +5,14 @@
         <div class="avatar_left">
           <div class="avatar_item" v-if="userJoin(item.userInfoVOList)">
             <v-avatar v-if="userInfo?.avatar" size="34" :image="userInfo?.avatar"></v-avatar>
-            <img v-else width="34" height="34" :avatar="userInfo?.userName || 'avatar'" color="#FEC72F" class="avatar">
+            <img v-else width="34" height="34" :avatar="userInfo?.userName || 'avatar'" color="#3D3D3D" class="avatar">
           </div>
           <div class="use_text" v-if="userJoin(item.userInfoVOList)">YOU</div>
         </div>
         <div class="avatar_box" @click="toChallenge(item)">
           <div class="avatar_item" v-for="(nodes, indices) in item.userInfoVOList" :key="indices">
             <v-avatar v-if="nodes?.avatar" size="34" :image="nodes?.avatar"></v-avatar>
-            <img v-else width="34" height="34" :avatar="nodes?.userName || 'avatar'" color="#FEC72F" class="avatar">
+            <img v-else width="34" height="34" :avatar="nodes?.userName || 'avatar'" color="#3D3D3D" class="avatar">
           </div>
         </div>
         <div class="avatar_right"></div>

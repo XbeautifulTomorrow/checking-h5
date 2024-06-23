@@ -5,10 +5,7 @@
         <div class="back_btn" v-if="$route.path == '/'" @click="toMain()">
           <v-icon color="#fff" size="24" icon="mdi-chevron-left"></v-icon>
         </div>
-        <v-img v-else :width="40" style="background-color: #fff;border-radius: 6px;" cover
-          src="@/assets/images/svg/logo.svg"></v-img>
       </template>
-      <v-app-bar-title class="ms-1" style="color: #fff;font-size: 16px">{{ title }}</v-app-bar-title>
       <template v-slot:append>
         <div class="t"></div>
         <div class="energy_box">
@@ -32,7 +29,7 @@
           </div>
         </div>
         <v-avatar v-if="userInfo.avatar" size="32" :image="userInfo.avatar"></v-avatar>
-        <img v-else width="32" height="32" :avatar="userInfo.userName || 'avatar'" color="#FEC72F" class="avatar">
+        <img v-else width="32" height="32" :avatar="userInfo.userName || 'avatar'" color="#3D3D3D" class="avatar">
       </template>
     </v-app-bar>
   </div>

@@ -72,7 +72,7 @@
         <div class="frens_list_item" v-for="(item, index) in frensList" :key="index">
           <div class="frens_list_item_left">
             <v-avatar v-if="item.avatar" size="40" :image="item.avatar"></v-avatar>
-            <img v-else width="40" height="40" :avatar="item?.userName" color="#FEC72F" class="avatar">
+            <img v-else width="40" height="40" :avatar="item?.userName" color="#3D3D3D" class="avatar">
             <div class="frens_list_item_left_box">
               <div class="user_name">{{ item?.userName }}</div>
               <div class="user_other">

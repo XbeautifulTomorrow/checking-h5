@@ -27,6 +27,7 @@
         ],
           nameSplit = name,
           initials, charIndex, colourIndex, canvas, context, dataURI;
+
         if (nameSplit.length > 1) {
           initials = nameSplit ? nameSplit.charAt(0).toUpperCase() + nameSplit.charAt(1) : '?';
         } else {
@@ -46,9 +47,9 @@
 
         context.fillStyle = color ? color : colours[colourIndex - 1];
         context.fillRect(0, 0, canvas.width, canvas.height);
-        context.font = Math.round(canvas.width / 2) + "px 'Microsoft Yahei'";
+        context.font = "bold " + Math.round(canvas.width / 2) + "px 'Microsoft Yahei'";
         context.textAlign = "center";
-        context.fillStyle = "#FFF";
+        context.fillStyle = "#fff";
         context.fillText(initials, size / 2, size / 1.5);
         dataURI = canvas.toDataURL();
         canvas = null;
