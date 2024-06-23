@@ -13,11 +13,46 @@
       </div>
     </div>
     <div class="frens_descriptions">
-      <v-timeline side="end" align="start" line-thickness="2">
-        <v-timeline-item v-for="item in stepTtems" :key="item.id" :dot-color="item.color" size="10" line-inset="0">
-          <div class="frens_descriptions_text" v-html="item.text"></div>
-        </v-timeline-item>
-      </v-timeline>
+      <div class="frens_descriptions_item">
+        <div class="dots">
+          <div class="line"></div>
+          <div class="dot_box">
+            <div class="dot"></div>
+          </div>
+        </div>
+        <div class="descriptions_text">Share your invitation link to your frens.</div>
+      </div>
+      <div class="frens_descriptions_item">
+        <div class="dots">
+          <div class="line"></div>
+          <div class="dot_box">
+            <div class="dot"></div>
+          </div>
+        </div>
+        <div class="descriptions_text">Your frens join GMCoin and start any Challenge.</div>
+      </div>
+      <div class="frens_descriptions_item">
+        <div class="dots">
+          <div class="line"></div>
+          <div class="dot_box">
+            <div class="dot"></div>
+          </div>
+        </div>
+        <div class="descriptions_text">You and your frens will receive bonuses.</div>
+      </div>
+      <div class="frens_descriptions_item">
+        <div class="dots">
+          <div class="line"></div>
+          <div class="dot_box">
+            <div class="dot"></div>
+          </div>
+        </div>
+        <div class="descriptions_text">
+          <span>{{ `You'll also get an extra ` }}</span>
+          <span style='color: #49B6ED;'>1%</span>
+          <span>{{ ` from each of your frens' check-ins.` }}</span>
+        </div>
+      </div>
     </div>
     <div class="invitation_method">
       <div class="method_item">
@@ -140,7 +175,6 @@ interface frensInfo {
 export default defineComponent({
   data() {
     return {
-      stepTtems: [] as Array<any>,
       frensTotal: 0,
       frensList: [] as Array<frensInfo>,
       levelImages: {
@@ -167,33 +201,6 @@ export default defineComponent({
     },
   },
   created() {
-    this.stepTtems = [
-      {
-        id: 1,
-        color: '#FDEFD6',
-        icon: 'mdi-information',
-        text: "Share your invitation link to your frens."
-      },
-      {
-        id: 2,
-        color: '#FDEFD6',
-        icon: 'mdi-alert-circle',
-        text: "Your frens join GMCoin and start any Challenge."
-      },
-      {
-        id: 3,
-        color: '#FDEFD6',
-        icon: 'mdi-alert-circle',
-        text: "You and your frens will receive bonuses."
-      },
-      {
-        id: 4,
-        color: '#FDEFD6',
-        icon: 'mdi-alert-circle',
-        text: "You'll also get an extra <span style='color: #49B6ED;'>1%</span> from each of your frens' check-ins."
-      },
-    ]
-
     this.fetchInviteUserList();
   },
   mounted() {
@@ -317,28 +324,75 @@ export default defineComponent({
 }
 
 .frens_descriptions {
+  margin-top: 8px;
+
   .frens_descriptions_text {
     font-size: 14px;
     color: #FDEFD6;
   }
 }
 
-:deep(.v-timeline-item__opposite) {
-  padding-right: 0 !important;
+.frens_descriptions_item {
+  display: flex;
+
+  .dots {
+    margin-right: 8px;
+    position: relative;
+
+    .line {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 100%;
+      width: 2px;
+      background-color: #FBE945;
+    }
+
+    .dot_box {
+      display: flex;
+      align-items: center;
+      height: 20px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #FEC72F;
+      border: 2px solid #FBE945;
+    }
+  }
+
+
+
+  .descriptions_text {
+    font-size: 14px;
+    color: #fdefd6;
+  }
 }
 
-:deep(.v-timeline-divider) {
-  padding-block-start: 10px !important;
+.frens_descriptions_item:nth-child(1) {
+  .dots {
+    margin-right: 8px;
+    position: relative;
+
+    .line {
+      height: 10px;
+      bottom: 0;
+    }
+  }
 }
 
-:deep(.v-timeline-item__body) {
-  padding-top: 10px !important;
-  padding-left: 10px !important;
-  padding-block-end: 0px !important;
-}
+.frens_descriptions_item:last-child {
+  .dots {
+    margin-right: 8px;
+    position: relative;
 
-:deep(.v-timeline) {
-  row-gap: 2px !important;
+    .line {
+      height: 10px;
+      top: 0;
+    }
+  }
 }
 
 .invitation_method {
@@ -348,6 +402,7 @@ export default defineComponent({
     margin-top: 8px;
   }
 }
+
 
 .method_item {
   background-color: rgba(6, 4, 4, 0.65);
