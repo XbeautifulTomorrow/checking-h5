@@ -55,7 +55,8 @@
       </div>
       <div class="check_in_items">
         <div class="check_in_item" v-for="(item, index) in challengeInfo?.ucCheckInVOs" :key="index">
-          <div :class="['check_in_main', challengeStatus(item)]">
+          <div :class="['check_in_main', challengeStatus(item)]"
+            @click="item?.userStatus == 4 && challengeInfo?.stage == 'SIGNIN' ? openReCheckin(item) : null">
             <div class="check_in_title">
               {{ getProject(item) }}
             </div>
@@ -167,8 +168,9 @@
         <div class="leaderboard_item" v-for="(item, index) in challengeInfo?.cpRankingVOs" :key="index">
           <div class="ranking">
             <v-img :width="30" v-if="index == 0" src="@/assets/images/svg/check_in/leaderboard_0.svg"></v-img>
-            <v-img :width="30" v-if="index == 1" src="@/assets/images/svg/check_in/leaderboard_1.svg"></v-img>
-            <v-img :width="30" v-if="index == 2" src="@/assets/images/svg/check_in/leaderboard_2.svg"></v-img>
+            <v-img :width="30" v-else-if="index == 1" src="@/assets/images/svg/check_in/leaderboard_1.svg"></v-img>
+            <v-img :width="30" v-else-if="index == 2" src="@/assets/images/svg/check_in/leaderboard_2.svg"></v-img>
+            <div v-else class="ranking_num">{{ index + 1 }}</div>
             <div class="user">
               <v-avatar v-if="item?.avatar" size="30" :image="item?.avatar"></v-avatar>
               <img v-else width="30" height="30" :avatar="item?.userName" color="#3D3D3D" class="avatar">
@@ -208,7 +210,8 @@
           </div>
         </div>
         <div class="points">
-          <div>{{ challengeInfo?.totalPoints ? Number(challengeInfo?.totalPoints || 0).toLocaleString() : "--" }}</div>
+          <div>{{ challengeInfo?.totalPoints ? Number(challengeInfo?.totalPoints || 0).toLocaleString() : "--" }}
+          </div>
           <v-img :width="16" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
         </div>
       </div>
@@ -252,7 +255,6 @@ import { validateToken, telegramLogin } from "@/services/api/user";
 import TWEEN from '@tweenjs/tween.js';
 
 import countDown from "@/components/countDown/index.vue";
-import challengData from "./challengData.json";
 
 import GM from "@/assets/images/svg/check_in/GM.svg";
 import BREAKFAST from "@/assets/images/svg/check_in/BREAKFAST.svg";
@@ -503,14 +505,6 @@ export default defineComponent({
     },
     // 获取挑战详情
     async fetchChallengeDetail() {
-
-      this.challengeInfo = challengData.data;
-      this.timerFun();
-
-      this.$nextTick(() => {
-        (window as any).LetterAvatar.transform();
-      });
-      return
       const { currentChallenge } = this;
       if (!currentChallenge) return;
       const { challengeId } = currentChallenge;
@@ -1095,7 +1089,7 @@ export default defineComponent({
     justify-content: center;
     font-weight: bold;
     color: white;
-    font-size: 12px;
+    font-size: 14px;
   }
 
   .user {
