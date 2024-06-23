@@ -58,9 +58,6 @@ export const useUserStore = defineStore("user", {
   },
   actions: {
     setLogin(data: any) {
-      if (data.certificate) {
-        delete data.certificate;
-      }
       this.logInfo = data;
       this.isLogin = true;
     },
@@ -95,6 +92,7 @@ export const useUserStore = defineStore("user", {
       this.isLogin = false;
       this.userInfo = {} as userInterface;
       window.NavigationPreloadManager;
+      this.showLogin = true;
       // window.location.href = "/";
     },
 
