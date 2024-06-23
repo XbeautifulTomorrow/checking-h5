@@ -169,7 +169,7 @@ export default defineComponent({
     // 用户状态
     userStatus(event: number) {
       if (event == 1) {
-        return 'IN GAME';
+        return 'IN_GAME';
       } else if (event == 4) {
         return 'CLAIM';
       } else if (event == 5) {
