@@ -63,7 +63,7 @@ export default defineComponent({
 }
 
 .nav_panel {
-  width: auto !important;
+  width: calc(100% - 16px) !important;
   margin: 0 8px 8px;
 }
 

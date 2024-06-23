@@ -46,6 +46,7 @@ export const useUserStore = defineStore("user", {
     userPage: null as string | any,
     currentTime: null as string | any,
     isLogin: getLocalStore("certificate") ? true : false,
+    showLogin: false, // 弹出登录
     loadLog: false,
   }),
   persist: {
@@ -76,6 +77,9 @@ export const useUserStore = defineStore("user", {
     },
     setLocale(data: any) {
       this.locale = data == "en_US" ? en : zhHant;
+    },
+    setShowLogin(data: any) {
+      this.showLogin = data;
     },
     setCurrentTime(data: any) {
       this.currentTime = data;

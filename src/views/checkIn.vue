@@ -189,7 +189,7 @@
           </div>
         </div>
       </div>
-      <div class="leaderboard_item you" v-if="challengeInfo?.userStatus != 2">
+      <div class="leaderboard_item you" v-if="isLogin && challengeInfo?.userStatus != 2">
         <div class="ranking">
           <v-img :width="30" v-if="challengeInfo?.ranking - 1 == 0"
             src="@/assets/images/svg/check_in/leaderboard_0.svg"></v-img>
@@ -346,7 +346,8 @@ export default defineComponent({
       showRecharge: false, // 充值弹窗
       reCheckinInfo: {} as ucCheckInVOs,
       joinLoading: false, // 报名加载
-      claimLoading: false // 领取加载
+      claimLoading: false, // 领取加载
+      isLoad: true // 是否第一次加载
     };
   },
   components: {
@@ -356,6 +357,10 @@ export default defineComponent({
     userInfo() {
       const { userInfo } = useUserStore();
       return userInfo;
+    },
+    isLogin() {
+      const { isLogin } = useUserStore();
+      return isLogin;
     },
     currentChallenge() {
       const { currentIndex, challengeList } = this;
@@ -440,7 +445,6 @@ export default defineComponent({
     },
   },
   async created() {
-
     this.fetchChallengeList();
   },
   methods: {
@@ -453,47 +457,28 @@ export default defineComponent({
           const index = this.challengeList.findIndex(e => e.challengeId == this.challengeId);
 
           if (index > -1) {
-            if (index == this.currentIndex) {
-              if (this.challengeList.length > 0) {
-                const userStore = useUserStore();
-                if (userStore.isLogin) {
-                  this.fetchChallengeDetail();
-                }
-              }
-
-              return
-            }
-
             this.currentIndex = index;
             const { setChallengeId } = useCheckInStore();
             setChallengeId(this.challengeList[index].challengeId);
           }
 
+          this.fetchChallengeDetail();
           return
         }
 
         const isSignUp = this.challengeList.findIndex(e => e.userStatus == 1);
         if (isSignUp > -1) {
-
-          if (isSignUp == this.currentIndex) {
-            const { setChallengeId } = useCheckInStore();
-            setChallengeId(this.challengeList[isSignUp].challengeId);
-            const userStore = useUserStore();
-            if (userStore.isLogin) {
-              this.fetchChallengeDetail();
-            }
-
-            return
-          }
-
           this.currentIndex = isSignUp;
+          const { setChallengeId } = useCheckInStore();
+          setChallengeId(this.challengeList[isSignUp].challengeId);
         }
 
-
+        this.fetchChallengeDetail();
       }
     },
     // 获取挑战详情
     async fetchChallengeDetail() {
+      this.isLoad = false; // 是否第一次加载
       const { currentChallenge } = this;
       if (!currentChallenge) return;
       const { challengeId } = currentChallenge;
@@ -765,6 +750,7 @@ export default defineComponent({
   },
   watch: {
     currentIndex(val, old) {
+      if (this.isLoad) return;
       const { challengeList } = this;
       const { setChallengeId } = useCheckInStore();
       setChallengeId(challengeList[val].challengeId);

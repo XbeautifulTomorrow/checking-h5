@@ -85,13 +85,13 @@ router.beforeEach(async (to, from, next) => {
 
   const userStore = useUserStore();
   if (userStore.isLogin) {
-    validateToken({});
-
     const { Telegram } = (window as any)
     if (Telegram) {
       const { WebApp } = Telegram;
       WebApp.setHeaderColor("#FF197C")
     }
+
+    validateToken({});
   } else {
     const { Telegram } = (window as any)
     let tg_certificate: any;
@@ -110,10 +110,13 @@ router.beforeEach(async (to, from, next) => {
     if (res.code == 200) {
       if (res.data.certificate) {
         localStorage.setItem("certificate", res.data.certificate);
-        userStore.setLogin(res.data);
-        // 加载
-        userStore.fetchUserInfo();
       }
+
+      // 保存登录信息
+      userStore.setLogin(res.data);
+
+      // 加载用户信息
+      userStore.fetchUserInfo();
     }
   }
 
