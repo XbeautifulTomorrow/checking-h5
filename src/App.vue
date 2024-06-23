@@ -118,19 +118,19 @@ export default defineComponent({
 </style>
 <style>
 /* 谷歌，元素隐藏必须设置宽度  不然无效 */
-*::-webkit-scrollbar {
+html::-webkit-scrollbar {
   display: none;
   width: 0px;
   height: auto;
 }
 
 /* /兼容火狐/ */
-* {
+html {
   scrollbar-width: none;
 }
 
 /* / 兼容IE10+ */
-* {
+html {
   -ms-overflow-style: none;
 }
 </style>

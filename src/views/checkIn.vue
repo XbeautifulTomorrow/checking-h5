@@ -258,6 +258,7 @@
         </div>
       </div>
     </v-dialog>
+    <rules></rules>
   </div>
 </template>
 
@@ -271,6 +272,7 @@ import { timeForStr, shareOnTelegram } from "@/utils";
 import TWEEN from '@tweenjs/tween.js';
 
 import countDown from "@/components/countDown/index.vue";
+import rules from "@/components/rules/index.vue";
 
 import GM from "@/assets/images/svg/check_in/GM.svg";
 import BREAKFAST from "@/assets/images/svg/check_in/BREAKFAST.svg";
@@ -344,6 +346,7 @@ export default defineComponent({
       showReCheckin: false, // 补签弹窗
       showInvite: false, // 邀请弹窗
       showRecharge: false, // 充值弹窗
+      showRules: true, // 规则弹窗
       reCheckinInfo: {} as ucCheckInVOs,
       joinLoading: false, // 报名加载
       claimLoading: false, // 领取加载
@@ -351,7 +354,8 @@ export default defineComponent({
     };
   },
   components: {
-    countDown
+    countDown,
+    rules
   },
   computed: {
     userInfo() {
@@ -1240,6 +1244,10 @@ export default defineComponent({
 
   .dialog_text {
     margin-bottom: 12px;
+
+    &.rules_title {
+      color: #FDEFD6;
+    }
   }
 
   .energy_box {
@@ -1298,6 +1306,13 @@ export default defineComponent({
       color: #fff;
     }
   }
+}
+
+.rules_panel {
+  max-height: 300px;
+  overflow-y: scroll;
+  font-size: 14px;
+  text-align: left;
 }
 
 .finished {

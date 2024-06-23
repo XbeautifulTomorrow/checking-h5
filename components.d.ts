@@ -11,6 +11,7 @@ declare module 'vue' {
     CountDown: typeof import('./src/components/countDown/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Rules: typeof import('./src/components/rules/index.vue')['default']
     TopToolbar: typeof import('./src/components/TopToolbar.vue')['default']
   }
 }
