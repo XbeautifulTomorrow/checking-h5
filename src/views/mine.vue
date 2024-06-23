@@ -51,7 +51,7 @@
     </div>
     <v-dialog v-model="showRecharge" width="auto">
       <div class="dialog_box">
-        <div class="dialog_text">You don't have enough energy to re-check in.</div>
+        <div class="dialog_text">Opps, You GMK is not enough! You have two ways to get more GMK.</div>
         <div class="recharge_item">
           <span>1. Invite Friends</span>
           <v-btn color="#49B6F6" height="24" density="compact" @click="toFrens()" variant="flat">
@@ -352,6 +352,7 @@ export default defineComponent({
     span {
       text-align: left;
       width: 120px;
+      color: #FDEFD6;
     }
 
     &>.v-btn {
