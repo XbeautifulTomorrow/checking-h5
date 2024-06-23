@@ -177,17 +177,34 @@ export default defineComponent({
       }
     },
     // 单位换算
-    unitConversion(num: number) {
-      if (num >= 1000000) {
-        return (num / 1000000).toFixed(2) + 'M';
-      } else if (num >= 10000) {
-        return (num / 10000).toFixed(2) + 'W';
-      } else if (num >= 1000) {
-        return (num / 10000).toFixed(2) + 'K';
-      } else {
-        return num;
+    unitConversion(val: number) {
+      let h = 1;
+      let kh = h * 1000;
+      let mh = kh * 1000;
+      let gh = mh * 1000;
+      let th = gh * 1000;
+      let ph = th * 1000;
+      let eh = ph * 1000;
+      let texts = 0 as number | string | any;
+      val = Number(val || 0);
+      if (val < kh) {
+        texts = val;
+      } else if (val >= kh && val < mh) {
+        texts = (val / kh).toFixed(2) + "K";
+      } else if (val >= mh && val < gh) {
+        texts = (val / mh).toFixed(2) + "M";
+      } else if (val >= gh && val < th) {
+        texts = (val / gh).toFixed(2) + "B";
+      } else if (val >= th && val < ph) {
+        texts = (val / th).toFixed(2) + "T";
+      } else if (val >= ph && val < eh) {
+        texts = (val / ph).toFixed(2) + "P";
+      } else if (val >= eh) {
+        texts = (val / eh).toFixed(2) + "E";
       }
-    },
+
+      return texts;
+    }
   },
   mounted() {
     const _this = this;

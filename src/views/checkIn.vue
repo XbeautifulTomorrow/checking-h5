@@ -477,6 +477,7 @@ export default defineComponent({
           setChallengeId(this.challengeList[isSignUp].challengeId);
         }
 
+        this.$forceUpdate();
         this.fetchChallengeDetail();
       }
     },
@@ -492,6 +493,7 @@ export default defineComponent({
       });
       if (res.code == 200) {
         this.challengeInfo = res.data;
+        this.$forceUpdate();
         this.timerFun();
 
         this.$nextTick(() => {
