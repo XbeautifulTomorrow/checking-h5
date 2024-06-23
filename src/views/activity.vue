@@ -3,11 +3,28 @@
     <div class="challenge_box">
       <div class="challenge_item" v-for="(item, index) in challengeList" :key="index">
         <div class="avatar_left">
-          <div class="avatar_item" v-if="userJoin(item.userInfoVOList)">
-            <v-avatar v-if="userInfo?.avatar" size="34" :image="userInfo?.avatar"></v-avatar>
-            <img v-else width="34" height="34" :avatar="userInfo?.userName || 'avatar'" color="#3D3D3D" class="avatar">
+          <div class="avatar_item" v-if="item.userStatus != 2">
+            <div class="challenge_info">
+              <div :class="['challenge_time', currentStatus(item.userStatus)]">
+                <v-avatar v-if="userInfo?.avatar" size="30" :image="userInfo?.avatar"></v-avatar>
+                <img v-else width="30" height="30" :avatar="userInfo?.userName || 'avatar'" color="#3D3D3D"
+                  class="avatar">
+                <span v-if="item.userStatus == 1">YUO</span>
+                <span v-else-if="item.userStatus != 3">WIN!</span>
+                <span v-else-if="item.userStatus == 3">FAIL</span>
+              </div>
+              <div class="challenge_bonus">
+                <v-img :width="16" src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
+                <div class="bonus_num">{{ unitConversion(item.amount || 0) }}</div>
+              </div>
+              <div :class="['challenge_user', userStatus(item.userStatus)]" v-if="item.userStatus != 3">
+                <v-img :width="16" v-if="item.userStatus == 1" src="@/assets/images/svg/active/in_game.svg"></v-img>
+                <v-img :width="16" v-if="item.userStatus == 4" src="@/assets/images/svg/active/claim.svg"></v-img>
+                <v-img :width="16" v-if="item.userStatus == 5" src="@/assets/images/svg/active/claimed.svg"></v-img>
+                <span>{{ userStatus(item.userStatus) == "IN_GAME" ? "IN GAME" : userStatus(item.userStatus) }}</span>
+              </div>
+            </div>
           </div>
-          <div class="use_text" v-if="userJoin(item.userInfoVOList)">YOU</div>
         </div>
         <div class="avatar_box" @click="toChallenge(item)">
           <div class="avatar_item" v-for="(nodes, indices) in item.userInfoVOList" :key="indices">
@@ -137,11 +154,40 @@ export default defineComponent({
 
       this.$router.push('/');
     },
-    // 当前比赛是否参加
-    userJoin(event: Array<userInfoVOList>) {
-      const { userInfo } = this;
-      return event.findIndex(e => e.userId == String(userInfo?.userId)) > -1;
-    }
+    // 当前状态
+    currentStatus(event: number) {
+      if (event == 1) {
+        return 'REGISTRATION';
+      } else if (event == 3) {
+        return 'ENDED';
+      } else if (event == 4) {
+        return 'SIGNIN';
+      } else if (event == 5) {
+        return 'SIGNIN';
+      }
+    },
+    // 用户状态
+    userStatus(event: number) {
+      if (event == 1) {
+        return 'IN GAME';
+      } else if (event == 4) {
+        return 'CLAIM';
+      } else if (event == 5) {
+        return 'CLAIMED';
+      }
+    },
+    // 单位换算
+    unitConversion(num: number) {
+      if (num >= 1000000) {
+        return (num / 1000000).toFixed(2) + 'M';
+      } else if (num >= 10000) {
+        return (num / 10000).toFixed(2) + 'W';
+      } else if (num >= 1000) {
+        return (num / 10000).toFixed(2) + 'K';
+      } else {
+        return num;
+      }
+    },
   },
   mounted() {
     const _this = this;
@@ -173,7 +219,7 @@ export default defineComponent({
 
   .avatar_left,
   .avatar_right {
-    width: 34px;
+    width: 24%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -184,18 +230,64 @@ export default defineComponent({
     justify-content: flex-end;
 
     .avatar_item {
-      width: 100%;
+      flex: 1;
       display: flex;
     }
-  }
 
-  .use_text {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: -24px;
-    font-weight: bold;
-    color: #fff;
+    .challenge_info {
+      flex: 1;
+      position: static;
+      top: 0;
+      left: 0;
+      transform: none;
+      overflow: initial;
+
+      &>div:last-child {
+        border-radius: 0 0 8px 8px;
+      }
+
+      .challenge_time {
+        text-align: center;
+        position: relative;
+        border-radius: 8px 8px 0 0;
+        padding-left: 30px;
+      }
+
+      .challenge_user {
+        font-size: 12px;
+        line-height: 1;
+        font-weight: bold;
+        color: white;
+        padding: 0;
+
+        &.IN_GAME {
+          background-color: #49b6f6;
+        }
+
+        &.CLAIM {
+          background-color: #ffad2e;
+          color: #000;
+        }
+
+        &.CLAIMED {
+          background-color: #A8A7A7;
+        }
+
+        .v-img {
+          margin-right: 2px;
+        }
+      }
+
+      img {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+      }
+    }
+
+    .challenge_time {
+      font-weight: bold;
+    }
   }
 }
 
@@ -287,7 +379,7 @@ export default defineComponent({
 }
 
 .avatar {
-  border: 4px solid #FBE945;
+  border: 4px solid #FFAD2E;
   border-radius: 50%;
 }
 </style>

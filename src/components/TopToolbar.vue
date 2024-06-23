@@ -134,7 +134,7 @@ export default defineComponent({
 }
 
 .avatar {
-  border: 4px solid #FBE945;
+  border: 4px solid #FFAD2E;
   border-radius: 50%;
 }
 </style>
