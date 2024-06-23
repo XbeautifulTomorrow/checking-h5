@@ -91,6 +91,13 @@ import GM from "@/assets/images/svg/earn/check_in.svg";
 import CHALLENGE from "@/assets/images/svg/earn/join.svg";
 import AD from "@/assets/images/svg/earn/ad.svg";
 
+interface showPromiseResult {
+  done: boolean; // true if user watch till the end, otherwise false
+  description: string; // event description
+  state: 'load' | 'render' | 'playing' | 'destroy'; // banner state
+  error: boolean; // true if event was emitted due to error, otherwise false
+}
+
 export default defineComponent({
   data() {
     return {
@@ -154,35 +161,49 @@ export default defineComponent({
             this.fetchChallengeList();
           } else {
             // 做任务
-            this.toTask(event.abbreviation);
+            this.toTask(event);
           }
         }
       }, 3000)
     },
     // 去做任务
-    toTask(event: string) {
-      if (event == "INVITE") {
+    toTask(event: taskInfo) {
+      const { abbreviation } = event;
+      if (abbreviation == "INVITE") {
         // 分享拉新
         const { inviteCode } = this.userInfo;
 
         shareOnTelegram("Test text", `https://t.me/cyclone384_bot/checking?startapp=${inviteCode}`);
-      } else if (event == "GM") {
+      } else if (abbreviation == "GM") {
         // 去签到
         this.$router.push('/');
-      } else if (event == "CHALLENGE") {
+      } else if (abbreviation == "CHALLENGE") {
         // 去参加挑战
         this.$router.push('/activity');
-      } else if (event == "AD") {
+      } else if (abbreviation == "AD") {
         // 看广告
-      } else if (event == "TGGROUP") {
+        const AdController = (window as any).Adsgram.init({ blockId: "128", debug: true });
+
+        // 显示广告横幅
+        AdController.show().then((result: showPromiseResult) => {
+          // user watch ad till the end
+          if (result.done) {
+            this.completed(event);
+          }
+          // your code to reward user
+        }).catch((result: showPromiseResult) => {
+          // user skipped video or get error during playing ad
+          // do nothing or whatever you want
+        })
+      } else if (abbreviation == "TGGROUP") {
         // 加入Telegram群
-      } else if (event == "TGCHANNEL") {
+      } else if (abbreviation == "TGCHANNEL") {
         // 加入Telegram群
-      } else if (event == "TW") {
+      } else if (abbreviation == "TW") {
         // 关住Twitter，跳到用户
-      } else if (event == "3BASE") {
+      } else if (abbreviation == "3BASE") {
         // 在3Base群里转发
-      } else if (event == "TWEET") {
+      } else if (abbreviation == "TWEET") {
         // 转发Twitter帖子，跳到帖子
       }
     },
