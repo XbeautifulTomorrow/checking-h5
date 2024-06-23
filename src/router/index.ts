@@ -86,6 +86,12 @@ router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore();
   if (userStore.isLogin) {
     validateToken({});
+
+    const { Telegram } = (window as any)
+    if (Telegram) {
+      const { WebApp } = Telegram;
+      WebApp.setHeaderColor("#FF197C")
+    }
   } else {
     const { Telegram } = (window as any)
     let tg_certificate: any;
