@@ -241,6 +241,23 @@
         </v-btn>
       </div>
     </v-dialog>
+    <v-dialog v-model="showRecharge" width="auto">
+      <div class="dialog_box">
+        <div class="dialog_text">You don't have enough energy to re-check in.</div>
+        <div class="recharge_item">
+          <span>1. Invite Friends</span>
+          <v-btn color="#49B6F6" height="24" density="compact" @click="toFrens()" variant="flat">
+            <div class="finished">GO</div>
+          </v-btn>
+        </div>
+        <div class="recharge_item">
+          <span>2. Daily Task</span>
+          <v-btn color="#49B6F6" height="24" density="compact" @click="toEarn()" variant="flat">
+            <div class="finished">GO</div>
+          </v-btn>
+        </div>
+      </div>
+    </v-dialog>
   </div>
 </template>
 
@@ -324,8 +341,9 @@ export default defineComponent({
         time: 1800,
         timer: null as number | any
       },
-      showReCheckin: false, // 补签
+      showReCheckin: false, // 补签弹窗
       showInvite: false, // 邀请弹窗
+      showRecharge: false, // 充值弹窗
       reCheckinInfo: {} as ucCheckInVOs,
       joinLoading: false, // 报名加载
       claimLoading: false // 领取加载
@@ -503,7 +521,7 @@ export default defineComponent({
       }
 
       if (userInfo.gmcAmount < bonusNum) {
-        setMessageText("Not enough balance!");
+        this.showRecharge = true;
         return
       }
 
@@ -735,6 +753,14 @@ export default defineComponent({
       // let min = ((diff % nd) % nh) / nm; // 计算差多少分钟
 
       return Math.floor(diff / ns);
+    },
+    // 去邀请
+    toFrens() {
+      this.$router.push('/frens');
+    },
+    // 去做任务
+    toEarn() {
+      this.$router.push('/earn');
     }
   },
   watch: {
@@ -1242,7 +1268,7 @@ export default defineComponent({
     }
   }
 
-  .v-btn {
+  &>.v-btn {
     font-size: 14px;
     border-radius: 8px;
     color: #fff;
@@ -1261,6 +1287,30 @@ export default defineComponent({
     background: linear-gradient(90deg, rgba(253, 239, 213, 1) 0%, rgba(248, 215, 156, 1) 101%);
     color: #FE2E75;
     font-weight: bold;
+  }
+
+  .recharge_item+.recharge_item {
+    margin-top: 8px;
+  }
+
+  .recharge_item {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+
+    span {
+      text-align: left;
+      width: 120px;
+    }
+
+    &>.v-btn {
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .finished {
+      color: #fff;
+    }
   }
 }
 

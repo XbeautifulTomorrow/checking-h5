@@ -49,6 +49,23 @@
         </div>
       </div>
     </div>
+    <v-dialog v-model="showRecharge" width="auto">
+      <div class="dialog_box">
+        <div class="dialog_text">You don't have enough energy to re-check in.</div>
+        <div class="recharge_item">
+          <span>1. Invite Friends</span>
+          <v-btn color="#49B6F6" height="24" density="compact" @click="toFrens()" variant="flat">
+            <div class="finished">GO</div>
+          </v-btn>
+        </div>
+        <div class="recharge_item">
+          <span>2. Daily Task</span>
+          <v-btn color="#49B6F6" height="24" density="compact" @click="toEarn()" variant="flat">
+            <div class="finished">GO</div>
+          </v-btn>
+        </div>
+      </div>
+    </v-dialog>
   </div>
 </template>
 
@@ -96,7 +113,8 @@ export default defineComponent({
         10: Level_10
       },
       levelList: [] as Array<levelInfo>,
-      timer: null as number | any
+      timer: null as number | any,
+      showRecharge: false,
     };
   },
   computed: {
@@ -123,7 +141,7 @@ export default defineComponent({
       const { userInfo } = this;
       const { setMessageText } = useMessageStore();
       if (userInfo.gmcAmount < event.upgradeAmount) {
-        setMessageText("Not enough balance");
+        this.showRecharge = true;
         return
       }
 
@@ -139,6 +157,14 @@ export default defineComponent({
         userStore.fetchUserInfo();
         this.fetchLevelList();
       }
+    },
+    // 去邀请
+    toFrens() {
+      this.$router.push('/frens');
+    },
+    // 去做任务
+    toEarn() {
+      this.$router.push('/earn');
     }
   },
   mounted() {
@@ -296,5 +322,50 @@ export default defineComponent({
     color: #fff;
     text-transform: capitalize;
   }
+}
+
+.dialog_box {
+  background-color: #000;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  color: #fff;
+  text-align: center;
+  font-size: 20px;
+  line-height: 1.2;
+
+  .dialog_text {
+    margin-bottom: 12px;
+  }
+
+  .recharge_item+.recharge_item {
+    margin-top: 8px;
+  }
+
+  .recharge_item {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+
+    span {
+      text-align: left;
+      width: 120px;
+    }
+
+    &>.v-btn {
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .finished {
+      color: #fff;
+    }
+  }
+}
+
+.finished {
+  text-transform: none;
 }
 </style>

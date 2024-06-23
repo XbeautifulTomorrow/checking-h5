@@ -9,20 +9,20 @@
       <template v-slot:append>
         <div class="t"></div>
         <div class="energy_box">
-          <v-icon color="#FFF100" :size="24" icon="mdi-lightning-bolt"></v-icon>
+          <v-icon color="#FFF100" :size="20" icon="mdi-lightning-bolt"></v-icon>
           <div class="energy_item">
             <div class="energy_val">{{ userInfo.energyAmount }}</div>
-            <v-fab color="#49B6F6" size="24" icon="mdi-plus" elevation="0" rounded="lg" @click="toFrens()"
+            <v-fab color="#49B6F6" size="20" icon="mdi-plus" elevation="0" rounded="lg" @click="toFrens()"
               class="btn_border">
               <v-icon color="#fff" size="20"></v-icon>
             </v-fab>
           </div>
         </div>
         <div class="energy_box">
-          <v-img :width="24" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
+          <v-img :width="20" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
           <div class="energy_item">
             <div class="energy_val">{{ Number(userInfo?.gmcAmount || 0).toLocaleString() }}</div>
-            <v-fab color="#49B6F6" size="24" icon="mdi-plus" elevation="0" rounded="lg" @click="toEarn()"
+            <v-fab color="#49B6F6" size="20" icon="mdi-plus" elevation="0" rounded="lg" @click="toEarn()"
               class="btn_border">
               <v-icon color="#fff" size="20"></v-icon>
             </v-fab>
@@ -105,8 +105,8 @@ export default defineComponent({
 }
 
 .energy_box {
-  height: 24px;
-  padding-right: 24px;
+  height: 20px;
+  padding-right: 20px;
   display: flex;
   align-items: center;
   background-color: rgba(210, 210, 214, 1);
