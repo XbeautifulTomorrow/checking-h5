@@ -118,8 +118,9 @@ export default defineComponent({
 
 /* 谷歌，元素隐藏必须设置宽度  不然无效 */
 *::-webkit-scrollbar {
+  display: none;
   width: 0px;
-  height: 30px;
+  height: auto;
 }
 
 /* /兼容火狐/ */
