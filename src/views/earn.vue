@@ -188,11 +188,13 @@ export default defineComponent({
         AdController.show().then((result: showPromiseResult) => {
           // user watch ad till the end
           if (result.done) {
-            this.completed(event);
+            // this.completed(event);
+            console.log(result)
           }
           // your code to reward user
         }).catch((result: showPromiseResult) => {
           // user skipped video or get error during playing ad
+          console.log(result)
           // do nothing or whatever you want
         })
       } else if (abbreviation == "TGGROUP") {
