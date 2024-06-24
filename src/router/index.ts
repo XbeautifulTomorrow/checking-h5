@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useUserStore } from "@/store/user.js";
+import { useCheckInStore, } from '@/store/check_in.js';
 import { validateToken, telegramLogin } from "@/services/api/user";
-import { setSessionStore } from "@/utils";
+import { setSessionStore, getSessionStore, removeSessionStore } from "@/utils";
 
 //1. 定义要使用到的路由组件  （一定要使用文件的全名，得包含文件后缀名）
 import activity from '@/views/activity.vue';
@@ -79,8 +80,19 @@ router.beforeEach(async (to, from, next) => {
   let urlParam = params.get('tgWebAppStartParam');
 
   if (urlParam) {
-    // 保存邀请码
-    setSessionStore('inviteCode', urlParam);
+    // 如果推送最新
+    if (urlParam?.indexOf("next")) {
+      const params = urlParam.split("-");
+      if (params.length > 1) {
+        const useCheckIn = useCheckInStore();
+        useCheckIn.setChallengeId(params[1]);
+      }
+    } else if (urlParam?.indexOf("Frens")) {
+      setSessionStore('nextPath', "/frens");
+    } else {
+      // 保存邀请码
+      setSessionStore('inviteCode', urlParam);
+    }
   }
 
   const userStore = useUserStore();
@@ -120,7 +132,13 @@ router.beforeEach(async (to, from, next) => {
     }
   }
 
-  next();
+  // 如果有路由
+  const nextPath = getSessionStore('nextPath');
+  if (nextPath) {
+    removeSessionStore('nextPath');
+  }
+
+  next({ path: nextPath ? nextPath : "/" });
 });
 
 // 4. 导出router

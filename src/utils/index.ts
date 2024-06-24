@@ -76,6 +76,16 @@ export function getLocalStore(key: string) {
 }
 
 /**
+ * @description:  local store remove
+ * @param {string} key
+ * @param {string} value
+ * @return {*}
+ */
+export function removeLocalStore(key: string) {
+  return localStorage.removeItem(key);
+}
+
+/**
  * @description:  local store set
  * @param {string} key
  * @param {string} value
@@ -83,7 +93,6 @@ export function getLocalStore(key: string) {
  */
 export function setSessionStore(key: string, value: string) {
   sessionStorage.setItem(key, value);
-
 }
 
 /**
@@ -94,6 +103,16 @@ export function setSessionStore(key: string, value: string) {
  */
 export function getSessionStore(key: string) {
   return sessionStorage.getItem(key) || "";
+}
+
+/**
+ * @description:  local store remove
+ * @param {string} key
+ * @param {string} value
+ * @return {*}
+ */
+export function removeSessionStore(key: string) {
+  return sessionStorage.removeItem(key);
 }
 
 /**

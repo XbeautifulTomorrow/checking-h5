@@ -177,7 +177,7 @@ export default defineComponent({
     // 广告
     toAdController(event: taskInfo) {
       // 看广告
-      const AdController = (window as any).Adsgram.init({ blockId: "128" });
+      const AdController = (window as any).Adsgram.init({ blockId: "233" });
 
       // 显示广告横幅
       AdController.show().then(async (result: showPromiseResult) => {
@@ -209,8 +209,13 @@ export default defineComponent({
       if (abbreviation == "INVITE") {
         // 分享拉新
         const { inviteCode } = this.userInfo;
+        let inviteText = `Early to bed🛌, early to rise☀️, makes a man healthy, wealthy, and wise. 
 
-        shareOnTelegram("Test text", `https://t.me/cyclone384_bot/checking?startapp=${inviteCode}`);
+Start the Self-Discipline Challenge at GMcoin and you will be rewarded with up to 500 $GMC🧧 as startup capital.
+
+I am invincible when it comes to self-discipline, dare you challenge me?🤑🤑🤑`
+
+        shareOnTelegram(inviteText, `https://t.me/cyclone384_bot/checking?startapp=${inviteCode}`);
       } else if (abbreviation == "GM") {
         // 去签到
         this.$router.push('/');
@@ -227,6 +232,7 @@ export default defineComponent({
         // 关住Twitter，跳到用户
       } else if (abbreviation == "3BASE") {
         // 在3Base群里转发
+        openUrl("https://t.me/ton_3base_bot/Ton3Base?startapp=673_BRZLED");
       } else if (abbreviation == "TWEET") {
         // 转发Twitter帖子，跳到帖子
       }
