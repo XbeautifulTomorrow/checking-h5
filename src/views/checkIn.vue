@@ -26,7 +26,9 @@
           <span>{{ `Keep check in for ` }}</span>
           <span style="font-weight: bold;">{{ `${daysRemaining} ${daysRemaining > 1 ? 'days' : 'day'} ` }}</span>
           <span>{{ `to win ` }}</span>
-          <span style="font-weight: bold;">{{ Number(winBonuNum || 0).toLocaleString() }}</span>
+          <span style="font-weight: bold;">
+            {{ isNaN(winBonuNum) ? Number(winBonuNum || 0).toLocaleString() : "--" }}
+          </span>
           <span>{{ ` $GMC!` }}</span>
         </span>
       </div>
@@ -46,10 +48,12 @@
       <div class="check_in_hint" v-else-if="challengeInfo?.userStatus == 3">
         <span>{{ reSigning }}</span>
       </div>
-      <div class="check_in_hint" v-else>
+      <div class="check_in_hint" v-else-if="challengeInfo?.userStatus > 3">
         <span>
           <span>{{ `Congratulations, you have won ` }}</span>
-          <span style="font-weight: bold;">{{ Number(challengeInfo.rewardAmount).toLocaleString() }}</span>
+          <span style="font-weight: bold;">
+            {{ challengeInfo?.rewardAmount ? Number(challengeInfo?.rewardAmount).toLocaleString() : "--" }}
+          </span>
           <span>{{ ` $GMC!` }}</span>
         </span>
       </div>
@@ -159,9 +163,15 @@
         <div class="title">GM Leaderboard</div>
         <div class="val">
           <v-img :width="16" src="@/assets/images/svg/check_in/user.svg"></v-img>
-          <span>{{ Number(challengeInfo?.notEliminatedNumber).toLocaleString() }}</span>
+          <span>
+            {{
+              challengeInfo?.notEliminatedNumber ? Number(challengeInfo?.notEliminatedNumber).toLocaleString() : 0
+            }}
+          </span>
           <span>/</span>
-          <span style="color: #C3C0C0;">{{ Number(challengeInfo?.totalNumber).toLocaleString() }}</span>
+          <span style="color: #C3C0C0;">
+            {{ challengeInfo?.totalNumber ? Number(challengeInfo?.totalNumber).toLocaleString() : 0 }}
+          </span>
         </div>
       </div>
       <div class="ranking_box">
@@ -189,7 +199,7 @@
           </div>
         </div>
       </div>
-      <div class="leaderboard_item you" v-if="isLogin && challengeInfo?.userStatus != 2">
+      <div class="leaderboard_item you" v-if="challengeInfo?.userStatus != 2 && challengeInfo?.ranking">
         <div class="ranking">
           <v-img :width="30" v-if="challengeInfo?.ranking - 1 == 0"
             src="@/assets/images/svg/check_in/leaderboard_0.svg"></v-img>
@@ -441,22 +451,19 @@ export default defineComponent({
     // 是否最后一天，并且所有签到已完成
     isLastDay() {
       const { challengeInfo: { ucCheckInVOs, endDate } } = this;
-      let checkIndex = true;
 
-      ucCheckInVOs.forEach(e => {
-        checkIndex = e.userStatus > 2;
-      })
+      const { currentTime } = useUserStore();
+      const endTime = new Date(timeForStr(endDate, "YYYY-MM-DD"))
+      const currentDate = new Date(timeForStr(currentTime, "YYYY-MM-DD"));
 
-      // 已完成所有签到，判断是否最后一天
-      if (checkIndex) {
-        const { currentTime } = useUserStore();
-        const taskDay = new Date(endDate).getDate();
-        const currentDay = new Date(currentTime).getDate();
-        return taskDay >= currentDay;
+      if (currentDate >= endTime) {
+
+        // 当天是否所有挑战已完成或已超时
+        const checkIn = ucCheckInVOs.findIndex(e => e.userStatus > 2) > -1;
+        return checkIn;
+      } else {
+        return true;
       }
-
-      // 未完成签到
-      return false;
     },
   },
   async created() {
@@ -888,6 +895,7 @@ export default defineComponent({
 }
 
 .check_in_panel {
+  min-height: 200px;
   margin: 8px;
   background-color: rgba(255, 255, 255, 1);
   border: none;
