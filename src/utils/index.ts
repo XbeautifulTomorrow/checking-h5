@@ -671,9 +671,7 @@ export const delCookie = (name: any) => {
   * @param {string} url - 分享链接。
   */
 export const shareOnTelegram = (url: string) => {
-  const inviteText = `Early to bed🛌, early to rise☀️, makes a man healthy, wealthy, and wise. 
-
-Start the Self-Discipline Challenge at GMcoin and you will be rewarded with up to 500 $GMC🧧 as startup capital.
+  const inviteText = `Start the Self-Discipline Challenge at GMcoin and you will be rewarded with up to 500 $GMC🧧 as startup capital.
   
 I am invincible when it comes to self-discipline, dare you challenge me?🤑🤑🤑`;
   // 构建分享内容的URL
