@@ -680,5 +680,5 @@ I am invincible when it comes to self-discipline, dare you challenge me?🤑🤑
   const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(inviteText)}`;
 
   // 打开Telegram小程序或网页版Telegram进行分享
-  window.open(shareUrl, '_blank');
+  openUrl(shareUrl);
 }
