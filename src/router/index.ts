@@ -136,9 +136,11 @@ router.beforeEach(async (to, from, next) => {
   const nextPath = getSessionStore('nextPath');
   if (nextPath) {
     removeSessionStore('nextPath');
+    next({ path: nextPath });
+  } else {
+    next();
   }
 
-  next({ path: nextPath ? nextPath : "/" });
 });
 
 // 4. 导出router
