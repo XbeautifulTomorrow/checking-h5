@@ -267,13 +267,24 @@ export default defineComponent({
       }
 
       .challenge_time {
+        min-height: 20px;
+        line-height: 20px;
+        padding: 0 8px;
         text-align: center;
         position: relative;
         border-radius: 8px 8px 0 0;
         padding-left: 30px;
+        box-sizing: border-box;
+      }
+
+      .challenge_bonus {
+        padding: 0 4px;
+        min-height: 22px;
+        font-size: 12px;
       }
 
       .challenge_user {
+        min-height: 20px;
         font-size: 12px;
         line-height: 1;
         font-weight: bold;

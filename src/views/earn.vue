@@ -11,7 +11,9 @@
           <div class="task_item_left">
             <v-img :width="36" cover :src="taskImages[item.abbreviation as keyof typeof taskImages]"></v-img>
             <div class="task_item_reward">
-              <div class="task_name" v-if="item.abbreviation == 'AD'">{{ `${item.fullName} 0/3` }}</div>
+              <div class="task_name" v-if="item.abbreviation == 'AD'">
+                {{ `${item.fullName} ${item.finishCount}/${item.totalCount}` }}
+              </div>
               <div class="task_name" v-else>{{ item.fullName }}</div>
               <div class="task_bonus">
                 <v-img :width="18" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
@@ -149,6 +151,12 @@ export default defineComponent({
       event.loading = true;
       if (this.timer) clearTimeout(this.timer);
       this.timer = setTimeout(async () => {
+
+        if (event.abbreviation == "AD") {
+          this.toAdController(event);
+          return
+        }
+
         const res = await completeTask({
           taskId: event.id
         });
@@ -166,6 +174,35 @@ export default defineComponent({
         }
       }, 3000)
     },
+    // 广告
+    toAdController(event: taskInfo) {
+      // 看广告
+      const AdController = (window as any).Adsgram.init({ blockId: "128", debug: true });
+
+      // 显示广告横幅
+      AdController.show().then(async (result: showPromiseResult) => {
+        // user watch ad till the end
+        if (result.done) {
+          const res = await completeTask({
+            taskId: event.id
+          });
+          event.loading = false;
+          if (res.code == 200) {
+            if (res.data) {
+              // 任务完成了，重新获取列表
+              const userStore = useUserStore();
+              userStore.fetchUserInfo();
+              this.fetchChallengeList();
+            }
+          }
+        }
+        // your code to reward user
+      }).catch((result: showPromiseResult) => {
+        // user skipped video or get error during playing ad
+        console.log(result)
+        // do nothing or whatever you want
+      })
+    },
     // 去做任务
     toTask(event: taskInfo) {
       const { abbreviation } = event;
@@ -180,23 +217,6 @@ export default defineComponent({
       } else if (abbreviation == "CHALLENGE") {
         // 去参加挑战
         this.$router.push('/activity');
-      } else if (abbreviation == "AD") {
-        // 看广告
-        const AdController = (window as any).Adsgram.init({ blockId: "128", debug: true });
-
-        // 显示广告横幅
-        AdController.show().then((result: showPromiseResult) => {
-          // user watch ad till the end
-          if (result.done) {
-            // this.completed(event);
-            console.log(result)
-          }
-          // your code to reward user
-        }).catch((result: showPromiseResult) => {
-          // user skipped video or get error during playing ad
-          console.log(result)
-          // do nothing or whatever you want
-        })
       } else if (abbreviation == "TGGROUP") {
         // 加入Telegram群
       } else if (abbreviation == "TGCHANNEL") {

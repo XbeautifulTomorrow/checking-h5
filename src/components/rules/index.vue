@@ -162,10 +162,13 @@ export default defineComponent({
 }
 
 .rules_panel {
+  padding: 4px;
+  border-radius: 4px;
   max-height: 50vh;
   overflow-y: scroll;
   font-size: 14px;
   text-align: left;
+  background-color: rgba(47, 47, 47, 0.6);
 }
 
 .rules_footer {

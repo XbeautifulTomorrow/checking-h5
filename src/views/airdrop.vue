@@ -7,7 +7,7 @@
     <div class="preparation_phase">
       <div class="prepare_item" v-for="(item, index) in prepareList" :key="index">
         <div :class="['check_box', item.isCheck && 'checked']">
-          <v-img :width="14" cover src="@/assets/images/svg/airdrop/checked.svg"></v-img>
+          <v-img v-if="item.isCheck" :width="14" cover src="@/assets/images/svg/airdrop/checked.svg"></v-img>
         </div>
         <div class="prepare_text">{{ item.text }}</div>
       </div>

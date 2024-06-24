@@ -767,6 +767,7 @@ export default defineComponent({
     currentIndex(val, old) {
       if (this.isLoad) return;
       const { challengeList } = this;
+      this.bonusNum = null;
       const { setChallengeId } = useCheckInStore();
       setChallengeId(challengeList[val].challengeId);
 
@@ -1292,9 +1293,10 @@ export default defineComponent({
   line-height: 1.2;
 
   .dialog_text {
-    margin-bottom: 12px;
+    margin-bottom: 24px;
 
     &.rules_title {
+      font-size: 18px;
       color: #FDEFD6;
     }
   }
