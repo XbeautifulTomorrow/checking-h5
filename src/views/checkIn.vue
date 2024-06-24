@@ -441,15 +441,22 @@ export default defineComponent({
     // 是否最后一天，并且所有签到已完成
     isLastDay() {
       const { challengeInfo: { ucCheckInVOs, endDate } } = this;
-      const checkIn = ucCheckInVOs.findIndex(e => e.userStatus > 2) > -1;
-      if (checkIn) {
+      let checkIndex = true;
+
+      ucCheckInVOs.forEach(e => {
+        checkIndex = e.userStatus > 2;
+      })
+
+      // 已完成所有签到，判断是否最后一天
+      if (checkIndex) {
         const { currentTime } = useUserStore();
         const taskDay = new Date(endDate).getDate();
         const currentDay = new Date(currentTime).getDate();
         return taskDay >= currentDay;
       }
 
-      return true
+      // 未完成签到
+      return false;
     },
   },
   async created() {
