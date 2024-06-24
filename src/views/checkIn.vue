@@ -449,7 +449,7 @@ export default defineComponent({
         return taskDay >= currentDay;
       }
 
-      return false
+      return true
     },
   },
   async created() {
