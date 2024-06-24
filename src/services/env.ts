@@ -3,8 +3,7 @@ const config = {
     api: "http://222.214.219.202:4401/",
   },
   prod: {
-    // api: "https://api.gmking.io/",
-    api: "/"
+    api: "https://api.gmking.io/",
   },
 };
 
