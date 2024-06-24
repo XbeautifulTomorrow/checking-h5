@@ -646,9 +646,9 @@ export default defineComponent({
     // 邀请
     inviteToTelegram() {
       const { inviteCode } = this.userInfo;
-      const inviteUrl = `https://t.me/cyclone384_bot/checking?startapp=${inviteCode}`;
+      const inviteUrl = `https://t.me/theGMCoin_Bot/GMCoin?startapp=${inviteCode}`;
       this.showInvite = false;
-      shareOnTelegram("Test text", inviteUrl);
+      shareOnTelegram(inviteUrl);
     },
     // 根据当前状态获取样式
     challengeStatus(event: ucCheckInVOs) {

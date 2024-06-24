@@ -256,8 +256,8 @@ export default defineComponent({
     // 邀请
     inviteToTelegram() {
       const { inviteCode } = this.userInfo;
-      const inviteUrl = `https://t.me/cyclone384_bot/checking?startapp=${inviteCode}`;
-      shareOnTelegram("Test text", inviteUrl);
+      const inviteUrl = `https://t.me/theGMCoin_Bot/GMCoin?startapp=${inviteCode}`;
+      shareOnTelegram(inviteUrl);
     },
     // 打开邀请奖励排行榜
     toRanking() {

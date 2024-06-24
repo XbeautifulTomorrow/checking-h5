@@ -661,9 +661,14 @@ export const delCookie = (name: any) => {
   * @param {string} text - 分享内容。
   * @param {string} url - 分享链接。
   */
-export const shareOnTelegram = (text: string, url: string) => {
+export const shareOnTelegram = (url: string) => {
+  const inviteText = `Early to bed🛌, early to rise☀️, makes a man healthy, wealthy, and wise. 
+
+  Start the Self-Discipline Challenge at GMcoin and you will be rewarded with up to 500 $GMC🧧 as startup capital.
+  
+  I am invincible when it comes to self-discipline, dare you challenge me?🤑🤑🤑`;
   // 构建分享内容的URL
-  const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+  const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(inviteText)}`;
 
   // 打开Telegram小程序或网页版Telegram进行分享
   window.open(shareUrl, '_blank');
