@@ -5,6 +5,15 @@ import { useMessageStore } from "@/store/message.js";
 
 export function openUrl(url: string) {
   if (typeof window !== "object") return;
+  const u = navigator.userAgent;
+  const isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+
+  if (isiOS) {
+    // iOS
+    window.location.href = url;
+    return;
+  }
+  // Android
   const tempWin = window.open("_blank");
   if (tempWin) {
     tempWin.opener = null;
