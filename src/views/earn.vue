@@ -74,7 +74,7 @@
 import { defineComponent } from 'vue';
 import { useUserStore } from "@/store/user.js";
 import { getTaskList, completeTask } from "@/services/api/task.js";
-import { shareOnTelegram } from "@/utils";
+import { shareOnTelegram, openUrl } from "@/utils";
 
 interface taskInfo {
   id: string | number, //任务ID
@@ -219,8 +219,10 @@ export default defineComponent({
         this.$router.push('/activity');
       } else if (abbreviation == "TGGROUP") {
         // 加入Telegram群
+        openUrl("https://t.me/GMCoin_Chat");
       } else if (abbreviation == "TGCHANNEL") {
         // 加入Telegram群
+        openUrl("https://t.me/theGMCoin");
       } else if (abbreviation == "TW") {
         // 关住Twitter，跳到用户
       } else if (abbreviation == "3BASE") {
