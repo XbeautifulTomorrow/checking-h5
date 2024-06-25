@@ -12,7 +12,8 @@
             <v-img :width="36" cover :src="taskImages[item.abbreviation as keyof typeof taskImages]"></v-img>
             <div class="task_item_reward">
               <div class="task_name" v-if="item.abbreviation == 'AD'">
-                {{ `${item.fullName} ${item.finishCount}/${item.totalCount}` }}
+                <span>{{ `${item.fullName} ` }}</span>
+                <!-- <span>{{ `${item.finishCount}/${item.totalCount}` }}</span> -->
               </div>
               <div class="task_name" v-else>{{ item.fullName }}</div>
               <div class="task_bonus">

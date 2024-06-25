@@ -20,6 +20,7 @@
 import TopToolbar from '@/components/TopToolbar.vue';
 import BottomNav from '@/components/BottomNav.vue';
 import { useMessageStore } from "@/store/message.js";
+import { useUserStore } from "@/store/user.js";
 
 import { defineComponent } from 'vue';
 export default defineComponent({
@@ -40,6 +41,16 @@ export default defineComponent({
       set(val: boolean) {
         const { setShowMessage } = useMessageStore();
         setShowMessage(val)
+      }
+    },
+    showGift: {
+      get() {
+        const { showGift } = useUserStore();
+        return showGift
+      },
+      set(val: boolean) {
+        const { setShowGift } = useUserStore();
+        setShowGift(val)
       }
     },
     messageText() {
