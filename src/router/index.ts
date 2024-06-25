@@ -140,7 +140,7 @@ router.beforeEach(async (to, from, next) => {
 
   if (nextPath) {
     removeSessionStore('nextPath');
-    next({ path: nextPath });
+    next({ name: "Frens" });
   } else {
     next();
   }
