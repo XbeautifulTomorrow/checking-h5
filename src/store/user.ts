@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
-import { getLocalStore, setSessionStore, getSessionStore } from "@/utils";
-import { getUserInfo } from "@/services/api/user";
+import { getLocalStore, setSessionStore, getSessionStore, removeSessionStore } from "@/utils";
+import { getUserInfo, receiveGifts } from "@/services/api/user";
 import { en, zhHant } from 'vuetify/locale'
 import { getLang } from "@/locales/index";
 
@@ -79,6 +79,20 @@ export const useUserStore = defineStore("user", {
     },
     setCurrentTime(data: any) {
       this.currentTime = data;
+    },
+    // 领取礼物
+    fetchReceiveGifts() {
+      const recommend = getSessionStore("recommend");
+
+      if (recommend) {
+        removeSessionStore("recommend");
+        receiveGifts({}).then(e => {
+          if (e.code == 200 && e.data) {
+            // 如果可领取
+            this.showGift = true;
+          }
+        })
+      }
     },
     logoutApi() {
       const invateCode = getSessionStore("invateCode");

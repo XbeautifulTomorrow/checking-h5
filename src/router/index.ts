@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useUserStore } from "@/store/user.js";
-import { validateToken, telegramLogin, receiveGifts } from "@/services/api/user";
+import { validateToken, telegramLogin } from "@/services/api/user";
 import { useCheckInStore, } from '@/store/check_in.js';
 import { setSessionStore, getSessionStore, removeSessionStore } from "@/utils";
 
@@ -108,6 +108,10 @@ router.beforeEach(async (to, from, next) => {
     }
 
     validateToken({});
+
+    // 领取礼物
+    const { fetchReceiveGifts } = useUserStore();
+    fetchReceiveGifts();
   } else {
     const { Telegram } = (window as any)
     let tg_certificate: any;
@@ -134,20 +138,14 @@ router.beforeEach(async (to, from, next) => {
 
       // 加载用户信息
       userStore.fetchUserInfo();
-      const recommend = getSessionStore("recommend");
 
-      if (recommend) {
-        removeSessionStore("recommend");
-        receiveGifts({}).then(e => {
-          if (e.data) {
-            // 如果可领取
-            const { setShowGift } = useUserStore();
-            setShowGift(true);
-          }
-        })
-      }
+      // 领取礼物
+      const { fetchReceiveGifts } = useUserStore();
+      fetchReceiveGifts();
     }
   }
+
+
 
   // 如果有路由
   const nextPath = getSessionStore('nextPath');
