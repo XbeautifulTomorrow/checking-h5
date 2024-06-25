@@ -78,12 +78,13 @@ router.beforeEach(async (to, from, next) => {
   const queryString = window.location.search;
   const params = new URLSearchParams(queryString);
   const urlParam = params.get('tgWebAppStartParam');
-  const urlParams = getSessionStore("urlParams")
+  const urlParams = getSessionStore("urlParams");
+
   if (urlParam && urlParam != urlParams) {
     setSessionStore("urlParams", urlParam);
     // 如果推送最新
     if (urlParam.indexOf("next_") > -1) {
-      const paramArray = urlParam.split("-");
+      const paramArray = urlParam.split("_");
       if (paramArray.length >= 2) {
         const useCheckIn = useCheckInStore();
         useCheckIn.setChallengeId(paramArray[1]);
