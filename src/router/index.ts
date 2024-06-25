@@ -81,14 +81,16 @@ router.beforeEach(async (to, from, next) => {
 
   if (urlParam) {
     // 如果推送最新
-    if (urlParam?.indexOf("next")) {
-      const params = urlParam.split("-");
+    if (urlParam.indexOf("next") > -1) {
+      const params = urlParam.split("-") as Array<string>;
       if (params.length > 1) {
         const useCheckIn = useCheckInStore();
         useCheckIn.setChallengeId(params[1]);
       }
-    } else if (urlParam?.indexOf("Frens")) {
+    } else if (urlParam.indexOf("Frens") > -1) {
       setSessionStore('nextPath', "/frens");
+    } else if (urlParam.indexOf("3base")) {
+      setSessionStore('recommend', "3base");
     } else {
       // 保存邀请码
       setSessionStore('inviteCode', urlParam);
@@ -135,6 +137,7 @@ router.beforeEach(async (to, from, next) => {
 
   // 如果有路由
   const nextPath = getSessionStore('nextPath');
+  console.log(nextPath)
   if (nextPath) {
     removeSessionStore('nextPath');
     next({ path: nextPath });
