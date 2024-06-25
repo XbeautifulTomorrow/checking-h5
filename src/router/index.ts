@@ -138,16 +138,13 @@ router.beforeEach(async (to, from, next) => {
   // 如果有路由
   const nextPath = getSessionStore('nextPath');
 
-  console.log(nextPath)
   if (nextPath) {
-    console.log(nextPath)
     removeSessionStore('nextPath');
-    console.log(nextPath)
-    //   next({ name: "Frens" });
+    next({ name: "Frens" });
   }
-  // else {
-  next();
-  // }
+  else {
+    next();
+  }
 
 });
 
