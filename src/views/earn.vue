@@ -13,7 +13,7 @@
             <div class="task_item_reward">
               <div class="task_name" v-if="item.abbreviation == 'AD'">
                 <span>{{ `${item.fullName} ` }}</span>
-                <!-- <span>{{ `${item.finishCount}/${item.totalCount}` }}</span> -->
+                <span>{{ `${item.finishCount}/${item.totalCount}` }}</span>
               </div>
               <div class="task_name" v-else>{{ item.fullName }}</div>
               <div class="task_bonus">
