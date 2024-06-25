@@ -28,7 +28,7 @@
             'days' : 'day'} ` }}</span>
           <span>{{ `to win ` }}</span>
           <span style="font-weight: bold;">
-            {{ isNaN(winBonuNum) ? Number(winBonuNum || 0).toLocaleString() : "--" }}
+            {{ winBonuNum ? Number(winBonuNum || 0).toLocaleString() : "--" }}
           </span>
           <span>{{ ` $GMC!` }}</span>
         </span>
