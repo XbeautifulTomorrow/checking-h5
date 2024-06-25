@@ -89,7 +89,7 @@ router.beforeEach(async (to, from, next) => {
       }
     } else if (urlParam.indexOf("Frens") > -1) {
       setSessionStore('nextPath', "/frens");
-    } else if (urlParam.indexOf("3base")) {
+    } else if (urlParam.indexOf("3base") > -1) {
       setSessionStore('recommend', "3base");
     } else {
       // 保存邀请码
