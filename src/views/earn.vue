@@ -231,11 +231,13 @@ export default defineComponent({
         openUrl("https://t.me/theGMCoin");
       } else if (abbreviation == "TW") {
         // 关住Twitter，跳到用户
+        openUrl("https://x.com/gm_coin51171");
       } else if (abbreviation == "3BASE") {
         // 在3Base群里转发
         openUrl("https://t.me/ton_3base_bot/Ton3Base?startapp=673_BRZLED");
       } else if (abbreviation == "TWEET") {
         // 转发Twitter帖子，跳到帖子
+        openUrl("https://x.com/gm_coin51171/status/1805241310422745452");
       }
     },
     // 生成一个随机数
