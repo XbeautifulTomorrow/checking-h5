@@ -113,6 +113,8 @@ router.beforeEach(async (to, from, next) => {
       removeSessionStore('nextPath');
       next({ name: "Frens" });
     }
+
+    return
   } else {
     const { Telegram } = (window as any)
     let tg_certificate: any;
