@@ -256,7 +256,7 @@ export default defineComponent({
     // 邀请
     inviteToTelegram() {
       const { inviteCode } = this.userInfo;
-      const inviteUrl = `https://t.me/theGMCoin_Bot/GMCoin?startapp=${inviteCode}`;
+      const inviteUrl = `${import.meta.env.VITE_APPLETS_URL}?startapp=${inviteCode}`;
       shareOnTelegram(inviteUrl);
     },
     // 打开邀请奖励排行榜

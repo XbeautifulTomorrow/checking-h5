@@ -24,7 +24,8 @@
       <div class="check_in_hint" v-if="challengeInfo?.userStatus == 1">
         <span>
           <span>{{ `Keep check in for ` }}</span>
-          <span style="font-weight: bold;">{{ `${daysRemaining} ${daysRemaining > 1 ? 'days' : 'day'} ` }}</span>
+          <span style="font-weight: bold;">{{ `${challengeInfo?.keepCheckDays} ${challengeInfo?.keepCheckDays > 1 ?
+            'days' : 'day'} ` }}</span>
           <span>{{ `to win ` }}</span>
           <span style="font-weight: bold;">
             {{ isNaN(winBonuNum) ? Number(winBonuNum || 0).toLocaleString() : "--" }}
@@ -388,17 +389,6 @@ export default defineComponent({
       const { challengeId } = useCheckInStore();
       return challengeId
     },
-    // 剩余签到天数
-    daysRemaining() {
-      const { currentChallenge } = this;
-      const { currentTime } = useUserStore();
-      const time = new Date(currentChallenge?.endDate);
-      const times = new Date(currentTime);
-      if (times > time) return 0;
-      const days = time.getDate() - times.getDate() + 1;
-
-      return days;
-    },
     // 获胜额外奖励
     winBonus() {
       const { challengeInfo: { cpRankingVOs }, userInfo: { userId } } = this;
@@ -646,7 +636,7 @@ export default defineComponent({
     // 邀请
     inviteToTelegram() {
       const { inviteCode } = this.userInfo;
-      const inviteUrl = `https://t.me/theGMCoin_Bot/GMCoin?startapp=${inviteCode}`;
+      const inviteUrl = `${import.meta.env.VITE_APPLETS_URL}?startapp=${inviteCode}`;
       this.showInvite = false;
       shareOnTelegram(inviteUrl);
     },

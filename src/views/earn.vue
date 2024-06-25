@@ -209,8 +209,8 @@ export default defineComponent({
       if (abbreviation == "INVITE") {
         // 分享拉新
         const { inviteCode } = this.userInfo;
-
-        shareOnTelegram(`https://t.me/theGMCoin_Bot/GMCoin?startapp=${inviteCode}`);
+        const inviteUrl = `${import.meta.env.VITE_APPLETS_URL}?startapp=${inviteCode}`;
+        shareOnTelegram(inviteUrl);
       } else if (abbreviation == "GM") {
         // 去签到
         this.$router.push('/');
