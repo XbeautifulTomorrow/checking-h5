@@ -215,7 +215,7 @@
             <img v-else width="30" height="30" :avatar="challengeInfo?.userName" color="#3D3D3D" class="avatar">
             <div class="user_name">YOU</div>
           </div>
-          <div class="bonus" v-if="challengeInfo?.ranking < 4">
+          <div class="bonus" v-if="challengeInfo?.ranking && challengeInfo?.ranking < 4 && winBonus">
             <v-img :width="24" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
             <div class="val">{{ `+${Number(winBonus || 0).toLocaleString()}` }}</div>
           </div>
