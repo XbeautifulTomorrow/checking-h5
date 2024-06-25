@@ -636,7 +636,13 @@ export default defineComponent({
     // 邀请
     inviteToTelegram() {
       const { inviteCode } = this.userInfo;
-      const inviteUrl = `${import.meta.env.VITE_APPLETS_URL}?startapp=${inviteCode}`;
+      let inviteUrl = "";
+      if (import.meta.env.MODE == "prod") {
+        inviteUrl = `https://t.me/theGMCoin_Bot/GMCoin?startapp=${inviteCode}`;
+      } else {
+        inviteUrl = `https://t.me/cyclone384_bot/checking?startapp=${inviteCode}`
+      }
+
       this.showInvite = false;
       shareOnTelegram(inviteUrl);
     },

@@ -667,7 +667,6 @@ export const delCookie = (name: any) => {
 
 /**
   * Telegram分享。
-  * @param {string} text - 分享内容。
   * @param {string} url - 分享链接。
   */
 export const shareOnTelegram = (url: string) => {
