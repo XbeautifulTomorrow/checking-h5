@@ -13,7 +13,7 @@
             <div class="task_item_reward">
               <div class="task_name" v-if="item.abbreviation == 'AD'">
                 <span>{{ `${item.fullName} ` }}</span>
-                <!-- <span>{{ `${item.finishCount}/${item.totalCount}` }}</span> -->
+                <span>{{ `${item.finishCount}/${item.totalCount}` }}</span>
               </div>
               <div class="task_name" v-else>{{ item.fullName }}</div>
               <div class="task_bonus">
@@ -75,7 +75,7 @@
 import { defineComponent } from 'vue';
 import { useUserStore } from "@/store/user.js";
 import { getTaskList, completeTask } from "@/services/api/task.js";
-import { shareOnTelegram, openUrl } from "@/utils";
+import { shareOnTelegram, openUrl, setSessionStore, getSessionStore, removeSessionStore } from "@/utils";
 
 interface taskInfo {
   id: string | number, //任务ID
@@ -158,16 +158,30 @@ export default defineComponent({
           return
         }
 
+        const isOpen = getSessionStore(event.abbreviation);
+        if (event.type == "EXPLORE" && isOpen != "1") {
+          setSessionStore(event.abbreviation, "1");
+          this.toTask(event);
+          return;
+        }
+
         const res = await completeTask({
           taskId: event.id
         });
+
         event.loading = false;
+
         if (res.code == 200) {
           if (res.data) {
-            // 任务完成了，重新获取列表
+            // 任务完成了，更新余额
             const userStore = useUserStore();
             userStore.fetchUserInfo();
+
+            // 重新获取任务列表
             this.fetchChallengeList();
+
+            // 移除任务缓存
+            removeSessionStore(event.abbreviation);
           } else {
             // 做任务
             this.toTask(event);
