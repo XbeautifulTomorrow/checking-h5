@@ -110,8 +110,7 @@ router.beforeEach(async (to, from, next) => {
     validateToken({});
 
     // 领取礼物
-    const { fetchReceiveGifts } = useUserStore();
-    fetchReceiveGifts();
+    userStore.fetchReceiveGifts();
   } else {
     const { Telegram } = (window as any)
     let tg_certificate: any;
@@ -140,8 +139,7 @@ router.beforeEach(async (to, from, next) => {
       userStore.fetchUserInfo();
 
       // 领取礼物
-      const { fetchReceiveGifts } = useUserStore();
-      fetchReceiveGifts();
+      userStore.fetchReceiveGifts();
     }
   }
 

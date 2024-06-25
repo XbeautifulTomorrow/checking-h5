@@ -90,6 +90,9 @@ export const useUserStore = defineStore("user", {
           if (e.code == 200 && e.data) {
             // 如果可领取
             this.showGift = true;
+
+            //刷新用户数据
+            this.fetchUserInfo();
           }
         })
       }
