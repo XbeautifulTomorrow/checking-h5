@@ -3,7 +3,6 @@ import { getLocalStore, setSessionStore, getSessionStore } from "@/utils";
 import { getUserInfo } from "@/services/api/user";
 import { en, zhHant } from 'vuetify/locale'
 import { getLang } from "@/locales/index";
-// import router from "@/router/index";
 
 const langMenu: any = {
   zh_CN: en,
@@ -46,6 +45,7 @@ export const useUserStore = defineStore("user", {
     userPage: null as string | any,
     currentTime: null as string | any,
     isLogin: getLocalStore("certificate") ? true : false,
+    showGift: false,
     loadLog: false,
   }),
   persist: {
@@ -71,6 +71,9 @@ export const useUserStore = defineStore("user", {
         this.logoutApi();
       }
     },
+    setShowGift(data: any) {
+      this.showGift = data;
+    },
     setLocale(data: any) {
       this.locale = data == "en_US" ? en : zhHant;
     },
@@ -90,7 +93,7 @@ export const useUserStore = defineStore("user", {
       window.NavigationPreloadManager;
 
       if (import.meta.env.MODE == "prod") {
-        window.location.href = "/";
+        // window.location.href = "/";
       }
     }
   }
