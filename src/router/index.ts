@@ -83,7 +83,7 @@ router.beforeEach(async (to, from, next) => {
     // 如果推送最新
     if (urlParam.indexOf("next_") > -1) {
       const paramArray = urlParam.split("-");
-      if (paramArray.length > 1) {
+      if (paramArray.length >= 2) {
         const useCheckIn = useCheckInStore();
         useCheckIn.setChallengeId(paramArray[1]);
       }
@@ -106,6 +106,13 @@ router.beforeEach(async (to, from, next) => {
     }
 
     validateToken({});
+
+    // 如果有路由
+    const nextPath = getSessionStore('nextPath');
+    if (nextPath) {
+      removeSessionStore('nextPath');
+      next({ name: "Frens" });
+    }
   } else {
     const { Telegram } = (window as any)
     let tg_certificate: any;
