@@ -139,8 +139,7 @@ router.beforeEach(async (to, from, next) => {
       if (recommend) {
         removeSessionStore("recommend");
         receiveGifts({}).then(e => {
-
-          if (e) {
+          if (e.data) {
             // 如果可领取
             const { setShowGift } = useUserStore();
             setShowGift(true);
