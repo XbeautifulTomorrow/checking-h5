@@ -114,9 +114,10 @@ router.beforeEach(async (to, from, next) => {
       console.log(tg_certificate);
     }
 
+    const inviteCode = getSessionStore("inviteCode")
     const res = await telegramLogin({
       tgEncodeStr: tg_certificate,
-      inviteCode: urlParam
+      inviteCode: inviteCode
     });
 
     if (res.code == 200) {
