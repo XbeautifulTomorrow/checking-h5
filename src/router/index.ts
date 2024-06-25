@@ -87,7 +87,7 @@ router.beforeEach(async (to, from, next) => {
         const useCheckIn = useCheckInStore();
         useCheckIn.setChallengeId(params[1]);
       }
-    } else if (urlParam.indexOf("Frens") > -1) {
+    } else if (urlParam.indexOf("frens") > -1) {
       setSessionStore('nextPath', "/frens");
     } else if (urlParam.indexOf("3base") > -1) {
       setSessionStore('recommend', "3base");
@@ -137,7 +137,7 @@ router.beforeEach(async (to, from, next) => {
 
   // 如果有路由
   const nextPath = getSessionStore('nextPath');
-  console.log(nextPath)
+
   if (nextPath) {
     removeSessionStore('nextPath');
     next({ path: nextPath });
