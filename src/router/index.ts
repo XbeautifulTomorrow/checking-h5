@@ -82,10 +82,10 @@ router.beforeEach(async (to, from, next) => {
   if (urlParam) {
     // 如果推送最新
     if (urlParam.indexOf("next") > -1) {
-      const params = urlParam.split("-") as Array<string>;
-      if (params.length > 1) {
+      const paramArray = urlParam.split("-");
+      if (paramArray.length > 1) {
         const useCheckIn = useCheckInStore();
-        useCheckIn.setChallengeId(params[1]);
+        useCheckIn.setChallengeId(paramArray[1]);
       }
     } else if (urlParam.indexOf("frens") > -1) {
       setSessionStore('nextPath', "/frens");
