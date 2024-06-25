@@ -21,7 +21,7 @@ import TopToolbar from '@/components/TopToolbar.vue';
 import BottomNav from '@/components/BottomNav.vue';
 import { useMessageStore } from "@/store/message.js";
 import { useCheckInStore, } from '@/store/check_in.js';
-import { setSessionStore } from "@/utils";
+import { getSessionStore, setSessionStore } from "@/utils";
 
 
 import { defineComponent } from 'vue';
@@ -53,9 +53,9 @@ export default defineComponent({
   created() {
     const queryString = window.location.search;
     const params = new URLSearchParams(queryString);
-    let urlParam = params.get('tgWebAppStartParam');
-
-    if (urlParam) {
+    const urlParam = params.get('tgWebAppStartParam');
+    const urlParams = getSessionStore("urlParams")
+    if (urlParam && urlParam != urlParams) {
       // 如果推送最新
       if (urlParam.indexOf("next_") > -1) {
         const paramArray = urlParam.split("-");
@@ -72,6 +72,8 @@ export default defineComponent({
         setSessionStore('inviteCode', urlParam);
       }
     }
+
+
   },
   methods: {
     // 关闭消息
