@@ -132,20 +132,19 @@ router.beforeEach(async (to, from, next) => {
 
       // 加载用户信息
       userStore.fetchUserInfo();
+
+      // 如果有路由
+      const nextPath = getSessionStore('nextPath');
+      if (nextPath) {
+        removeSessionStore('nextPath');
+        next({ name: "Frens" });
+      }
+
+      return
     }
   }
 
-  // 如果有路由
-  const nextPath = getSessionStore('nextPath');
-
-  if (nextPath) {
-    removeSessionStore('nextPath');
-    next({ name: "Frens" });
-  }
-  else {
-    next();
-  }
-
+  next();
 });
 
 // 4. 导出router
