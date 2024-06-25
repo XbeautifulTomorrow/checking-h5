@@ -38,7 +38,8 @@
     <div class="task_panel">
       <div class="task_title">Explore</div>
       <div class="task_list">
-        <div class="task_item" v-for="(item, index) in explore" :key="index">
+        <div class="task_item" v-for="(item, index) in explore" :key="index"
+          @click.stop="item.isFinish ? toTask(item) : null">
           <div class="task_item_left">
             <div class="telegram_img" v-if="item.abbreviation == 'TGGROUP' || item.abbreviation == 'TGCHANNEL'">
               <v-img :width="26" cover src="@/assets/images/svg/earn/telegram.svg"></v-img>
@@ -57,8 +58,8 @@
           </div>
           <div class="task_item_right">
             <v-btn :color="item.isFinish ? 'rgb(0,0,0,0)' : '#49B6F6'" :loading="item.loading" height="24"
-              density="compact" @click="completed(item)" :variant="item.isFinish ? 'text' : 'flat'"
-              :readonly="item.isFinish">
+              density="compact" @click.stop="!item.isFinish ? completed(item) : toTask(item)"
+              :variant="item.isFinish ? 'text' : 'flat'" :readonly="item.isFinish">
               <div v-if="!item.isFinish" class="finished">GO</div>
               <div v-else-if="item.isFinish" class="completed">
                 <v-icon size="30" color="#49B6F6" icon="mdi-check-bold"></v-icon>
@@ -113,8 +114,7 @@ export default defineComponent({
         GM,
         CHALLENGE,
         AD
-      },
-      timer: null as number | any,
+      }
     };
   },
   computed: {
@@ -138,23 +138,26 @@ export default defineComponent({
         for (let i = 0; i < data.length; i++) {
           const element = data[i];
           if (element.type == "DAILY") {
-            element.loading = false;
             this.dailyTask.push(element);
           } else {
             element.loading = false;
             this.explore.push(element);
           }
+
+          element.loading = false;
+          element.timer = false;
         }
       }
     },
     // 完成任务
     completed(event: any) {
       event.loading = true;
-      if (this.timer) clearTimeout(this.timer);
-      this.timer = setTimeout(async () => {
+      if (event.timer) clearTimeout(event.timer);
+      event.timer = setTimeout(async () => {
 
         if (event.abbreviation == "AD") {
           this.toAdController(event);
+          event.loading = false;
           return
         }
 
@@ -268,7 +271,7 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .earn_wrapper {
-  padding: 0 8px;
+  padding: 0 8px 16px;
 }
 
 .gift_box {
