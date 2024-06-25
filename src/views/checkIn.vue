@@ -241,8 +241,7 @@
           <span class="finished">{{ `- ${challengeInfo?.supplementaryEnergy}` }}</span>
           <v-icon color="#FFF100" :size="16" icon="mdi-lightning-bolt"></v-icon>
         </div>
-        <v-btn class="re_check_in" @click="handleReCheckin()" :loading="reCheckinLoading"
-          :disabled="Number(challengeInfo?.supplementaryEnergy) >= Number(userInfo?.energyAmount)">
+        <v-btn class="re_check_in" @click="handleReCheckin()" :loading="reCheckinLoading">
           <span class="finished">Re-Check In</span>
         </v-btn>
       </div>
