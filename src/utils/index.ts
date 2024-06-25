@@ -13,8 +13,9 @@ export function openUrl(url: string) {
     window.location.href = url;
     return;
   }
+
   // Android
-  const tempWin = window.open("_blank");
+  const tempWin = window.open(url, "_blank");
   if (tempWin) {
     tempWin.opener = null;
     tempWin.location.href = url;

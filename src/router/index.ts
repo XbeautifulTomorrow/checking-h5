@@ -81,7 +81,7 @@ router.beforeEach(async (to, from, next) => {
 
   if (urlParam) {
     // 如果推送最新
-    if (urlParam.indexOf("next") > -1) {
+    if (urlParam.indexOf("next_") > -1) {
       const paramArray = urlParam.split("-");
       if (paramArray.length > 1) {
         const useCheckIn = useCheckInStore();
