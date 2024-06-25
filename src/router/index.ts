@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useUserStore } from "@/store/user.js";
 import { validateToken, telegramLogin } from "@/services/api/user";
-import { getSessionStore, removeSessionStore } from "@/utils";
+import { useCheckInStore, } from '@/store/check_in.js';
+import { setSessionStore, getSessionStore, removeSessionStore } from "@/utils";
 
 //1. 定义要使用到的路由组件  （一定要使用文件的全名，得包含文件后缀名）
 import activity from '@/views/activity.vue';
@@ -74,6 +75,29 @@ router.onError((error) => {
 });
 
 router.beforeEach(async (to, from, next) => {
+  const queryString = window.location.search;
+  const params = new URLSearchParams(queryString);
+  const urlParam = params.get('tgWebAppStartParam');
+  const urlParams = getSessionStore("urlParams")
+  if (urlParam && urlParam != urlParams) {
+    setSessionStore("urlParams", urlParam);
+    // 如果推送最新
+    if (urlParam.indexOf("next_") > -1) {
+      const paramArray = urlParam.split("-");
+      if (paramArray.length >= 2) {
+        const useCheckIn = useCheckInStore();
+        useCheckIn.setChallengeId(paramArray[1]);
+      }
+    } else if (urlParam.indexOf("frens") > -1) {
+      setSessionStore('nextPath', "/frens");
+    } else if (urlParam.indexOf("3base") > -1) {
+      setSessionStore('recommend', "3base");
+    } else {
+      // 保存邀请码
+      setSessionStore('inviteCode', urlParam);
+    }
+  }
+
   const userStore = useUserStore();
   if (userStore.isLogin) {
     const { Telegram } = (window as any)
@@ -82,16 +106,7 @@ router.beforeEach(async (to, from, next) => {
       WebApp.setHeaderColor("#FF197C")
     }
 
-    await validateToken({});
-
-    // 如果有路由
-    const nextPath = getSessionStore('nextPath');
-    if (nextPath) {
-      removeSessionStore('nextPath');
-      next({ name: "Frens" });
-    }
-
-    return
+    validateToken({});
   } else {
     const { Telegram } = (window as any)
     let tg_certificate: any;
@@ -118,19 +133,17 @@ router.beforeEach(async (to, from, next) => {
 
       // 加载用户信息
       userStore.fetchUserInfo();
-
-      // 如果有路由
-      const nextPath = getSessionStore('nextPath');
-      if (nextPath) {
-        removeSessionStore('nextPath');
-        next({ name: "Frens" });
-      }
-
-      return
     }
   }
 
-  next();
+  // 如果有路由
+  const nextPath = getSessionStore('nextPath');
+  if (nextPath) {
+    removeSessionStore('nextPath');
+    next({ name: "Frens" });
+  } else {
+    next();
+  }
 });
 
 // 4. 导出router

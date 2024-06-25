@@ -20,9 +20,6 @@
 import TopToolbar from '@/components/TopToolbar.vue';
 import BottomNav from '@/components/BottomNav.vue';
 import { useMessageStore } from "@/store/message.js";
-import { useCheckInStore, } from '@/store/check_in.js';
-import { getSessionStore, setSessionStore } from "@/utils";
-
 
 import { defineComponent } from 'vue';
 export default defineComponent({
@@ -49,31 +46,6 @@ export default defineComponent({
       const { messageText } = useMessageStore();
       return messageText
     },
-  },
-  created() {
-    const queryString = window.location.search;
-    const params = new URLSearchParams(queryString);
-    const urlParam = params.get('tgWebAppStartParam');
-    const urlParams = getSessionStore("urlParams")
-    if (urlParam && urlParam != urlParams) {
-      // 如果推送最新
-      if (urlParam.indexOf("next_") > -1) {
-        const paramArray = urlParam.split("-");
-        if (paramArray.length >= 2) {
-          const useCheckIn = useCheckInStore();
-          useCheckIn.setChallengeId(paramArray[1]);
-        }
-      } else if (urlParam.indexOf("frens") > -1) {
-        setSessionStore('nextPath', "/frens");
-      } else if (urlParam.indexOf("3base") > -1) {
-        setSessionStore('recommend', "3base");
-      } else {
-        // 保存邀请码
-        setSessionStore('inviteCode', urlParam);
-      }
-    }
-
-
   },
   methods: {
     // 关闭消息
