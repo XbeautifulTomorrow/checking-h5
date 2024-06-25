@@ -1,5 +1,5 @@
 <template>
-  <div class="content">
+  <div class="down_wrapper">
     <slot v-bind="{
       d: days,
       h: hours,
@@ -119,7 +119,7 @@ export default defineComponent({
 });
 </script>
 <style lang='scss' scoped>
-.content {
+.down_wrapper {
   width: auto;
   display: inline-flex;
   align-items: center;

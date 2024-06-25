@@ -68,16 +68,16 @@
             <v-img :width="30" cover :src="project[item.signType as keyof typeof project]"></v-img>
             <!--已报名-->
             <template v-if="challengeInfo?.userStatus != 2">
+              <!--未开始-->
               <div v-if="item.userStatus == 1" class="check_in_time">
-                <!--未开始-->
                 {{ formatTime(item.startDate) }}
               </div>
-              <template v-else-if="item.userStatus == 2">
-                <!--可签到倒计时-->
+              <!--可签到倒计时-->
+              <div v-else-if="item.userStatus == 2" class="check_in_time">
                 <countDown v-slot="timeObj" @onEnd="fetchChallengeDetail()" :time="getCountDown(item, 2)">
                   <span class="check_in">{{ `${timeObj.mm}m${timeObj.ss}s Left` }}</span>
                 </countDown>
-              </template>
+              </div>
               <!--已签到，显示获得积分-->
               <div v-else-if="item.userStatus == 3" class="check_in_time">
                 <div class="points">
@@ -238,10 +238,11 @@
       <div class="dialog_box">
         <div class="dialog_text">Re-check in will cost energy.</div>
         <div class="energy_box">
-          <span class="finished">{{ `- 1` }}</span>
+          <span class="finished">{{ `- ${challengeInfo?.supplementaryEnergy}` }}</span>
           <v-icon color="#FFF100" :size="16" icon="mdi-lightning-bolt"></v-icon>
         </div>
-        <v-btn class="re_check_in" @click="handleReCheckin()">
+        <v-btn class="re_check_in" @click="handleReCheckin()" :loading="reCheckinLoading"
+          :disabled="Number(challengeInfo?.supplementaryEnergy) >= Number(userInfo?.energyAmount)">
           <span class="finished">Re-Check In</span>
         </v-btn>
       </div>
@@ -328,6 +329,7 @@ interface challengeDetails {
   prizePool: number;
   winAmount: number | string | any;
   rewardAmount: number | string | any;
+  supplementaryEnergy: number | string | any;
   ucCheckInVOs: Array<ucCheckInVOs>;
   cpRankingVOs: Array<cpRankingVOs>;
   [x: string]: string | number | any;
@@ -363,8 +365,9 @@ export default defineComponent({
       showRecharge: false, // 充值弹窗
       showRules: true, // 规则弹窗
       reCheckinInfo: {} as ucCheckInVOs,
-      joinLoading: false, // 报名加载
       claimLoading: false, // 领取加载
+      joinLoading: false, // 报名加载
+      reCheckinLoading: false, // 补签加载
       isLoad: true // 是否第一次加载
     };
   },
@@ -574,6 +577,7 @@ export default defineComponent({
     },
     // 补签
     async handleReCheckin() {
+      this.reCheckinLoading = true;
       const { reCheckinInfo } = this;
       const { setMessageText } = useMessageStore();
 
@@ -582,6 +586,7 @@ export default defineComponent({
         signType: reCheckinInfo.signType
       });
 
+      this.reCheckinLoading = false;
       if (res.code == 200) {
         this.showReCheckin = false;
 
