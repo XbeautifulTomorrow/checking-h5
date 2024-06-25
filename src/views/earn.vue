@@ -162,6 +162,8 @@ export default defineComponent({
         if (event.type == "EXPLORE" && isOpen != "1") {
           setSessionStore(event.abbreviation, "1");
           this.toTask(event);
+
+          event.loading = false;
           return;
         }
 
