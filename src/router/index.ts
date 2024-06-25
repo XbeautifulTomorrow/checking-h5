@@ -105,7 +105,7 @@ router.beforeEach(async (to, from, next) => {
       WebApp.setHeaderColor("#FF197C")
     }
 
-    validateToken({});
+    await validateToken({});
 
     // 如果有路由
     const nextPath = getSessionStore('nextPath');
