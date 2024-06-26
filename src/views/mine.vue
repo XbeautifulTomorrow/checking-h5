@@ -51,7 +51,7 @@
     </div>
     <v-dialog v-model="showRecharge" width="auto">
       <div class="dialog_box">
-        <div class="dialog_text">Opps, You GMC is not enough! You have two ways to get more GMC.</div>
+        <div class="dialog_text">Opps, You $GMC is not enough! You have two ways to get more $GMC.</div>
         <div class="recharge_item">
           <span>1. Invite Friends</span>
           <v-btn color="#49B6F6" height="24" density="compact" @click="toFrens()" variant="flat">

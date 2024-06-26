@@ -82,7 +82,7 @@
         <div class="method_box">
           <div class="method_text">
             <div>
-              <span>Invite a Friends with </span>
+              <span>Invite a Friend with </span>
               <span style="color:#49B6F6;">Telegram Premium</span>
             </div>
           </div>
