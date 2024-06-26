@@ -3,7 +3,10 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite --mode dev",
-    "build": "vue-tsc --noEmit && vite build --mode prod",
+    "test": "vite --mode test",
+    "prod": "vite --mode prod",
+    "build:dev": "vue-tsc --noEmit && vite build --mode test",
+    "build:prod": "vue-tsc --noEmit && vite build --mode prod",
     "preview": "vite preview"
   },
   "dependencies": {
