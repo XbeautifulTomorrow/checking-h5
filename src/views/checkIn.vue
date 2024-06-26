@@ -109,20 +109,17 @@
     <div class="interval_panel">
       <div class="interval"></div>
       <div class="join_panel">
-        <!-- 未报名 -->
-        <v-text-field class="" v-model="bonusNum" :placeholder="formatPlaceholder()" variant="solo"
-          density="comfortable" :readonly="challengeInfo?.stage != 'REGISTRATION'" v-if="challengeInfo?.userStatus == 2"
-          rounded="10px">
-          <template v-slot:append-inner>
-            <v-btn v-if="challengeInfo?.stage == 'REGISTRATION'" :loading="joinLoading" class="join_btn"
-              @click="handleRegistration()">
-              <span class="finished">Join</span>
-            </v-btn>
-            <v-btn v-else class="join_btn disabled">
-              <span class="finished">Join</span>
-            </v-btn>
-          </template>
-        </v-text-field>
+        <template v-if="challengeInfo?.userStatus == 2">
+          <!--可以报名-->
+          <v-btn class="check_in_btn" height="42" @click="showJoin = true"
+            v-if="challengeInfo?.stage == 'REGISTRATION'">
+            <span class="finished">ACTIVATE AND EARN</span>
+          </v-btn>
+          <!--已开始，不能报名-->
+          <v-btn class=" check_in_btn not_started" height="42" readonly v-else>
+            <span class="finished">{{ formatPlaceholder }}</span>
+          </v-btn>
+        </template>
         <!-- 已报名 -->
         <template v-else-if="challengeInfo?.userStatus == 1">
           <!--可以签到，计算积分-->
@@ -234,6 +231,33 @@
       <span class="help">?</span>
       <span class="rules_text">RULE</span>
     </div>
+    <v-dialog v-model="showJoin" width="100%">
+      <div class="join_dialog_panel">
+        <div class="join_title">Join To Split Bonus.</div>
+        <div class="bonus_img">
+          <v-img :width="100" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
+        </div>
+        <div class="join_quantity">
+          <v-btn color="#49B6F6" height="40" width="40" density="compact" @click="handleQuantityChange(1)" border
+            variant="flat" :disabled="bonusNum <= userInfo?.minAmount" size="x-small">
+            <span class="operating_text">-</span>
+          </v-btn>
+          <div class="quantity">{{ bonusNum }}</div>
+          <v-btn color="#49B6F6" height="40" width="40" density="compact" @click="handleQuantityChange(2)"
+            variant="flat" :disabled="bonusNum >= userInfo?.maxAmount" size="x-small">
+            <span class="operating_text">+</span>
+          </v-btn>
+        </div>
+        <div class="join_btns">
+          <div class="join_text">More investment, higher returns. </div>
+          <v-btn color="#49B6F6" height="40" width="260" density="compact" @click="handleRegistration()" variant="flat"
+            :loading="joinLoading" size="x-small">
+            <span class="btn_text">CHECK-IN NOW</span>
+          </v-btn>
+        </div>
+      </div>
+    </v-dialog>
+    <!--补签弹窗-->
     <v-dialog v-model="showReCheckin" width="auto">
       <div class="dialog_box">
         <div class="dialog_text">Re-check in will cost energy.</div>
@@ -246,6 +270,7 @@
         </v-btn>
       </div>
     </v-dialog>
+    <!--邀请弹窗-->
     <v-dialog v-model="showInvite" width="auto">
       <div class="dialog_box">
         <div class="dialog_text">You don't have enough energy to re-check in.</div>
@@ -256,6 +281,7 @@
         </v-btn>
       </div>
     </v-dialog>
+    <!--充值弹窗-->
     <v-dialog v-model="showRecharge" width="auto">
       <div class="dialog_box">
         <div class="dialog_text">Opps, You $GMC is not enough! You have two ways to get more $GMC.</div>
@@ -273,6 +299,7 @@
         </div>
       </div>
     </v-dialog>
+    <!--规则弹窗-->
     <rules></rules>
   </div>
 </template>
@@ -343,7 +370,7 @@ export default defineComponent({
         prizePool: 0
       } as challengeDetails,
       currentIndex: 0,
-      bonusNum: null as number | any,
+      bonusNum: 0,
       prizePoolNum: 0,
       winBonuNum: 0,
       page: 1,
@@ -359,10 +386,10 @@ export default defineComponent({
         time: 1800,
         timer: null as number | any
       },
+      showJoin: false, // 参加弹窗
       showReCheckin: false, // 补签弹窗
       showInvite: false, // 邀请弹窗
       showRecharge: false, // 充值弹窗
-      showRules: true, // 规则弹窗
       reCheckinInfo: {} as ucCheckInVOs,
       claimLoading: false, // 领取加载
       joinLoading: false, // 报名加载
@@ -390,6 +417,16 @@ export default defineComponent({
     challengeId() {
       const { challengeId } = useCheckInStore();
       return challengeId
+    },
+    // 输入框提示
+    formatPlaceholder() {
+      const { challengeInfo } = this;
+
+      if (challengeInfo.stage == "SIGNIN") {
+        return "The challenge is locked.";
+      }
+
+      return "The challenge is closed.";
     },
     // 获胜额外奖励
     winBonus() {
@@ -459,6 +496,8 @@ export default defineComponent({
     },
   },
   async created() {
+    const { userInfo: { minAmount } } = this;
+    this.bonusNum = minAmount;
     this.fetchChallengeList();
   },
   methods: {
@@ -511,6 +550,16 @@ export default defineComponent({
         });
       }
     },
+    // 参加代币数量
+    handleQuantityChange(type: number) {
+      const { userInfo: { minAmount } } = this;
+
+      if (type == 1) {
+        this.bonusNum -= minAmount;
+        return
+      }
+      this.bonusNum += minAmount;
+    },
     // 挑战报名
     async handleRegistration() {
       const { bonusNum, currentChallenge, userInfo } = this;
@@ -534,7 +583,8 @@ export default defineComponent({
 
       this.joinLoading = false;
       if (res.code == 200) {
-        this.bonusNum = null;
+        this.showJoin = false;
+        this.bonusNum = userInfo?.minAmount;
         setMessageText("Challenge has been joined.");
         const userStore = useUserStore();
         userStore.fetchUserInfo();
@@ -687,17 +737,6 @@ export default defineComponent({
     formatTime(event: any) {
       return timeForStr("2001-01-01 " + event, "HH:mm")
     },
-    // 输入框提示
-    formatPlaceholder() {
-      const { userInfo, challengeInfo } = this;
-      if (challengeInfo.stage == "REGISTRATION") {
-        return `Limit ${userInfo?.minAmount}-${userInfo?.maxAmount} GMC`;
-      } else if (challengeInfo.stage == "SIGNIN") {
-        return "The challenge is locked.";
-      } else {
-        return "The challenge is closed.";
-      }
-    },
     // 获取倒计时时间
     getCountDown(event: ucCheckInVOs, type = 1) {
       const { firstStart } = this;
@@ -780,8 +819,8 @@ export default defineComponent({
   watch: {
     currentIndex(val, old) {
       if (this.isLoad) return;
-      const { challengeList } = this;
-      this.bonusNum = null;
+      const { challengeList, userInfo: { minAmount } } = this;
+      this.bonusNum = minAmount;
       const { setChallengeId } = useCheckInStore();
       setChallengeId(challengeList[val].challengeId);
 
@@ -1382,8 +1421,88 @@ export default defineComponent({
   text-align: left;
 }
 
+.join_dialog_panel {
+  background-color: #fd516c;
+  border-radius: 16px;
+  padding: 16px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  color: #fff;
+  text-align: center;
+  font-size: 20px;
+  line-height: 1.2;
+
+  .join_title {
+    font-weight: 700;
+    font-style: normal;
+    font-size: 24px;
+    color: #FDEFD6;
+  }
+
+  .bonus_img {
+    margin: 24px 0 16px;
+
+    .v-img {
+      flex: none;
+    }
+  }
+
+  .join_quantity {
+    width: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(49, 49, 49, 0.9);
+    border-radius: 16px;
+
+    .v-btn {
+      border: 1px solid #000;
+    }
+
+    .operating_text {
+      color: #fff;
+      font-weight: bold;
+      font-size: 30px;
+      line-height: 1;
+    }
+
+    .quantity {
+      color: #FDEFD6;
+      flex: 1;
+    }
+  }
+
+  .join_btns {
+
+    .join_text {
+      font-size: 16px;
+      color: #FFFFFF;
+      margin: 16px 0 4px;
+    }
+
+    .v-btn {
+      width: 100%;
+      border-radius: 10px;
+      background: linear-gradient(90deg, rgba(253, 239, 213, 1) 0%, rgba(248, 215, 156, 1) 101%);
+      box-shadow: none;
+      color: #FE2E75;
+    }
+
+    .btn_text {
+      font-size: 18px;
+      color: #FE2E75;
+      font-weight: 400;
+      letter-spacing: 0;
+    }
+  }
+}
+
 .finished {
   text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
 }
 
 .avatar {
