@@ -93,6 +93,16 @@ router.beforeEach(async (to, from, next) => {
       setSessionStore('nextPath', "/frens");
     } else if (urlParam.indexOf("3base") > -1) {
       setSessionStore('recommend', "3base");
+      const inviteArray = urlParam.split("_");
+      if (inviteArray.length >= 2) {
+        if (inviteArray[0] == "3base") {
+          // 保存邀请码
+          setSessionStore('inviteCode', inviteArray[1]);
+        } else {
+          // 保存邀请码
+          setSessionStore('inviteCode', inviteArray[0]);
+        }
+      }
     } else {
       // 保存邀请码
       setSessionStore('inviteCode', urlParam);
