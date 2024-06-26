@@ -678,7 +678,7 @@ export default defineComponent({
       } else if (signType == "LUNCH") {
         return "Lunch"
       } else if (signType == "SUPPER") {
-        return "Supper"
+        return "Dinner"
       } else if (signType == "GN") {
         return "GN"
       }

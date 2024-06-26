@@ -35,7 +35,7 @@
         </span>
         <br />
         <span>
-          <span>Supper: </span>
+          <span>Dinner: </span>
           <span style="font-weight: bold;color: #FDEFD6;">From UTC 18:00 to 18:30</span>
         </span>
         <br />
