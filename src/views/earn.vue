@@ -233,7 +233,7 @@ export default defineComponent({
         if (import.meta.env.MODE == "prod") {
           inviteUrl = `https://t.me/theGMCoin_Bot/GMCoin?startapp=${inviteCode}`;
         } else {
-          inviteUrl = `https://t.me/cyclone384_bot/checking?startapp=${inviteCode}`
+          inviteUrl = `https://t.me/gm_coin_test_bot/checking?startapp=${inviteCode}`
         }
 
         shareOnTelegram(inviteUrl);
