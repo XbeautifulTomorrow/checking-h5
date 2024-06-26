@@ -114,7 +114,7 @@
                 <v-img :width="60" cover :src="levelImages[item.level as keyof typeof levelImages]"></v-img>
                 <div class="user_points" v-if="item.points">
                   <v-img :width="18" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
-                  <span>{{ `${Number(item.points).toLocaleString()}` }}</span>
+                  <span>{{ `${unitConversion(item.points)}` }}</span>
                 </div>
               </div>
             </div>
@@ -128,7 +128,7 @@
               </div>
               <div class="bonus" v-if="item.gmcAmount">
                 <v-img :width="18" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-                <span>{{ `+ ${Number(item.gmcAmount).toLocaleString()}` }}</span>
+                <span>{{ `+ ${unitConversion(item.gmcAmount)}` }}</span>
               </div>
             </div>
           </div>
@@ -146,7 +146,7 @@
 import { defineComponent } from 'vue';
 import { useUserStore } from "@/store/user.js";
 import { getInviteUserList } from "@/services/api/user.js";
-import { shareOnTelegram, timeForStr } from "@/utils";
+import { shareOnTelegram, timeForStr, unitConversion } from "@/utils";
 
 // 等级图标
 import Level_1 from "@/assets/images/svg/main/level_1.svg";
@@ -216,6 +216,7 @@ export default defineComponent({
   },
   methods: {
     timeForStr: timeForStr,
+    unitConversion: unitConversion,
     // 获取邀请用户列表
     async fetchInviteUserList(type = 1, isSearch = true) {
       if (this.finished) return;
@@ -517,6 +518,10 @@ export default defineComponent({
     font-weight: bold;
     font-size: 16px;
     color: #FFFFFF;
+    max-width: 140px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     &.premium {
       color: #49B6F6;
@@ -529,6 +534,7 @@ export default defineComponent({
 
     &>.v-img {
       margin-right: 8px;
+      flex: none;
     }
   }
 

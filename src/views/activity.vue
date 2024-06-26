@@ -59,6 +59,7 @@ import { defineComponent } from 'vue';
 import { useUserStore } from "@/store/user.js";
 import { getChallengeList } from '@/services/api/challenge';
 import { useCheckInStore } from '@/store/check_in.js';
+import { unitConversion } from "@/utils";
 
 interface userInfoVOList {
   avatar: string;
@@ -95,6 +96,7 @@ export default defineComponent({
     },
   },
   methods: {
+    unitConversion: unitConversion,
     // 获取挑战列表
     async fetchChallengeList(type = 1, isSearch = true) {
       if (this.finished) return;
@@ -178,35 +180,6 @@ export default defineComponent({
       } else if (event == 5) {
         return 'CLAIMED';
       }
-    },
-    // 单位换算
-    unitConversion(val: number) {
-      let h = 1;
-      let kh = h * 1000;
-      let mh = kh * 1000;
-      let gh = mh * 1000;
-      let th = gh * 1000;
-      let ph = th * 1000;
-      let eh = ph * 1000;
-      let texts = 0 as number | string | any;
-      val = Number(val || 0);
-      if (val < kh) {
-        texts = val;
-      } else if (val >= kh && val < mh) {
-        texts = (val / kh).toFixed(2) + "K";
-      } else if (val >= mh && val < gh) {
-        texts = (val / mh).toFixed(2) + "M";
-      } else if (val >= gh && val < th) {
-        texts = (val / gh).toFixed(2) + "B";
-      } else if (val >= th && val < ph) {
-        texts = (val / th).toFixed(2) + "T";
-      } else if (val >= ph && val < eh) {
-        texts = (val / ph).toFixed(2) + "P";
-      } else if (val >= eh) {
-        texts = (val / eh).toFixed(2) + "E";
-      }
-
-      return texts;
     }
   },
   mounted() {
