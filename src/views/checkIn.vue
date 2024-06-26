@@ -387,7 +387,7 @@ export default defineComponent({
         time: 1800,
         timer: null as number | any
       },
-      showJoin: true, // 参加弹窗
+      showJoin: false, // 参加弹窗
       showReCheckin: false, // 补签弹窗
       showInvite: false, // 邀请弹窗
       showRecharge: false, // 充值弹窗
