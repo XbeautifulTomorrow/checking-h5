@@ -113,7 +113,7 @@
           <!--可以报名-->
           <v-btn class="check_in_btn" height="42" @click="showJoin = true"
             v-if="challengeInfo?.stage == 'REGISTRATION'">
-            <span class="finished">ACTIVATE AND EARN</span>
+            <span class="finished">START EARN</span>
           </v-btn>
           <!--已开始，不能报名-->
           <v-btn class=" check_in_btn not_started" height="42" readonly v-else>
@@ -231,11 +231,11 @@
       <span class="help">?</span>
       <span class="rules_text">RULE</span>
     </div>
-    <v-dialog v-model="showJoin" width="100%">
+    <v-dialog v-model="showJoin" width="100%" :opacity="0.8">
       <div class="join_dialog_panel">
         <div class="join_title">Join To Split Bonus.</div>
         <div class="bonus_img">
-          <v-img :width="100" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
+          <v-img :width="120" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
         </div>
         <div class="join_quantity">
           <v-btn color="#49B6F6" height="40" width="40" density="compact" @click="handleQuantityChange(1)" border
@@ -386,7 +386,7 @@ export default defineComponent({
         time: 1800,
         timer: null as number | any
       },
-      showJoin: false, // 参加弹窗
+      showJoin: true, // 参加弹窗
       showReCheckin: false, // 补签弹窗
       showInvite: false, // 邀请弹窗
       showRecharge: false, // 充值弹窗
@@ -1424,7 +1424,7 @@ export default defineComponent({
 .join_dialog_panel {
   background-color: #fd516c;
   border-radius: 16px;
-  padding: 16px;
+  padding: 16px 16px 32px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -1458,7 +1458,18 @@ export default defineComponent({
     border-radius: 16px;
 
     .v-btn {
-      border: 1px solid #000;
+      border: 2px solid #000;
+      border-radius: 12px;
+      box-sizing: border-box;
+
+      &.v-btn--disabled {
+        background-color: #B7B6B4 !important;
+        color: #C8C1C1;
+      }
+
+      :deep(.v-btn__overlay) {
+        opacity: 0 !important;
+      }
     }
 
     .operating_text {
@@ -1479,7 +1490,7 @@ export default defineComponent({
     .join_text {
       font-size: 16px;
       color: #FFFFFF;
-      margin: 16px 0 4px;
+      margin: 24px 0 4px;
     }
 
     .v-btn {
@@ -1493,7 +1504,6 @@ export default defineComponent({
     .btn_text {
       font-size: 18px;
       color: #FE2E75;
-      font-weight: 400;
       letter-spacing: 0;
     }
   }
@@ -1502,7 +1512,6 @@ export default defineComponent({
 .finished {
   text-transform: none;
   letter-spacing: 0;
-  font-weight: 400;
 }
 
 .avatar {
