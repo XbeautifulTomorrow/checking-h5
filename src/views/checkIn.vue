@@ -111,24 +111,24 @@
       <div class="join_panel">
         <template v-if="challengeInfo?.userStatus == 2">
           <!--可以报名-->
-          <v-btn class="check_in_btn" height="42" @click="showJoin = true"
+          <v-btn class="check_in_btn" height="42" @click="handleOpenJoin()" :elevation="8"
             v-if="challengeInfo?.stage == 'REGISTRATION'">
-            <span class="finished">ACTIVATE AND EARN</span>
+            <span class="finished">START EARN</span>
           </v-btn>
           <!--已开始，不能报名-->
-          <v-btn class=" check_in_btn not_started" height="42" readonly v-else>
+          <v-btn class=" check_in_btn not_started" height="42" readonly v-else :elevation="8">
             <span class="finished">{{ formatPlaceholder }}</span>
           </v-btn>
         </template>
         <!-- 已报名 -->
         <template v-else-if="challengeInfo?.userStatus == 1">
           <!--可以签到，计算积分-->
-          <v-btn class="check_in_btn" height="42" @click="handleCheckIn()" v-if="checkStart">
+          <v-btn class="check_in_btn" height="42" @click="handleCheckIn()" v-if="checkStart" :elevation="8">
             <span class="finished">{{ `Check In +${Number(createPoints.time).toLocaleString()}` }}</span>
             <v-img :width="24" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
           </v-btn>
           <!--其他状态，或者已经过了签到时间-->
-          <v-btn class=" check_in_btn not_started" height="42" readonly v-else>
+          <v-btn class=" check_in_btn not_started" height="42" readonly v-else :elevation="8">
             <countDown class="finished" v-slot="timeObj" @onEnd="fetchChallengeDetail()"
               :time="getCountDown(isNotStart)" v-if="isLastDay">
               {{ `Next check-in start in ${timeObj.hh}:${timeObj.mm}:${timeObj.ss}` }}
@@ -138,18 +138,19 @@
         </template>
         <!-- 失败 -->
         <template v-else-if="challengeInfo?.userStatus == 3">
-          <v-btn class="check_in_btn failed" readonly>
+          <v-btn class="check_in_btn failed" readonly :elevation="8">
             <span class="finished">You Failed</span>
           </v-btn>
         </template>
         <!--结束，领取奖励-->
         <template v-else-if="challengeInfo?.userStatus > 3">
           <v-btn v-if="challengeInfo?.userStatus == 4" class="check_in_btn" @click="claimBonus()"
-            :loading="claimLoading">
+            :loading="claimLoading" :elevation="8">
             <span class="finished">{{ `Claim +${Number(challengeInfo?.rewardAmount).toLocaleString()}` }}</span>
             <v-img :width="24" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
           </v-btn>
-          <v-btn v-if="challengeInfo?.userStatus == 5" class="check_in_btn not_started" :loading="claimLoading">
+          <v-btn v-if="challengeInfo?.userStatus == 5" class="check_in_btn not_started" :loading="claimLoading"
+            :elevation="8">
             <span class="finished">{{ `${Number(challengeInfo?.rewardAmount).toLocaleString()} $GMC Claimed` }}</span>
           </v-btn>
         </template>
@@ -231,11 +232,11 @@
       <span class="help">?</span>
       <span class="rules_text">RULE</span>
     </div>
-    <v-dialog v-model="showJoin" width="100%">
+    <v-dialog v-model="showJoin" width="100%" :opacity="0.8">
       <div class="join_dialog_panel">
         <div class="join_title">Join To Split Bonus.</div>
         <div class="bonus_img">
-          <v-img :width="100" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
+          <v-img :width="120" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
         </div>
         <div class="join_quantity">
           <v-btn color="#49B6F6" height="40" width="40" density="compact" @click="handleQuantityChange(1)" border
@@ -251,7 +252,7 @@
         <div class="join_btns">
           <div class="join_text">More investment, higher returns. </div>
           <v-btn color="#49B6F6" height="40" width="260" density="compact" @click="handleRegistration()" variant="flat"
-            :loading="joinLoading" size="x-small">
+            :elevation="8" :loading="joinLoading" size="x-small">
             <span class="btn_text">CHECK-IN NOW</span>
           </v-btn>
         </div>
@@ -284,7 +285,7 @@
     <!--充值弹窗-->
     <v-dialog v-model="showRecharge" width="auto">
       <div class="dialog_box">
-        <div class="dialog_text">Opps, You $GMC is not enough! You have two ways to get more $GMC.</div>
+        <div class="dialog_text">Opps, You $GMC is not enough! You have two ways to get more.</div>
         <div class="recharge_item">
           <span>1. Invite Friends</span>
           <v-btn color="#49B6F6" height="24" density="compact" @click="toFrens()" variant="flat">
@@ -496,8 +497,6 @@ export default defineComponent({
     },
   },
   async created() {
-    const { userInfo: { minAmount } } = this;
-    this.bonusNum = minAmount;
     this.fetchChallengeList();
   },
   methods: {
@@ -549,6 +548,12 @@ export default defineComponent({
           (window as any).LetterAvatar.transform();
         });
       }
+    },
+    // 打开参加弹窗
+    handleOpenJoin() {
+      const { userInfo: { minAmount } } = this;
+      this.bonusNum = minAmount;
+      this.showJoin = true;
     },
     // 参加代币数量
     handleQuantityChange(type: number) {
@@ -1424,7 +1429,7 @@ export default defineComponent({
 .join_dialog_panel {
   background-color: #fd516c;
   border-radius: 16px;
-  padding: 16px;
+  padding: 16px 16px 32px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -1458,7 +1463,18 @@ export default defineComponent({
     border-radius: 16px;
 
     .v-btn {
-      border: 1px solid #000;
+      border: 2px solid #000;
+      border-radius: 12px;
+      box-sizing: border-box;
+
+      &.v-btn--disabled {
+        background-color: #B7B6B4 !important;
+        color: #C8C1C1;
+      }
+
+      :deep(.v-btn__overlay) {
+        opacity: 0 !important;
+      }
     }
 
     .operating_text {
@@ -1479,7 +1495,7 @@ export default defineComponent({
     .join_text {
       font-size: 16px;
       color: #FFFFFF;
-      margin: 16px 0 4px;
+      margin: 24px 0 4px;
     }
 
     .v-btn {
@@ -1493,7 +1509,6 @@ export default defineComponent({
     .btn_text {
       font-size: 18px;
       color: #FE2E75;
-      font-weight: 400;
       letter-spacing: 0;
     }
   }
@@ -1502,7 +1517,6 @@ export default defineComponent({
 .finished {
   text-transform: none;
   letter-spacing: 0;
-  font-weight: 400;
 }
 
 .avatar {
