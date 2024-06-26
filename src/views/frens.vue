@@ -510,6 +510,7 @@ export default defineComponent({
   &>img,
   &>v-img {
     margin-right: 8px;
+    flex: none;
   }
 
   .user_name {
