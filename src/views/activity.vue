@@ -9,7 +9,7 @@
                 <v-avatar v-if="userInfo?.avatar" size="30" :image="userInfo?.avatar"></v-avatar>
                 <img v-else width="30" height="30" :avatar="userInfo?.userName || 'avatar'" color="#3D3D3D"
                   class="avatar">
-                <span v-if="item.userStatus == 1">YUO</span>
+                <span v-if="item.userStatus == 1">YOU</span>
                 <span v-else-if="item.userStatus != 3">WIN!</span>
                 <span v-else-if="item.userStatus == 3">FAIL</span>
               </div>
