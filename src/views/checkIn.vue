@@ -22,7 +22,7 @@
     <div class="check_in_panel">
       <!--已报名-->
       <div class="check_in_hint" v-if="challengeInfo?.userStatus == 1">
-        <span v-if="isreCheckin">
+        <span v-if="challengeInfo?.stage != 'REGISTRATION' && isreCheckin">
           <span>Please </span>
           <span style="font-weight: bold;">Re-Checkin</span>
           <span> in time or you will fail this challenge!</span>
