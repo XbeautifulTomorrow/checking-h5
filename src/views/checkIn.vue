@@ -22,7 +22,11 @@
     <div class="check_in_panel">
       <!--已报名-->
       <div class="check_in_hint" v-if="challengeInfo?.userStatus == 1">
-        <span v-if="isreCheckin">Please Re-Checkin in time or you will fail this challenge!</span>
+        <span v-if="isreCheckin">
+          <span>Please </span>
+          <span style="font-weight: bold;">Re-Checkin</span>
+          <span> in time or you will fail this challenge!</span>
+        </span>
         <span v-else>
           <span>{{ `Keep check in for ` }}</span>
           <span style="font-weight: bold;">{{ `${challengeInfo?.keepCheckDays} ${challengeInfo?.keepCheckDays > 1 ?
