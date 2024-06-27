@@ -22,7 +22,8 @@
     <div class="check_in_panel">
       <!--已报名-->
       <div class="check_in_hint" v-if="challengeInfo?.userStatus == 1">
-        <span>
+        <span v-if="isreCheckin">Please Re-Checkin in time or you will fail this challenge!</span>
+        <span v-else>
           <span>{{ `Keep check in for ` }}</span>
           <span style="font-weight: bold;">{{ `${challengeInfo?.keepCheckDays} ${challengeInfo?.keepCheckDays > 1 ?
             'days' : 'day'} ` }}</span>
@@ -467,6 +468,12 @@ export default defineComponent({
     checkStart() {
       const { challengeInfo: { ucCheckInVOs } } = this;
       const checkIn = ucCheckInVOs.findIndex(e => e.userStatus == 2) > -1;
+      return checkIn;
+    },
+    // 是否有补签项
+    isreCheckin() {
+      const { challengeInfo: { ucCheckInVOs } } = this;
+      const checkIn = ucCheckInVOs.findIndex(e => e.userStatus == 4) > -1;
       return checkIn;
     },
     // 获取第一个挑战
@@ -944,15 +951,17 @@ export default defineComponent({
   background-color: rgba(255, 255, 255, 1);
   border: none;
   border-radius: 14px;
+  padding: 8px;
 }
 
 .check_in_hint {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 38px;
+  margin-bottom: 8px;
   font-size: 14px;
   color: #FE2E75;
+  text-align: center;
 }
 
 .check_in_items {
