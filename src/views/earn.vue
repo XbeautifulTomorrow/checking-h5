@@ -245,10 +245,10 @@ export default defineComponent({
         this.$router.push('/activity');
       } else if (abbreviation == "TGGROUP") {
         // 加入Telegram群
-        openUrl("https://t.me/GMCoin_Chat");
+        openUrl("https://t.me/GMCoinChat1");
       } else if (abbreviation == "TGCHANNEL") {
         // 加入Telegram群
-        openUrl("https://t.me/theGMCoin");
+        openUrl("https://t.me/GMCoinChannel");
       } else if (abbreviation == "TW") {
         // 关住Twitter，跳到用户
         openUrl("https://x.com/GMCoin_Fam");
