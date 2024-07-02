@@ -121,6 +121,7 @@ export const useUserStore = defineStore("user", {
             WebApp.setHeaderColor("#FF197C")
             tg_certificate = btoa(WebApp.initData);
             console.log(tg_certificate);
+            console.log(WebApp.version);
           }
 
           const inviteCode = getSessionStore("inviteCode");

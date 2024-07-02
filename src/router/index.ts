@@ -126,8 +126,9 @@ router.beforeEach(async (to, from, next) => {
     let tg_certificate: any;
     if (Telegram) {
       const { WebApp } = Telegram;
-      WebApp.setHeaderColor("#FF197C")
+      WebApp.setHeaderColor("#FF197C");
       tg_certificate = btoa(WebApp.initData);
+      console.log(WebApp.version);
       console.log(tg_certificate);
     }
 
