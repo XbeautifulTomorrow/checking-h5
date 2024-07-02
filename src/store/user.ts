@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { setSessionStore, getSessionStore, removeSessionStore } from "@/utils";
+import { getLocalStore, setSessionStore, getSessionStore, removeSessionStore } from "@/utils";
 import { getUserInfo, receiveGifts } from "@/services/api/user";
 import { en, zhHant } from 'vuetify/locale'
 import { getLang } from "@/locales/index";
@@ -44,7 +44,7 @@ export const useUserStore = defineStore("user", {
     logInfo: {} as logInterface,
     userPage: null as string | any,
     currentTime: null as string | any,
-    isLogin: getSessionStore("certificate") ? true : false,
+    isLogin: getLocalStore("certificate") ? true : false,
     showGift: false,
     retryCount: 5, // 登录重试次数
     loadLog: false,
@@ -106,13 +106,14 @@ export const useUserStore = defineStore("user", {
 
       localStorage.removeItem("logInfo");
       localStorage.removeItem("userInfo");
+      localStorage.removeItem("certificate");
       this.isLogin = false;
       this.userInfo = {} as userInterface;
       window.NavigationPreloadManager;
 
       if (import.meta.env.MODE != "dev") {
         if (this.retryCount >= 0) {
-          window.location.href = "/";
+          // window.location.href = "/";
         }
 
         this.retryCount--;

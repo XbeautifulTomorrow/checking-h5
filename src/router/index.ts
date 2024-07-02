@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import { useUserStore } from "@/store/user.js";
 import { validateToken, telegramLogin } from "@/services/api/user";
 import { useCheckInStore, } from '@/store/check_in.js';
-import { setSessionStore, getSessionStore, removeSessionStore } from "@/utils";
+import { setLocalStore, setSessionStore, getSessionStore, removeSessionStore } from "@/utils";
 
 //1. 定义要使用到的路由组件  （一定要使用文件的全名，得包含文件后缀名）
 import activity from '@/views/activity.vue';
@@ -131,7 +131,7 @@ router.beforeEach(async (to, from, next) => {
       console.log(tg_certificate);
     }
 
-    const inviteCode = getSessionStore("inviteCode")
+    const inviteCode = getSessionStore("inviteCode");
     const res = await telegramLogin({
       tgEncodeStr: tg_certificate,
       inviteCode: inviteCode
@@ -139,7 +139,7 @@ router.beforeEach(async (to, from, next) => {
 
     if (res.code == 200) {
       if (res.data.certificate) {
-        setSessionStore("certificate", res.data.certificate);
+        setLocalStore("certificate", res.data.certificate);
       }
 
       // 保存登录信息
@@ -152,8 +152,6 @@ router.beforeEach(async (to, from, next) => {
       userStore.fetchReceiveGifts();
     }
   }
-
-
 
   // 如果有路由
   const nextPath = getSessionStore('nextPath');
