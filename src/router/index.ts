@@ -122,7 +122,6 @@ router.beforeEach(async (to, from, next) => {
 
   const userStore = useUserStore();
   if (userStore.isLogin) {
-    const { Telegram } = (window as any)
     if (Telegram) {
       const { WebApp } = Telegram;
       WebApp.setHeaderColor("#FF197C")
@@ -134,7 +133,10 @@ router.beforeEach(async (to, from, next) => {
     userStore.fetchReceiveGifts();
   } else {
 
-
+    if (Telegram) {
+      const { WebApp } = Telegram;
+      WebApp.setHeaderColor("#FF197C")
+    }
     const tg_token = getSessionStore("tg_certificate");
     const inviteCode = getSessionStore("inviteCode");
     const res = await telegramLogin({
