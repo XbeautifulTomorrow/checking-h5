@@ -112,7 +112,7 @@ export const useUserStore = defineStore("user", {
 
       if (import.meta.env.MODE != "dev") {
         if (this.retryCount >= 0) {
-          window.location.href = "/";
+          // window.location.href = "/";
         }
 
         this.retryCount--;
