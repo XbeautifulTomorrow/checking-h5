@@ -111,7 +111,7 @@ export const useUserStore = defineStore("user", {
       this.userInfo = {} as userInterface;
       window.NavigationPreloadManager;
 
-      if (import.meta.env.MODE == "prod") {
+      if (import.meta.env.MODE != "dev") {
         if (this.retryCount > 0) {
           window.location.href = "/";
         }
