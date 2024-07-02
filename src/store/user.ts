@@ -46,13 +46,15 @@ export const useUserStore = defineStore("user", {
     currentTime: null as string | any,
     isLogin: getLocalStore("certificate") ? true : false,
     showGift: false,
+    retryCount: 5, // 登录重试次数
     loadLog: false,
   }),
   persist: {
     enabled: true,
     strategies: [
       { key: "userInfo", storage: localStorage, paths: ["userInfo"] },
-      { key: "logInfo", storage: localStorage, paths: ["logInfo"] }
+      { key: "logInfo", storage: localStorage, paths: ["logInfo"] },
+      { key: "retryCount", storage: sessionStorage, paths: ["retryCount"] }
     ],
   },
   actions: {
@@ -110,7 +112,11 @@ export const useUserStore = defineStore("user", {
       window.NavigationPreloadManager;
 
       if (import.meta.env.MODE == "prod") {
-        // window.location.href = "/";
+        if (this.retryCount > 0) {
+          window.location.href = "/";
+        }
+
+        this.retryCount--;
       }
     }
   }
