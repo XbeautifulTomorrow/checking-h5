@@ -109,6 +109,18 @@ router.beforeEach(async (to, from, next) => {
     }
   }
 
+  const tg_token = getSessionStore("tg_certificate");
+  if (!tg_token) {
+    const { Telegram } = (window as any);
+    if (Telegram) {
+      const { WebApp } = Telegram;
+      WebApp.setHeaderColor("#FF197C")
+      let tg_certificate = btoa(WebApp.initData);
+      setSessionStore("tg_certificate", tg_certificate);
+      console.log(tg_certificate);
+    }
+  }
+
   const userStore = useUserStore();
   if (userStore.isLogin) {
     const { Telegram } = (window as any)
@@ -122,18 +134,10 @@ router.beforeEach(async (to, from, next) => {
     // 领取礼物
     userStore.fetchReceiveGifts();
   } else {
-    const { Telegram } = (window as any)
-    let tg_certificate: any;
-    if (Telegram) {
-      const { WebApp } = Telegram;
-      WebApp.setHeaderColor("#FF197C")
-      tg_certificate = btoa(WebApp.initData);
-      console.log(tg_certificate);
-    }
 
     const inviteCode = getSessionStore("inviteCode")
     const res = await telegramLogin({
-      tgEncodeStr: tg_certificate,
+      tgEncodeStr: tg_token,
       inviteCode: inviteCode
     });
 
