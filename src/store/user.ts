@@ -1,8 +1,9 @@
 import { defineStore } from "pinia";
-import { getLocalStore, setSessionStore, getSessionStore, removeSessionStore } from "@/utils";
+import { setLocalStore, getLocalStore, setSessionStore, getSessionStore, removeSessionStore } from "@/utils";
 import { getUserInfo, receiveGifts } from "@/services/api/user";
 import { en, zhHant } from 'vuetify/locale'
 import { getLang } from "@/locales/index";
+import { telegramLogin } from "@/services/api/user";
 
 const langMenu: any = {
   zh_CN: en,
@@ -99,7 +100,7 @@ export const useUserStore = defineStore("user", {
         })
       }
     },
-    logoutApi() {
+    async logoutApi() {
       const invateCode = getSessionStore("invateCode");
       sessionStorage.clear();
       setSessionStore("invateCode", invateCode);
@@ -113,7 +114,37 @@ export const useUserStore = defineStore("user", {
 
       if (import.meta.env.MODE != "dev") {
         if (this.retryCount >= 0) {
-          // window.location.href = "/";
+          const { Telegram } = (window as any)
+          let tg_certificate: any;
+          if (Telegram) {
+            const { WebApp } = Telegram;
+            WebApp.setHeaderColor("#FF197C")
+            tg_certificate = btoa(WebApp.initData);
+            console.log(tg_certificate);
+          }
+
+          const inviteCode = getSessionStore("inviteCode");
+          const res = await telegramLogin({
+            tgEncodeStr: tg_certificate,
+            inviteCode: inviteCode
+          });
+
+          if (res.code == 200) {
+            if (res.data.certificate) {
+              setLocalStore("certificate", res.data.certificate);
+            }
+
+            // 保存登录信息
+            this.setLogin(res.data);
+
+            // 加载用户信息
+            this.fetchUserInfo();
+
+            // 领取礼物
+            this.fetchReceiveGifts();
+
+            window.location.href = "/";
+          }
         }
 
         this.retryCount--;
