@@ -143,8 +143,7 @@ export const useUserStore = defineStore("user", {
 
             // 领取礼物
             this.fetchReceiveGifts();
-
-            window.location.href = "/";
+            window.location.reload();
           }
         }
 
