@@ -2,6 +2,7 @@ import axios from "axios";
 import { useUserStore } from "@/store/user.js";
 import config from "./env";
 import { useMessageStore } from "@/store/message.js";
+import { getSessionStore } from "@/utils";
 const axiosInstance = axios.create({
   baseURL: config.api,
   withCredentials: true,
@@ -13,8 +14,8 @@ const notMessage: any = [];
 
 axiosInstance.interceptors.request.use(
   (config: any) => {
-    if (localStorage.getItem("certificate")) {
-      config.headers.certificate = localStorage.getItem("certificate");
+    if (getSessionStore("certificate")) {
+      config.headers.certificate = getSessionStore("certificate");
     }
 
     return config;
