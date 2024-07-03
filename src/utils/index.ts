@@ -684,17 +684,17 @@ export const unitConversion = (val: number) => {
   if (val < kh) {
     texts = val;
   } else if (val >= kh && val < mh) {
-    texts = (val / kh).toFixed(2) + "K";
+    texts = accurateDecimal(val / kh, 2) + "K";
   } else if (val >= mh && val < gh) {
-    texts = (val / mh).toFixed(2) + "M";
+    texts = accurateDecimal(val / mh, 2) + "M";
   } else if (val >= gh && val < th) {
-    texts = (val / gh).toFixed(2) + "B";
+    texts = accurateDecimal(val / gh, 2) + "B";
   } else if (val >= th && val < ph) {
-    texts = (val / th).toFixed(2) + "T";
+    texts = accurateDecimal(val / th, 2) + "T";
   } else if (val >= ph && val < eh) {
-    texts = (val / ph).toFixed(2) + "P";
+    texts = accurateDecimal(val / ph, 2) + "P";
   } else if (val >= eh) {
-    texts = (val / eh).toFixed(2) + "E";
+    texts = accurateDecimal(val / eh, 2) + "E";
   }
 
   return texts;

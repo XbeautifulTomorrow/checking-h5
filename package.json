@@ -12,9 +12,12 @@
   "dependencies": {
     "@babel/core": "^7.24.7",
     "@mdi/font": "6.2.95",
+    "@ton/ton": "^13.11.2",
+    "@tonconnect/ui": "^2.0.5",
     "@tweenjs/tween.js": "^23.1.2",
     "axios": "^1.7.2",
     "bignumber.js": "^9.1.2",
+    "buffer": "^6.0.3",
     "core-js": "^3.37.1",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.11",

@@ -47,6 +47,18 @@ const getInviteRankingList = (params: any) => http.get("/gm-coin-server-web/user
  */
 const receiveGifts = (params: any) => http.get("/gm-coin-server-web/user/threeBaseAssociations", params);
 
+/**
+ * 充值产品
+ * @param params
+ */
+const getProductList = (params: any) => http.get("/gm-coin-server-web/product-info/list", params);
+
+/**
+ * 购买产品
+ * @param params
+ */
+const buyProduct = (params: any) => http.get("/gm-coin-server-web/product-info/purchase", params);
+
 export {
   validateToken,
   telegramLogin,
@@ -55,5 +67,7 @@ export {
   levelUpgrade,
   getInviteUserList,
   getInviteRankingList,
-  receiveGifts
+  receiveGifts,
+  getProductList,
+  buyProduct
 };

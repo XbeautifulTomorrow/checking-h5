@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { getLocalStore, setSessionStore, getSessionStore, removeSessionStore } from "@/utils";
 import { getUserInfo, receiveGifts } from "@/services/api/user";
+import { buyProduct } from "@/services/api/user.js";
 import { en, zhHant } from 'vuetify/locale'
 import { getLang } from "@/locales/index";
 
@@ -36,6 +37,19 @@ interface logInterface {
   tgId: number | string //tgID
 }
 
+interface productInfo {
+  productId: number, //产品ID
+  orderId: number, //订单ID
+  walletAddress: number, //充值钱包地址
+  publicKey: string, //地址公钥
+  price: number, //产品价格
+  priceCoin: string, //价格币种
+  amount: number, //充值金额
+  amountCoin: string, //充值币种
+  remark: string //充值钱包地址_订单ID
+  [x: string]: string | number | any;
+}
+
 
 export const useUserStore = defineStore("user", {
   state: () => ({
@@ -45,7 +59,14 @@ export const useUserStore = defineStore("user", {
     userPage: null as string | any,
     currentTime: null as string | any,
     isLogin: getLocalStore("certificate") ? true : false,
-    showGift: false,
+    showGift: false, // 礼物弹窗
+    showRecharge: false, // 充值弹窗
+    productId: null as number | string | any, // 充值产品ID
+    productInfo: {} as productInfo, // 充值产品信息
+    tonConnect: null as any, // 链接对象
+    walletAddr: null as number | string | any,     // 钱包地址
+    isConnect: false,     //链接状态
+    showConfirm: false, // 确认弹窗
     retryCount: 5, // 登录重试次数
     loadLog: false,
   }),
@@ -75,6 +96,34 @@ export const useUserStore = defineStore("user", {
     },
     setShowGift(data: any) {
       this.showGift = data;
+    },
+    setShowRecharge(data: any) {
+      this.showRecharge = data;
+    },
+    setTonConnect(data: any) {
+      this.tonConnect = data;
+    },
+    async setProductId(data: any) {
+      this.productId = data;
+
+      const res = await buyProduct({ productId: data });
+      if (res.code == 200) {
+        this.productInfo = res.data;
+      }
+
+      this.showConfirm = true;
+    },
+    listening(data: any) {
+      if (data.isc) {
+        this.isConnect = true;
+        this.walletAddr = data.account;
+      } else {
+        this.isConnect = false;
+        this.walletAddr = null;
+      }
+    },
+    setShowConfirm(data: any) {
+      this.showConfirm = data;
     },
     setLocale(data: any) {
       this.locale = data == "en_US" ? en : zhHant;

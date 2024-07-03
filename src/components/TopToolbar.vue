@@ -72,10 +72,14 @@ export default defineComponent({
       this.$router.push('/activity');
     },
     toFrens() {
-      this.$router.push('/frens');
+      // this.$router.push('/frens');
+      const { setShowRecharge } = useUserStore();
+      setShowRecharge(true);
     },
     toEarn() {
-      this.$router.push('/earn');
+      // this.$router.push('/earn');
+      const { setShowRecharge } = useUserStore();
+      setShowRecharge(true);
     },
   },
   watch: {

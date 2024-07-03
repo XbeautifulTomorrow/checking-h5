@@ -24,6 +24,8 @@
         <v-btn class="close_btn" @click="showGift = false" height="40" rounded="lg" size="small">CONFIRM</v-btn>
       </div>
     </v-dialog>
+    <recharge></recharge>
+    <confirm v-if="showConfirm"></confirm>
   </v-app>
 </template>
 
@@ -32,6 +34,8 @@ import TopToolbar from '@/components/TopToolbar.vue';
 import BottomNav from '@/components/BottomNav.vue';
 import { useMessageStore } from "@/store/message.js";
 import { useUserStore } from "@/store/user.js";
+import recharge from "@/components/recharge/index.vue";
+import confirm from "@/components/recharge/confirm.vue";
 
 import { defineComponent } from 'vue';
 export default defineComponent({
@@ -41,7 +45,9 @@ export default defineComponent({
   },
   components: {
     TopToolbar,
-    BottomNav
+    BottomNav,
+    recharge,
+    confirm
   },
   computed: {
     showMessage: {
@@ -63,6 +69,10 @@ export default defineComponent({
         const { setShowGift } = useUserStore();
         setShowGift(val)
       }
+    },
+    showConfirm() {
+      const { showConfirm } = useUserStore();
+      return showConfirm
     },
     messageText() {
       const { messageText } = useMessageStore();
@@ -146,5 +156,10 @@ html {
 /* / 兼容IE10+ */
 html {
   -ms-overflow-style: none;
+}
+
+.s-enter-active,
+.s-enter-to {
+  z-index: 3000 !important;
 }
 </style>
