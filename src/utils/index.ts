@@ -153,7 +153,7 @@ export function onCopy(event: string) {
 }
 
 function debounce(fn: () => void, delay: number | undefined) {
-  let timer: number | undefined;
+  let timer: number | any;
   return function () {
     if (timer) {
       clearTimeout(timer);
