@@ -155,7 +155,7 @@ export default defineComponent({
 
 .recharge_toolbar {
   width: 100%;
-  height: 40px;
+  min-height: 40px;
   background: linear-gradient(180deg, rgba(141, 103, 80, 1) 0%, rgba(141, 103, 80, 1) 100%);
   border: none;
   border-radius: 8px;
@@ -183,7 +183,7 @@ export default defineComponent({
   }
 
   .shading {
-    height: 100%;
+    min-height: 40px;
     display: flex;
     align-items: flex-end;
 
