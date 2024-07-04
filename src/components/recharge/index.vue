@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="showRecharge" width="100%" transition="dialog-bottom-transition">
+  <v-dialog v-model="showRecharge" width="100%" transition="dialog-top-transition" fullscreen>
     <div class="dialog_box">
       <div class="recharge_title">RECHARGE</div>
       <div class="recharge_toolbar">
@@ -124,11 +124,11 @@ export default defineComponent({
 :deep(.v-overlay__content) {
   margin: 0 !important;
   max-width: max-content !important;
-  bottom: 0;
 }
 
 .dialog_box {
   width: 100%;
+  max-height: 100vh;
   border-radius: 16px 16px 0 0;
   padding: 16px;
   display: flex;
@@ -199,7 +199,6 @@ export default defineComponent({
   margin-top: -16px;
   padding: 4px;
   border-radius: 4px;
-  max-height: 70vh;
   overflow-y: scroll;
   font-size: 14px;
   background-color: rgba(137, 104, 85, 1);
