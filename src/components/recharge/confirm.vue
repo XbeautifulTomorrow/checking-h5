@@ -141,11 +141,11 @@ export default defineComponent({
     },
     // 处理购买
     async handlePayment() {
-      const { productInfo: { walletAddress, amount } } = this;
+      const { productInfo: { publicKey, amount } } = this;
       const transaction = {
         messages: [
           {
-            address: walletAddress, // 目的地址
+            address: publicKey, // 目的地址
             amount: toNano(amount).toString() //以nanotons计的Toncoin
           }
         ]
