@@ -37,6 +37,7 @@ import { useUserStore } from "@/store/user.js";
 import { unitConversion } from "@/utils";
 import { TonConnectUI, ConnectedWallet } from '@tonconnect/ui'
 import { toNano } from '@ton/ton';
+import config from "@/services/env"
 
 type statusType = "pending" | "success" | "error";
 
@@ -92,7 +93,7 @@ export default defineComponent({
     },
     async initTonConnect() {
       this.tonConnect = new TonConnectUI({
-        manifestUrl: "https://ton-connect.github.io/demo-dapp-with-react-ui/tonconnect-manifest.json"
+        manifestUrl: config.api + "/gm-coin-server-web/config/tonconnect/json"
       });
 
       // webapp重定向
