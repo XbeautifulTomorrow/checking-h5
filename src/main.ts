@@ -8,8 +8,6 @@
 import { registerPlugins } from '@/plugins';
 import { createPinia } from 'pinia';
 
-
-
 // Components
 import App from './App.vue';
 import dayjs from "dayjs";

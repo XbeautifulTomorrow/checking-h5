@@ -4,7 +4,10 @@ import Vue from '@vitejs/plugin-vue';
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 import ViteFonts from 'unplugin-fonts/vite';
 import mkcert from "vite-plugin-mkcert";
-const pkg = require("./package.json")
+const pkg = require("./package.json");
+
+import { nodePolyfills } from "vite-plugin-node-polyfills";
+import notifier from "vite-plugin-notifier";
 
 // 时间戳
 const timestamp = new Date().getTime();
@@ -22,6 +25,11 @@ export default defineConfig({
   plugins: [
     Vue({
       template: { transformAssetUrls },
+    }),
+    notifier(),
+    nodePolyfills({
+      // Whether to polyfill `node:` protocol imports.
+      protocolImports: true,
     }),
     Vuetify(),
     Components(),
