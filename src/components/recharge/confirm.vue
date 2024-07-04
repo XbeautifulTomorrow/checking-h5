@@ -104,11 +104,11 @@ export default defineComponent({
       this.tonConnect.onStatusChange((wallet: ConnectedWallet) => {
         if (wallet) {
           const { listening } = useUserStore();
-          const { account: { address } } = wallet;
+          const { account: { publicKey } } = wallet;
           const isC = this.tonConnect.connected;
           listening({
             isc: isC,
-            account: address
+            account: publicKey
           });
         }
       });
