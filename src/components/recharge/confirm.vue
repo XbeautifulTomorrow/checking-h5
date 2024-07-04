@@ -93,7 +93,7 @@ export default defineComponent({
     },
     async initTonConnect() {
       this.tonConnect = new TonConnectUI({
-        manifestUrl: config.api + "/gm-coin-server-web/config/tonconnect/json"
+        manifestUrl: config.api + "gm-coin-server-web/config/tonconnect/json"
       });
 
       // webapp重定向
