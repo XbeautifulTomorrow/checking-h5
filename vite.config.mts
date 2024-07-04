@@ -5,9 +5,7 @@ import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 import ViteFonts from 'unplugin-fonts/vite';
 import mkcert from "vite-plugin-mkcert";
 const pkg = require("./package.json");
-
-import { nodePolyfills } from "vite-plugin-node-polyfills";
-import notifier from "vite-plugin-notifier";
+import inject from '@rollup/plugin-inject'
 
 // 时间戳
 const timestamp = new Date().getTime();
@@ -19,17 +17,11 @@ import { fileURLToPath, URL } from 'node:url';
 // https://vitejs.dev/config/
 export default defineConfig({
   optimizeDeps: {
-    include: ['axios'],
-    // exclude: []
+    include: ['axios']
   },
   plugins: [
     Vue({
       template: { transformAssetUrls },
-    }),
-    notifier(),
-    nodePolyfills({
-      // Whether to polyfill `node:` protocol imports.
-      protocolImports: true,
     }),
     Vuetify(),
     Components(),
@@ -82,6 +74,8 @@ export default defineConfig({
       },
     },
     rollupOptions: {
+      plugins: [
+        inject({ Buffer: ['buffer/', 'Buffer'] })],
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
