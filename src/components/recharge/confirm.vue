@@ -222,6 +222,7 @@ export default defineComponent({
       const Countdown = 30;
       if (!this.timer) {
         this.countdown = Countdown;
+        this.timeMsg = this.countdown + "s";
         this.timer = setInterval(() => {
           if (this.countdown > 0 && this.countdown <= 30) {
             this.countdown--;
@@ -233,7 +234,10 @@ export default defineComponent({
             if (this.countdown !== 0) {
               this.timeMsg = this.countdown + "s";
             } else {
+              this.timeMsg = this.countdown + "s";
               clearInterval(this.timer);
+              this.timer = null;
+
               const { setUserInfo } = useUserStore();
 
               const { userInfo: { energyAmount, gmcAmount } } = this;
@@ -245,10 +249,6 @@ export default defineComponent({
 
               this.status = "timeout";
               setUserInfo(this.userData);
-
-              this.timeMsg = "0s";
-              this.countdown = 30;
-              this.timer = null;
             }
           }
         }, 1000);
