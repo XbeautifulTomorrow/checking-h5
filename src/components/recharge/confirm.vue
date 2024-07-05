@@ -5,7 +5,7 @@
         <div class="close_btn" @click="showConfirm = false">
           <v-img :width="16" cover src="@/assets/images/svg/icon_x.svg"></v-img>
         </div>
-        <div class="recharge_box">
+        <div class="recharge_box" v-if="status == 'pending'">
           <div class="buy_title">PURCHASE</div>
           <div class="user_wallet" v-if="isConnect">
             <div class="address">{{ formatAddr(walletAddr) }}</div>
@@ -27,6 +27,15 @@
             <span class="finished">PAYMENT</span>
           </v-btn>
         </div>
+        <div v-else class="recharge_box">
+          <div class="success_img">
+            <v-img width="60" cover src="@/assets/images/svg/airdrop/checked.svg"></v-img>
+          </div>
+          <div class="success_text">Successful</div>
+          <v-btn class="connect_btn" :elevation="8" width="80%" height="36" @click="handleReady()">
+            <span class="finished">OK</span>
+          </v-btn>
+        </div>
       </div>
     </div>
   </v-dialog>
@@ -43,7 +52,7 @@ type statusType = "pending" | "success" | "error";
 export default defineComponent({
   data() {
     return {
-      status: "" as statusType
+      status: "pending" as statusType
     }
   },
   computed: {
@@ -114,10 +123,7 @@ export default defineComponent({
       });
     },
     async connectToWallet() {
-
       this.handleDisconnect();
-
-
       this.tonConnect.connectWallet().then((res: any) => {
         console.log(res);
       }).catch((err: any) => {
@@ -164,11 +170,9 @@ export default defineComponent({
       this.status = "pending";
 
       this.tonConnect.sendTransaction(transaction).then((res: any) => {
-        console.log(res);
         this.status = "success";
       }).catch((err: any) => {
         console.log(err);
-        this.status = "error";
       })
     },
     // 格式化地址
@@ -318,6 +322,32 @@ export default defineComponent({
     color: #FFEDD6;
     margin-top: 12px;
   }
+}
+
+.success_img {
+  width: 100px;
+  height: 100px;
+  background-color: #73DA7F;
+  border: 4px solid #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  margin-top: 24px;
+
+  .v-img {
+    flex: none;
+  }
+}
+
+.success_text {
+  font-weight: 700;
+  color: #E3D1AF;
+  text-align: center;
+  font-size: 16px;
+  margin-top: 16px;
+  margin-bottom: 16px;
 }
 
 .connect_btn {
