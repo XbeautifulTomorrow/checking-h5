@@ -106,7 +106,7 @@ export default defineComponent({
       let miniappUrl = "https://t.me/gm_coin_test_bot/checking";
 
       if (import.meta.env.MODE == "prod") {
-        manifestUrl = "https://api.gmking.io//gm-coin-server-web/config/tonconnect/json";
+        manifestUrl = "https://api.gmking.io/gm-coin-server-web/config/tonconnect/json";
       }
 
       this.tonConnect = new TonConnectUI({
