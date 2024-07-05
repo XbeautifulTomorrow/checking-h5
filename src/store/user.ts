@@ -10,7 +10,7 @@ const langMenu: any = {
   en_US: zhHant
 };
 
-interface userInterface {
+export interface userInterface {
   userId: number, // 用户ID
   userName: string; // 用户名
   tgId: number, // tgID
@@ -26,7 +26,7 @@ interface userInterface {
   [x: string]: string | number | any;
 }
 
-interface logInterface {
+export interface logInterface {
   id: string | number, //用户ID
   userName: string, //用户名
   email: string, //邮箱
@@ -37,7 +37,7 @@ interface logInterface {
   tgId: number | string //tgID
 }
 
-interface productInfo {
+export interface productInfo {
   productId: number, //产品ID
   orderId: number, //订单ID
   walletAddress: number, //充值钱包地址
@@ -93,6 +93,9 @@ export const useUserStore = defineStore("user", {
       } else {
         this.logoutApi();
       }
+    },
+    setUserInfo(data: any) {
+      this.userInfo = data;
     },
     setShowGift(data: any) {
       this.showGift = data;

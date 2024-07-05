@@ -5,7 +5,7 @@
         <div class="close_btn" @click="showConfirm = false">
           <v-img :width="16" cover src="@/assets/images/svg/icon_x.svg"></v-img>
         </div>
-        <div class="recharge_box" v-if="status == 'pending'">
+        <div class="recharge_box" v-if="!payment">
           <div class="buy_title">PURCHASE</div>
           <div class="user_wallet" v-if="isConnect">
             <div class="address">{{ formatAddr(walletAddr) }}</div>
@@ -28,13 +28,31 @@
           </v-btn>
         </div>
         <div v-else class="recharge_box">
-          <div class="success_img">
-            <v-img width="60" cover src="@/assets/images/svg/airdrop/checked.svg"></v-img>
+          <div v-if="status == 'complete'">
+            <div class="success_img">
+              <v-img width="60" cover src="@/assets/images/svg/airdrop/checked.svg"></v-img>
+            </div>
+            <div class="success_text">Purchase successfully!</div>
+            <v-btn class="connect_btn" :elevation="8" width="80%" height="36" @click="handleReady()">
+              <span class="finished">OK</span>
+            </v-btn>
           </div>
-          <div class="success_text">Successful</div>
-          <v-btn class="connect_btn" :elevation="8" width="80%" height="36" @click="handleReady()">
-            <span class="finished">OK</span>
-          </v-btn>
+          <div v-else>
+            <div class="buy_title">PROCESSING</div>
+            <div class="wait">
+              <v-img :class="[status != 'pending' ? 'timeuot' : '']" width="100" cover
+                src="@/assets/images/recharge/wait.png"></v-img>
+            </div>
+            <div class="count_down" v-if="status == 'pending'">
+              <div class="count_down_time">{{ timeMsg }}</div>
+              <div class="count_down_text">The purchase being confirmed, please wait pateintly for a while</div>
+            </div>
+            <div class="timeout" v-if="status == 'timeout'">
+              <div>Order processing is taking longer.</div>
+              <div>You can keep waiting or close the window. </div>
+              <div>We will notify you in bot after success.</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -42,20 +60,30 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { useUserStore } from "@/store/user.js";
+import { useUserStore, userInterface } from "@/store/user.js";
+import { getUserInfo } from "@/services/api/user";
 import { unitConversion } from "@/utils";
 import { TonConnectUI, ConnectedWallet } from '@tonconnect/ui'
 import { toNano, beginCell } from '@ton/ton';
 
-type statusType = "pending" | "success" | "error";
+type statusType = "pending" | "complete" | "timeout";
 
 export default defineComponent({
   data() {
     return {
-      status: "pending" as statusType
+      payment: false,
+      status: "pending" as statusType,
+      timer: null as number | any,
+      countdown: 30,
+      timeMsg: "30s",
+      userData: {} as userInterface
     }
   },
   computed: {
+    userInfo() {
+      const { userInfo } = useUserStore();
+      return userInfo
+    },
     showConfirm: {
       get() {
         const { showConfirm } = useUserStore();
@@ -93,7 +121,9 @@ export default defineComponent({
       return productInfo
     },
   },
-  created() { },
+  created() {
+    this.payment = false;
+  },
   methods: {
     unitConversion: unitConversion,
     handleReady() {
@@ -173,10 +203,10 @@ export default defineComponent({
         ]
       }
 
-      this.status = "pending";
-
       this.tonConnect.sendTransaction(transaction).then((res: any) => {
-        this.status = "success";
+        this.status = "pending";
+        this.payment = true;
+        this.countDown();
       }).catch((err: any) => {
         console.log(err);
       })
@@ -187,11 +217,68 @@ export default defineComponent({
       var reg = /^(\S{5})\S+(\S{4})$/;
       return event.replace(reg, "$1...$2");
     },
+    // 倒计时
+    countDown() {
+      const Countdown = 30;
+      if (!this.timer) {
+        this.countdown = Countdown;
+        this.timer = setInterval(() => {
+          if (this.countdown > 0 && this.countdown <= 30) {
+            this.countdown--;
+            if (this.countdown == 3) {
+              // 提前获取余额
+              this.fetchPaymentResults();
+            }
+
+            if (this.countdown !== 0) {
+              this.timeMsg = this.countdown + "s";
+            } else {
+              clearInterval(this.timer);
+              const { setUserInfo } = useUserStore();
+
+              const { userInfo: { energyAmount, gmcAmount } } = this;
+              if (this.userData.energyAmount > energyAmount && this.userData.gmcAmount > gmcAmount) {
+                this.status = "complete";
+                setUserInfo(this.userData);
+                return
+              }
+
+              this.status = "timeout";
+              setUserInfo(this.userData);
+
+              this.timeMsg = "0s";
+              this.countdown = 30;
+              this.timer = null;
+            }
+          }
+        }, 1000);
+      }
+    },
+    // 清除计时器
+    clearTimerFun() {
+      setInterval(this.timer);
+      this.timer = null;
+    },
+    // 获取支付结果（刷新余额
+    async fetchPaymentResults() {
+      const res = await getUserInfo({});
+      if (res.code == 200) {
+        this.userData = res.data as userInterface;
+      }
+    }
   },
   mounted() {
     this.$nextTick(() => {
       this.initTonConnect();
     })
+  },
+  beforeUnmount() {
+    this.clearTimerFun();
+    if (this.payment && this.status != "complete") {
+      // 如果已付款，更新一下用户信息
+      const { fetchUserInfo } = useUserStore();
+      fetchUserInfo();
+    }
   }
 })
 </script>
@@ -330,6 +417,49 @@ export default defineComponent({
   }
 }
 
+.wait {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .v-img {
+    flex: none;
+    animation: rotate 3s linear infinite;
+
+    &.timeuot {
+      animation: none;
+    }
+  }
+}
+
+.count_down {
+  .count_down_time {
+    font-weight: 700;
+    font-style: normal;
+    font-size: 28px;
+    color: #FFFFFF;
+    text-align: center;
+    margin: 8px 0;
+  }
+
+  .count_down_text {
+    font-weight: 400;
+    font-style: normal;
+    color: #E3D1AF;
+    font-size: 14px;
+    text-align: center;
+  }
+}
+
+.timeout {
+  font-style: normal;
+  color: #E3D1AF;
+  font-size: 14px;
+  text-align: center;
+  margin-top: 8px;
+}
+
 .success_img {
   width: 100px;
   height: 100px;
@@ -382,5 +512,16 @@ export default defineComponent({
 .finished {
   text-transform: none;
   letter-spacing: 0;
+}
+
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
