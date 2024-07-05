@@ -100,13 +100,26 @@ export default defineComponent({
       this.showConfirm = false;
     },
     async initTonConnect() {
+
+
+      let manifestUrl = "https://test1.xlab.red:28089/gm-coin-server-web/config/tonconnect/json";
+      let miniappUrl = "https://t.me/gm_coin_test_bot/checking";
+
+      if (import.meta.env.MODE == "prod") {
+        manifestUrl = "https://api.gmking.io//gm-coin-server-web/config/tonconnect/json";
+      }
+
       this.tonConnect = new TonConnectUI({
-        manifestUrl: "https://test1.xlab.red:28089/gm-coin-server-web/config/tonconnect/json"
+        manifestUrl: manifestUrl
       });
 
+
+      if (import.meta.env.MODE == "prod") {
+        miniappUrl = "https://t.me/theGMCoinBot/GMCoin";
+      }
       // webapp重定向
       this.tonConnect.uiOptions = {
-        twaReturnUrl: 'https://t.me/gm_coin_test_bot/checking'
+        twaReturnUrl: miniappUrl
       }
 
       // 监听钱包链接状态

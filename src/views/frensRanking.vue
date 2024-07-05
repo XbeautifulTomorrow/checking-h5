@@ -120,7 +120,7 @@ export default defineComponent({
       const { inviteCode } = this.userInfo;
       let inviteUrl = "";
       if (import.meta.env.MODE == "prod") {
-        inviteUrl = `https://t.me/theGMCoin_Bot/GMCoin?startapp=${inviteCode}`;
+        inviteUrl = `https://t.me/theGMCoinBot/GMCoin?startapp=${inviteCode}`;
       } else {
         inviteUrl = `https://t.me/gm_coin_test_bot/checking?startapp=${inviteCode}`
       }
@@ -131,7 +131,7 @@ export default defineComponent({
       const { inviteCode } = this.userInfo;
       let inviteUrl = "";
       if (import.meta.env.MODE == "prod") {
-        inviteUrl = `https://t.me/theGMCoin_Bot/GMCoin?startapp=${inviteCode}`;
+        inviteUrl = `https://t.me/theGMCoinBot/GMCoin?startapp=${inviteCode}`;
       } else {
         inviteUrl = `https://t.me/gm_coin_test_bot/checking?startapp=${inviteCode}`
       }
