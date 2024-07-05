@@ -36,7 +36,7 @@ import { defineComponent } from 'vue';
 import { useUserStore } from "@/store/user.js";
 import { unitConversion } from "@/utils";
 import { TonConnectUI, ConnectedWallet } from '@tonconnect/ui'
-import { toNano } from '@ton/ton';
+import { toNano, beginCell } from '@ton/ton';
 
 type statusType = "pending" | "success" | "error";
 
@@ -141,12 +141,22 @@ export default defineComponent({
     },
     // 处理购买
     async handlePayment() {
-      const { productInfo: { publicKey, amount } } = this;
+      const { productInfo: { publicKey, amount, remark } } = this;
+
+      // 创建评论
+      const body = beginCell()
+        .storeUint(0, 32) // 写入32个零位以表示后面将跟随文本评论
+        .storeStringTail(remark) // 写下我们的文本评论
+        .endCell();
+
+      // 创建交易体
       const transaction = {
+        validUntil: Math.floor(Date.now() / 1000) + 360,
         messages: [
           {
             address: publicKey, // 目的地址
-            amount: toNano(amount).toString() //以nanotons计的Toncoin
+            amount: toNano(amount).toString(), //以nanotons计的Toncoin
+            payload: body.toBoc().toString("base64")
           }
         ]
       }
