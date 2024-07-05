@@ -101,17 +101,11 @@ export default defineComponent({
     },
     // 初始化ton-connect
     async initTonConnect() {
-      let manifestUrl = "https://test1.xlab.red:28089/tonconnect-manifest.json";
       let miniappUrl = "https://t.me/gm_coin_test_bot/checking";
 
-      if (import.meta.env.MODE == "prod") {
-        manifestUrl = "https://gmking.io/tonconnect-manifest.json";
-      }
-
       this.tonConnect = new TonConnectUI({
-        manifestUrl: manifestUrl
+        manifestUrl: "https://file.gmking.io/tonconnect-manifest.json"
       });
-
 
       if (import.meta.env.MODE == "prod") {
         miniappUrl = "https://t.me/theGMCoinBot/GMCoin";
