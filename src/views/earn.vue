@@ -257,7 +257,7 @@ export default defineComponent({
         openUrl("https://t.me/ton_3base_bot/Ton3Base?startapp=673_BRZLED");
       } else if (abbreviation == "TWEET") {
         // 转发Twitter帖子，跳到帖子
-        openUrl("https://x.com/GMCoin_Fam/status/1805241310422745452");
+        openUrl("https://x.com/GMCoin_Fam/status/1808708189967561097");
       }
     },
     // 生成一个随机数
