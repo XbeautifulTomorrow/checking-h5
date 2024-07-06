@@ -278,8 +278,9 @@ export default defineComponent({
     },
     // 获取支付结果（刷新余额
     async fetchPaymentResults() {
+      const { productInfo: { orderId } } = this;
       const res = await getOrderList({
-        orderId: this.productId,
+        orderId: orderId,
         page: 1,
         size: 10
       });
