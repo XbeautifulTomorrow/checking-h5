@@ -60,13 +60,31 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { useUserStore, userInterface } from "@/store/user.js";
-import { getUserInfo } from "@/services/api/user";
+import { useUserStore } from "@/store/user.js";
+import { getOrderList } from "@/services/api/user";
 import { unitConversion } from "@/utils";
 import { TonConnectUI, ConnectedWallet } from '@tonconnect/ui'
 import { toNano, beginCell } from '@ton/ton';
 
 type statusType = "pending" | "complete" | "timeout";
+interface order {
+  orderId: number, //订单ID
+  userId: number, //用户ID
+  tgId: number, //tgID
+  productId: number, //产品ID
+  walletAddress: string, //充值钱包地址
+  amount: number, //充值数量
+  status: number, //订单状态（0-进行中，1-已完成，2-失败）
+  statusStr: string,
+  energyAmount: number, //能量数量
+  gmcAmount: number, //GMC数量
+  price: number, //产品价格
+  priceCoin: string, //价格币种
+  txid: string, //交易地址
+  publicKey: string, //公钥
+  amountCoin: string, //充值币种
+  [x: string]: string | number | any
+}
 
 export default defineComponent({
   data() {
@@ -76,7 +94,7 @@ export default defineComponent({
       timer: null as number | any,
       countdown: 30,
       timeMsg: "30s",
-      userData: {} as userInterface
+      orderData: [] as Array<order>
     }
   },
   computed: {
@@ -238,17 +256,16 @@ export default defineComponent({
               clearInterval(this.timer);
               this.timer = null;
 
-              const { setUserInfo } = useUserStore();
-
-              const { userInfo: { energyAmount, gmcAmount } } = this;
-              if (this.userData.energyAmount > energyAmount && this.userData.gmcAmount > gmcAmount) {
+              const { fetchUserInfo } = useUserStore();
+              const order = this.orderData.find(e => e.orderId == this.productId);
+              if (order && order.status == 1) {
                 this.status = "complete";
-                setUserInfo(this.userData);
+                fetchUserInfo();
                 return
               }
 
               this.status = "timeout";
-              setUserInfo(this.userData);
+              fetchUserInfo();
             }
           }
         }, 1000);
@@ -261,9 +278,13 @@ export default defineComponent({
     },
     // 获取支付结果（刷新余额
     async fetchPaymentResults() {
-      const res = await getUserInfo({});
+      const res = await getOrderList({
+        orderId: this.productId,
+        page: 1,
+        size: 10
+      });
       if (res.code == 200) {
-        this.userData = res.data as userInterface;
+        this.orderData = res.data.records as Array<order>;
       }
     }
   },

@@ -59,6 +59,13 @@ const getProductList = (params: any) => http.get("/gm-coin-server-web/product-in
  */
 const buyProduct = (params: any) => http.get("/gm-coin-server-web/product-info/purchase", params);
 
+
+/**
+ * 购买产品
+ * @param params
+ */
+const getOrderList = (params: any) => http.get("/gm-coin-server-web/order/list", params);
+
 export {
   validateToken,
   telegramLogin,
@@ -69,5 +76,6 @@ export {
   getInviteRankingList,
   receiveGifts,
   getProductList,
-  buyProduct
+  buyProduct,
+  getOrderList
 };
