@@ -276,17 +276,6 @@
         </v-btn>
       </div>
     </v-dialog>
-    <!--邀请弹窗-->
-    <v-dialog v-model="showInvite" width="auto">
-      <div class="dialog_box">
-        <div class="dialog_text">You don't have enough energy to re-check in.</div>
-        <v-btn class="invite" @click="inviteToTelegram()">
-          <v-img :width="24" cover src="@/assets/images/svg/check_in/telegram.svg"></v-img>
-          <span class="finished">Invite friend for 1</span>
-          <v-icon color="#FFF100" :size="16" icon="mdi-lightning-bolt"></v-icon>
-        </v-btn>
-      </div>
-    </v-dialog>
     <!--充值弹窗-->
     <v-dialog v-model="showRecharge" width="auto">
       <div class="dialog_box">
@@ -318,7 +307,7 @@ import { getChallengeNav, getChallengeDetails, challengeRegistration, challengeC
 import { useUserStore } from "@/store/user.js";
 import { useCheckInStore } from '@/store/check_in.js';
 import { useMessageStore } from "@/store/message.js";
-import { timeForStr, shareOnTelegram } from "@/utils";
+import { timeForStr } from "@/utils";
 import TWEEN from '@tweenjs/tween.js';
 
 import countDown from "@/components/countDown/index.vue";
@@ -396,7 +385,6 @@ export default defineComponent({
       },
       showJoin: false, // 参加弹窗
       showReCheckin: false, // 补签弹窗
-      showInvite: false, // 邀请弹窗
       showRecharge: false, // 充值弹窗
       reCheckinInfo: {} as ucCheckInVOs,
       claimLoading: false, // 领取加载
@@ -639,7 +627,8 @@ export default defineComponent({
         this.reCheckinInfo = item;
         this.showReCheckin = true;
       } else {
-        this.showInvite = true;
+        const { setShowRecharge } = useUserStore();
+        setShowRecharge(true);
       }
     },
     // 补签
@@ -704,19 +693,6 @@ export default defineComponent({
     handleRules() {
       const { setShowRules } = useCheckInStore();
       setShowRules(true);
-    },
-    // 邀请
-    inviteToTelegram() {
-      const { inviteCode } = this.userInfo;
-      let inviteUrl = "";
-      if (import.meta.env.MODE == "prod") {
-        inviteUrl = `https://t.me/theGMCoinBot/GMCoin?startapp=${inviteCode}`;
-      } else {
-        inviteUrl = `https://t.me/gm_coin_test_bot/checking?startapp=${inviteCode}`
-      }
-
-      this.showInvite = false;
-      shareOnTelegram(inviteUrl);
     },
     // 根据当前状态获取样式
     challengeStatus(event: ucCheckInVOs) {
