@@ -77,11 +77,11 @@
       </div>
       <div class="connect_info">
         <div class="connect_address">
-          <v-img :width="40" cover src="@/assets/images/svg/airdrop/icon_wallet.svg"></v-img>
+          <v-img :width="30" cover src="@/assets/images/svg/airdrop/icon_wallet.svg"></v-img>
           <span>{{ formatAddr(walletAddr) }}</span>
         </div>
         <div class="disconnect_btn" @click="handleDisconnect()">
-          <v-img :width="30" cover src="@/assets/images/svg/airdrop/icon_disconnect.svg"></v-img>
+          <v-img :width="20" cover src="@/assets/images/svg/airdrop/icon_disconnect.svg"></v-img>
         </div>
       </div>
     </div>
@@ -438,7 +438,7 @@ export default defineComponent({
     font-weight: 700;
     font-style: normal;
     color: #fff;
-    font-size: 20px;
+    font-size: 16px;
     background-color: rgba(0, 152, 235, 1);
     border-radius: 10px;
     padding: 4px 8px;
@@ -451,8 +451,8 @@ export default defineComponent({
   }
 
   .disconnect_btn {
-    width: 48px;
-    height: 48px;
+    width: 38px;
+    height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;

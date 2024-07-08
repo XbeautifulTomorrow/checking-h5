@@ -290,7 +290,7 @@
     <!--充值弹窗-->
     <v-dialog v-model="showRecharge" width="auto">
       <div class="dialog_box">
-        <div class="dialog_text">Opps, You $GMC is not enough! You have two ways to get more.</div>
+        <div class="dialog_text">Opps, You $GMC is not enough! You have three ways to get more.</div>
         <div class="recharge_btns">
           <v-btn class="recharge_item gift" @click="toRecharge()">
             <v-img :width="24" cover src="@/assets/images/svg/check_in/icon_gift.svg"></v-img>
