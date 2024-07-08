@@ -24,7 +24,7 @@
             <span class="finished">TON CONNECT</span>
           </v-btn>
           <v-btn v-else class="connect_btn" :elevation="8" width="90%" height="40" @click="handlePayment()">
-            <span class="finished">PAYMENT</span>
+            <span class="finished">TON CONNECT</span>
           </v-btn>
         </div>
         <div v-else class="recharge_box">
@@ -167,11 +167,11 @@ export default defineComponent({
       this.tonConnect.onStatusChange((wallet: ConnectedWallet) => {
         if (wallet) {
           const { listening } = useUserStore();
-          const { account: { publicKey } } = wallet;
+          const { account: { address } } = wallet;
           const isC = this.tonConnect.connected;
           listening({
             isc: isC,
-            account: publicKey
+            account: address
           });
         }
       });

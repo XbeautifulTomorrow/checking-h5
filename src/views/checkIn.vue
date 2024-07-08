@@ -291,16 +291,18 @@
     <v-dialog v-model="showRecharge" width="auto">
       <div class="dialog_box">
         <div class="dialog_text">Opps, You $GMC is not enough! You have two ways to get more.</div>
-        <div class="recharge_item">
-          <span>1. Invite Friends</span>
-          <v-btn color="#49B6F6" height="24" density="compact" @click="toFrens()" variant="flat">
-            <div class="finished">GO</div>
+        <div class="recharge_btns">
+          <v-btn class="recharge_item gift" @click="toRecharge()">
+            <v-img :width="24" cover src="@/assets/images/svg/check_in/icon_gift.svg"></v-img>
+            <span class="finished">Get Bonus $GMC</span>
           </v-btn>
-        </div>
-        <div class="recharge_item">
-          <span>2. Daily Task</span>
-          <v-btn color="#49B6F6" height="24" density="compact" @click="toEarn()" variant="flat">
-            <div class="finished">GO</div>
+          <v-btn class="recharge_item" @click="toFrens()">
+            <v-img :width="24" cover src="@/assets/images/svg/check_in/icon_invite.svg"></v-img>
+            <span class="finished">Invite Friend</span>
+          </v-btn>
+          <v-btn class="recharge_item" @click="toEarn()">
+            <v-img :width="24" cover src="@/assets/images/svg/check_in/icon_task.svg"></v-img>
+            <span class="finished">Daily Task</span>
           </v-btn>
         </div>
       </div>
@@ -822,6 +824,12 @@ export default defineComponent({
       // let min = ((diff % nd) % nh) / nm; // 计算差多少分钟
 
       return Math.floor(diff / ns);
+    },
+    // 去充值
+    toRecharge() {
+      this.showRecharge = false;
+      const { setShowRecharge } = useUserStore();
+      setShowRecharge(true);
     },
     // 去邀请
     toFrens() {
@@ -1406,25 +1414,28 @@ export default defineComponent({
     font-weight: bold;
   }
 
+  .recharge_btns {
+    display: flex;
+    flex-direction: column;
+  }
+
   .recharge_item+.recharge_item {
     margin-top: 8px;
   }
 
+
   .recharge_item {
-    display: flex;
-    align-items: center;
+    background-color: #49b6f6;
+
+    &.gift {
+      background-color: #f33b59;
+    }
+
+    .v-img {
+      margin-right: 4px;
+    }
+
     font-size: 16px;
-
-    span {
-      text-align: left;
-      width: 120px;
-      color: #FDEFD6;
-    }
-
-    &>.v-btn {
-      font-size: 14px;
-      color: #fff;
-    }
 
     .finished {
       color: #fff;
