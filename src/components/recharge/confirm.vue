@@ -224,6 +224,7 @@ export default defineComponent({
       this.tonConnect.sendTransaction(transaction).then((res: any) => {
         this.status = "pending";
         this.payment = true;
+        console.log(res)
         this.countDown();
       }).catch((err: any) => {
         console.log(err);

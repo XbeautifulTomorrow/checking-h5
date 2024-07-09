@@ -16,9 +16,13 @@
                 <span>{{ `${item.finishCount}/${item.totalCount}` }}</span>
               </div>
               <div class="task_name" v-else>{{ item.fullName }}</div>
-              <div class="task_bonus">
+              <div class="task_bonus" v-if="item.coinAmount">
                 <v-img :width="18" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
                 <div class="bonus">{{ `+ ${Number(item.coinAmount).toLocaleString()}` }}</div>
+              </div>
+              <div class="task_bonus" v-else>
+                <v-icon color="#FFF100" size="20" icon="mdi-lightning-bolt"></v-icon>
+                <div class="bonus">{{ `+ ${item.energyAmount}` }}</div>
               </div>
             </div>
           </div>
@@ -94,6 +98,10 @@ import INVITE from "@/assets/images/svg/earn/invite.svg";
 import GM from "@/assets/images/svg/earn/check_in.svg";
 import CHALLENGE from "@/assets/images/svg/earn/join.svg";
 import AD from "@/assets/images/svg/earn/ad.svg";
+import PURCHASE from "@/assets/images/svg/earn/purchase.svg";
+import CHAIN_CHECKIN from "@/assets/images/svg/earn/link_check_in.svg";
+import { TonConnectUI, ConnectedWallet } from '@tonconnect/ui'
+import { toNano, beginCell } from '@ton/ton';
 
 interface showPromiseResult {
   done: boolean; // true if user watch till the end, otherwise false
@@ -107,10 +115,12 @@ export default defineComponent({
     return {
       dailyTask: [] as Array<taskInfo>,
       explore: [] as Array<taskInfo>,
-      currentTask: "",
+      currentTask: {} as taskInfo,
       taskImages: {
         LOGIN,
         INVITE,
+        PURCHASE,
+        CHAIN_CHECKIN,
         GM,
         CHALLENGE,
         AD
@@ -121,6 +131,24 @@ export default defineComponent({
     userInfo() {
       const { userInfo } = useUserStore();
       return userInfo;
+    },
+    tonConnect: {
+      get() {
+        const { tonConnect } = useUserStore();
+        return tonConnect
+      },
+      set(val: boolean) {
+        const { setTonConnect } = useUserStore();
+        setTonConnect(val)
+      }
+    },
+    isConnect() {
+      const { isConnect } = useUserStore();
+      return isConnect
+    },
+    walletAddr() {
+      const { walletAddr } = useUserStore();
+      return walletAddr
     },
   },
   created() {
@@ -134,19 +162,25 @@ export default defineComponent({
         const { data } = res;
         this.dailyTask = [];
         this.explore = [];
+        const linkTask = [];
 
         for (let i = 0; i < data.length; i++) {
           const element = data[i];
           if (element.type == "DAILY") {
-            this.dailyTask.push(element);
+            if (element.abbreviation != "PURCHASE" && element.abbreviation != "CHAIN_CHECKIN") {
+              this.dailyTask.push(element);
+            } else {
+              linkTask.push(element);
+            }
           } else {
             element.loading = false;
             this.explore.push(element);
           }
-
           element.loading = false;
           element.timer = false;
         }
+
+        this.dailyTask.splice(2, 0, ...linkTask);
       }
     },
     // 完成任务
@@ -158,6 +192,12 @@ export default defineComponent({
         if (event.abbreviation == "AD") {
           this.toAdController(event);
           event.loading = false;
+          return
+        }
+
+        if (event.abbreviation == "CHAIN_CHECKIN") {
+          this.initTonConnect();
+          this.currentTask = event;
           return
         }
 
@@ -260,12 +300,119 @@ export default defineComponent({
         openUrl("https://x.com/GMCoin_Fam/status/1808708189967561097");
       }
     },
-    // 生成一个随机数
-    getRandom() {
-      const min = 0;
-      const max = 1;
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
+    // 初始化ton-connect
+    async initTonConnect() {
+      let miniappUrl = "https://t.me/gm_coin_test_bot/checking";
+
+      this.tonConnect = new TonConnectUI({
+        manifestUrl: "https://file.gmking.io/tonconnect-manifest.json"
+      });
+
+      if (import.meta.env.MODE == "prod") {
+        miniappUrl = "https://t.me/theGMCoinBot/GMCoin";
+      }
+      // webapp重定向
+      this.tonConnect.uiOptions = {
+        twaReturnUrl: miniappUrl
+      }
+
+      // 如果未链接，发起链接请求
+      if (this.tonConnect.connected) {
+        this.connectToWallet();
+      }
+      // 监听钱包链接状态
+      this.tonConnect.onStatusChange((wallet: ConnectedWallet) => {
+        if (wallet) {
+          const { listening } = useUserStore();
+          const { account: { address } } = wallet;
+          const isC = this.tonConnect.connected;
+          listening({
+            isc: isC,
+            account: address
+          });
+
+          this.handleSelfTransfer();
+        }
+      });
+
+    },
+    async connectToWallet() {
+      this.handleDisconnect();
+      this.tonConnect.connectWallet().then((res: any) => {
+        console.log(res);
+      }).catch((err: any) => {
+        console.log(err);
+        const index = this.dailyTask.findIndex(e => e.abbreviation == this.currentTask.abbreviation);
+        if (index != -1) {
+          this.dailyTask[index].loading = false;
+        }
+      })
+      // 如果需要，可以对connectedWallet做一些事情
+    },
+    // 处理自我转账
+    async handleSelfTransfer() {
+
+      // 创建评论
+      const body = beginCell()
+        .storeUint(0, 32) // 写入32个零位以表示后面将跟随文本评论
+        .storeStringTail('gmcoin') // 写下我们的文本评论
+        .endCell();
+
+      // 创建交易体
+      const transaction = {
+        validUntil: Math.floor(Date.now() / 1000) + 360,
+        messages: [
+          {
+            address: this.walletAddr, // 目的地址
+            amount: toNano(0.001).toString(), //以nanotons计的Toncoin
+            payload: body.toBoc().toString("base64")
+          }
+        ]
+      }
+
+      this.tonConnect.sendTransaction(transaction).then(async (res: any) => {
+        console.log(res)
+        const taskRes = await completeTask({
+          taskId: this.currentTask.id,
+          remark: res.boc,
+          length: res.boc.length
+        });
+
+        const index = this.dailyTask.findIndex(e => e.abbreviation == this.currentTask.abbreviation);
+        if (index != -1) {
+          this.dailyTask[index].loading = false;
+        }
+
+        if (taskRes.code == 200) {
+          if (taskRes.data) {
+            // 任务完成了，重新获取列表
+            const userStore = useUserStore();
+            userStore.fetchUserInfo();
+            this.fetchChallengeList();
+          }
+        }
+      }).catch((err: any) => {
+        console.log(err);
+        const index = this.dailyTask.findIndex(e => e.abbreviation == this.currentTask.abbreviation);
+        if (index != -1) {
+          this.dailyTask[index].loading = false;
+        }
+      })
+    },
+    // 断开连接  
+    async handleDisconnect() {
+      const isC = this.tonConnect.connected;
+      if (isC) {
+        // 如果已连接，断开连接     
+        await this.tonConnect.disconnect();
+
+        const { listening } = useUserStore();
+        listening({
+          isc: false,
+          address: null
+        })
+      }
+    },
   },
 });
 </script>
