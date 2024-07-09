@@ -196,8 +196,12 @@ export default defineComponent({
         }
 
         if (event.abbreviation == "CHAIN_CHECKIN") {
-          this.initTonConnect();
           this.currentTask = event;
+          if (!this.tonConnect) {
+            this.initTonConnect();
+          } else {
+            this.connectToWallet();
+          }
           return
         }
 
@@ -283,7 +287,12 @@ export default defineComponent({
       } else if (abbreviation == "CHALLENGE") {
         // 去参加挑战
         this.$router.push('/activity');
-      } else if (abbreviation == "TGGROUP") {
+      } else if (abbreviation == "PURCHASE") {
+        // 充值消费
+        const { setShowRecharge } = useUserStore();
+        setShowRecharge(true);
+      }
+      else if (abbreviation == "TGGROUP") {
         // 加入Telegram群
         openUrl("https://t.me/GMCoinChat1");
       } else if (abbreviation == "TGCHANNEL") {
@@ -317,7 +326,7 @@ export default defineComponent({
       }
 
       // 如果未链接，发起链接请求
-      if (this.tonConnect.connected) {
+      if (!this.tonConnect.connected) {
         this.connectToWallet();
       }
       // 监听钱包链接状态
