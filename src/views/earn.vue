@@ -16,13 +16,15 @@
                 <span>{{ `${item.finishCount}/${item.totalCount}` }}</span>
               </div>
               <div class="task_name" v-else>{{ item.fullName }}</div>
-              <div class="task_bonus" v-if="item.coinAmount">
-                <v-img :width="18" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-                <div class="bonus">{{ `+ ${Number(item.coinAmount).toLocaleString()}` }}</div>
-              </div>
-              <div class="task_bonus" v-else>
-                <v-icon color="#FFF100" size="20" icon="mdi-lightning-bolt"></v-icon>
-                <div class="bonus">{{ `+ ${item.energyAmount}` }}</div>
+              <div class="task_bonus_box">
+                <div class="task_bonus" v-if="item.energyAmount">
+                  <v-icon color="#FFF100" size="20" icon="mdi-lightning-bolt"></v-icon>
+                  <div class="bonus">{{ `+ ${item.energyAmount}` }}</div>
+                </div>
+                <div class="task_bonus" v-if="item.coinAmount">
+                  <v-img :width="18" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
+                  <div class="bonus">{{ `+ ${Number(item.coinAmount).toLocaleString()}` }}</div>
+                </div>
               </div>
             </div>
           </div>
@@ -54,9 +56,15 @@
             <v-img v-else :width="36" cover src="@/assets/images/svg/earn/3base.svg"></v-img>
             <div class="task_item_reward">
               <div class="task_name">{{ item.fullName }}</div>
-              <div class="task_bonus">
-                <v-icon color="#FFF100" size="20" icon="mdi-lightning-bolt"></v-icon>
-                <div class="bonus">{{ `+ ${item.energyAmount}` }}</div>
+              <div class="task_bonus_box">
+                <div class="task_bonus" v-if="item.energyAmount">
+                  <v-icon color="#FFF100" size="20" icon="mdi-lightning-bolt"></v-icon>
+                  <div class="bonus">{{ `+ ${item.energyAmount}` }}</div>
+                </div>
+                <div class="task_bonus" v-if="item.coinAmount">
+                  <v-img :width="18" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
+                  <div class="bonus">{{ `+ ${Number(item.coinAmount).toLocaleString()}` }}</div>
+                </div>
               </div>
             </div>
           </div>
@@ -516,6 +524,11 @@ export default defineComponent({
     line-height: 1.2;
   }
 
+  .task_bonus_box {
+    display: flex;
+    align-items: center;
+  }
+
   .task_bonus {
     display: flex;
     align-items: center;
@@ -526,6 +539,10 @@ export default defineComponent({
       flex: none;
       margin-right: 4px;
     }
+  }
+
+  .task_bonus+.task_bonus {
+    margin-left: 8px;
   }
 }
 
