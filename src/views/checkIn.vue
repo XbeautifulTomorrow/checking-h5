@@ -619,14 +619,13 @@ export default defineComponent({
         const checkIn = challengeInfo?.ucCheckInVOs.find(e => e.userStatus == 2);
 
         if (checkIn) {
-          const { setMessageText } = useMessageStore()
           const res = await challengeCheckIn({
             challengeId: challengeInfo?.challengeId,
             signType: checkIn?.signType
           });
 
           if (res.code == 200) {
-            setMessageText("Check in successfully");
+            this.showInvite = true;
             const userStore = useUserStore();
             userStore.fetchUserInfo();
             this.fetchChallengeList();
