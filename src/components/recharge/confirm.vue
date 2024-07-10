@@ -245,28 +245,15 @@ export default defineComponent({
         this.timer = setInterval(() => {
           if (this.countdown > 0 && this.countdown <= 30) {
             this.countdown--;
-            if (this.countdown == 3) {
-              // 提前获取余额
-              this.fetchPaymentResults();
-            }
 
+            this.fetchPaymentResults();
             if (this.countdown !== 0) {
               this.timeMsg = this.countdown + "s";
             } else {
               this.timeMsg = this.countdown + "s";
               clearInterval(this.timer);
               this.timer = null;
-
-              const { fetchUserInfo } = useUserStore();
-              const order = this.orderData.find(e => e.orderId == this.productId);
-              if (order && order.status == 1) {
-                this.status = "complete";
-                fetchUserInfo();
-                return
-              }
-
               this.status = "timeout";
-              fetchUserInfo();
             }
           }
         }, 1000);
@@ -286,7 +273,15 @@ export default defineComponent({
         size: 10
       });
       if (res.code == 200) {
-        this.orderData = res.data.records as Array<order>;
+        const orderData = res.data.records as Array<order>;
+
+        const { fetchUserInfo } = useUserStore();
+        const order = orderData.find(e => e.orderId == this.productId);
+        if (order && order.status == 1) {
+          this.status = "complete";
+          this.clearTimerFun();
+          fetchUserInfo();
+        }
       }
     }
   },
