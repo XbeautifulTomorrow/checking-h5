@@ -92,8 +92,8 @@ export default defineComponent({
       payment: false,
       status: "pending" as statusType,
       timer: null as number | any,
-      countdown: 30,
-      timeMsg: "30s",
+      countdown: 60,
+      timeMsg: "60s",
       orderData: [] as Array<order>
     }
   },
@@ -238,12 +238,12 @@ export default defineComponent({
     },
     // 倒计时
     countDown() {
-      const Countdown = 30;
+      const Countdown = 60;
       if (!this.timer) {
         this.countdown = Countdown;
         this.timeMsg = this.countdown + "s";
         this.timer = setInterval(() => {
-          if (this.countdown > 0 && this.countdown <= 30) {
+          if (this.countdown > 0 && this.countdown <= 60) {
             this.countdown--;
 
             this.fetchPaymentResults();
