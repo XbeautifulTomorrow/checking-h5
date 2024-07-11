@@ -26,6 +26,16 @@
     </v-dialog>
     <recharge></recharge>
     <confirm v-if="showConfirm"></confirm>
+    <v-dialog v-model="showLoading" max-width="320" persistent>
+      <v-list class="py-2" color="primary" elevation="12" rounded="lg">
+        <v-list-item title="Loading...">
+          <template v-slot:append>
+            <v-progress-circular color="primary" indeterminate="disable-shrink" size="16"
+              width="2"></v-progress-circular>
+          </template>
+        </v-list-item>
+      </v-list>
+    </v-dialog>
   </v-app>
 </template>
 
@@ -77,6 +87,10 @@ export default defineComponent({
     messageText() {
       const { messageText } = useMessageStore();
       return messageText
+    },
+    showLoading() {
+      const { showLoading } = useMessageStore();
+      return showLoading
     },
   },
   methods: {
