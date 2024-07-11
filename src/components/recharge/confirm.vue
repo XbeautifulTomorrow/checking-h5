@@ -276,7 +276,7 @@ export default defineComponent({
         const orderData = res.data.records as Array<order>;
 
         const { fetchUserInfo } = useUserStore();
-        const order = orderData.find(e => e.orderId == this.productId);
+        const order = orderData.find(e => e.orderId == orderId);
         if (order && order.status == 1) {
           this.status = "complete";
           this.clearTimerFun();
