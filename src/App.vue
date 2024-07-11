@@ -26,15 +26,12 @@
     </v-dialog>
     <recharge></recharge>
     <confirm v-if="showConfirm"></confirm>
-    <v-dialog v-model="showLoading" max-width="320" persistent>
-      <v-list class="py-2" color="primary" elevation="12" rounded="lg">
-        <v-list-item title="Loading...">
-          <template v-slot:append>
-            <v-progress-circular color="primary" indeterminate="disable-shrink" size="16"
-              width="2"></v-progress-circular>
-          </template>
-        </v-list-item>
-      </v-list>
+    <v-dialog v-model="showLoading" width="auto" persistent>
+      <div class="loading_box">
+        <v-progress-circular color="#fff" indeterminate size="40" bg-color="rgba(255, 255, 255, 0)"
+          width="4"></v-progress-circular>
+        <span class="loading_text">Loading</span>
+      </div>
     </v-dialog>
   </v-app>
 </template>
@@ -151,6 +148,23 @@ export default defineComponent({
     font-size: 20px;
     font-weight: bold;
     padding: 0 20px;
+  }
+}
+
+.loading_box {
+  width: 120px;
+  height: 120px;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  .loading_text {
+    margin-top: 8px;
+    font-size: 16px;
+    color: #fff;
   }
 }
 </style>
