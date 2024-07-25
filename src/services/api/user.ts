@@ -64,7 +64,7 @@ const buyProduct = (params: any) => http.get("/gm-coin-server-web/product-info/p
  * 购买产品
  * @param params
  */
-const getOrderList = (params: any) => http.get("/gm-coin-server-web/order/list", params);
+const getOrderList = (params: any) => http.get("/gm-coin-server-web/order/list", params, { showLoading: false });
 
 export {
   validateToken,

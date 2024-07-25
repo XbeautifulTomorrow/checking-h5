@@ -119,7 +119,10 @@ export default defineComponent({
       },
       set(val: boolean) {
         const { setTonConnect } = useUserStore();
-        setTonConnect(val)
+        if (!val) {
+          this.clearTimerFun();
+        }
+        setTonConnect(val);
       }
     },
     isConnect() {

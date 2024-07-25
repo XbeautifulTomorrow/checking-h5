@@ -267,8 +267,8 @@
     <v-dialog v-model="showInvite" width="auto">
       <div class="dialog_box">
         <div class="dialog_text">
-          <span>Signed up! Invite friends and grab </span>
-          <span style="font-weight: 700;">500 $GMC!</span>
+          <span>Invite Friends. Split </span>
+          <span style="font-weight: 700;">$1M $GMC !</span>
         </div>
         <v-btn class="invite" @click="inviteToTelegram()">
           <v-img :width="24" cover src="@/assets/images/svg/check_in/telegram.svg"></v-img>
