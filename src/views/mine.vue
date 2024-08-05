@@ -1,11 +1,26 @@
 <template>
   <div class="mine_wrapper">
     <div class="user_box">
-      <v-avatar v-if="userInfo?.avatar" size="50" :image="userInfo?.avatar"></v-avatar>
-      <img v-else width="50" height="50" :avatar="userInfo?.userName || 'avatar'" color="#3D3D3D" class="avatar">
+      <v-avatar
+        v-if="userInfo?.avatar"
+        size="50"
+        :image="userInfo?.avatar"
+      ></v-avatar>
+      <img
+        v-else
+        width="50"
+        height="50"
+        :avatar="userInfo?.userName || 'avatar'"
+        color="#3D3D3D"
+        class="avatar"
+      />
       <div class="min_text">{{ userInfo?.userName }}</div>
       <div class="points">
-        <v-img :width="20" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
+        <v-img
+          :width="20"
+          cover
+          src="@/assets/images/svg/check_in/points.svg"
+        ></v-img>
         <span>{{ Number(userInfo?.pointAmount || 0).toLocaleString() }}</span>
       </div>
     </div>
@@ -14,7 +29,7 @@
       <div class="level_list">
         <div class="level_item level_description">
           <div class="level_item_left">
-            <div class="v-btn finished" style="width: 80px;">Level</div>
+            <div class="v-btn finished" style="width: 80px">Level</div>
             <div class="v-btn finished">Entry Limits</div>
           </div>
           <div class="level_item_right">
@@ -25,24 +40,52 @@
           <div class="level_item_left">
             <div class="level_num">
               <div class="num">{{ `Lvl ${item.level}` }}</div>
-              <v-img :width="70" :class="[index > 3 && 'level_img']" cover
-                :src="levelImages[item.level as keyof typeof levelImages]"></v-img>
+              <v-img
+                :width="70"
+                :class="[index > 3 && 'level_img']"
+                cover
+                :src="levelImages[item.level as keyof typeof levelImages]"
+              ></v-img>
             </div>
             <div class="level_item_reward">
               <div class="level_bonus">
-                <v-img :width="20" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
+                <v-img
+                  :width="20"
+                  cover
+                  src="@/assets/images/svg/check_in/gm_coin.svg"
+                ></v-img>
                 <div class="bonus">
-                  {{ `${Number(item.minAmount).toLocaleString()} - ${Number(item.maxAmount).toLocaleString()}` }}
+                  {{
+                    `${Number(item.minAmount).toLocaleString()} - ${Number(
+                      item.maxAmount
+                    ).toLocaleString()}`
+                  }}
                 </div>
               </div>
             </div>
           </div>
           <div class="level_item_right">
-            <v-btn :color="item.isLocked ? 'rgb(0,0,0,0)' : '#49B6F6'" :loading="item.loading" height="24" width="100"
-              density="compact" @click="levelUp(item)" :variant="item.isLocked ? 'elevated' : 'flat'"
-              :disabled="item.isLocked" size="x-small" v-if="item.level <= userInfo?.level + 1">
-              <v-img v-if="!item.isLocked" :width="18" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-              <div v-if="!item.isLocked" class="finished">{{ Number(item.upgradeAmount).toLocaleString() }}</div>
+            <v-btn
+              :color="item.isLocked ? 'rgb(0,0,0,0)' : '#49B6F6'"
+              :loading="item.loading"
+              height="24"
+              width="100"
+              density="compact"
+              @click="levelUp(item)"
+              :variant="item.isLocked ? 'elevated' : 'flat'"
+              :disabled="item.isLocked"
+              size="x-small"
+              v-if="item.level <= userInfo?.level + 1"
+            >
+              <v-img
+                v-if="!item.isLocked"
+                :width="18"
+                cover
+                src="@/assets/images/svg/check_in/gm_coin.svg"
+              ></v-img>
+              <div v-if="!item.isLocked" class="finished">
+                {{ Number(item.upgradeAmount).toLocaleString() }}
+              </div>
               <div v-if="item.isLocked" class="finished">Unlocked</div>
             </v-btn>
           </div>
@@ -52,18 +95,32 @@
     <!--充值弹窗-->
     <v-dialog v-model="showRecharge" width="auto">
       <div class="dialog_box">
-        <div class="dialog_text">Opps, You $GMC is not enough! You have three ways to get more.</div>
+        <div class="dialog_text">
+          Opps, You $GMC is not enough! You have three ways to get more.
+        </div>
         <div class="recharge_btns">
           <v-btn class="recharge_item gift" @click="toRecharge()">
-            <v-img :width="24" cover src="@/assets/images/svg/check_in/icon_gift.svg"></v-img>
+            <v-img
+              :width="24"
+              cover
+              src="@/assets/images/svg/check_in/icon_gift.svg"
+            ></v-img>
             <span class="finished">Get Bonus $GMC</span>
           </v-btn>
           <v-btn class="recharge_item" @click="toFrens()">
-            <v-img :width="24" cover src="@/assets/images/svg/check_in/icon_invite.svg"></v-img>
+            <v-img
+              :width="24"
+              cover
+              src="@/assets/images/svg/check_in/icon_invite.svg"
+            ></v-img>
             <span class="finished">Invite Friend</span>
           </v-btn>
           <v-btn class="recharge_item" @click="toEarn()">
-            <v-img :width="24" cover src="@/assets/images/svg/check_in/icon_task.svg"></v-img>
+            <v-img
+              :width="24"
+              cover
+              src="@/assets/images/svg/check_in/icon_task.svg"
+            ></v-img>
             <span class="finished">Daily Task</span>
           </v-btn>
         </div>
@@ -73,7 +130,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 import { useUserStore } from "@/store/user.js";
 import { getLevelList, levelUpgrade } from "@/services/api/user.js";
 import { useMessageStore } from "@/store/message.js";
@@ -91,12 +148,12 @@ import Level_9 from "@/assets/images/svg/main/level_9.svg";
 import Level_10 from "@/assets/images/svg/main/level_10.svg";
 
 interface levelInfo {
-  "id": number, //等级ID
-  "level": number, //等级
-  "upgradeAmount": number, //升级消耗金额(GMC)
-  "minAmount": number, //最小输入金额(GMC)
-  "maxAmount": number, //最大输入金额(GMC)
-  "isLocked": boolean //是否解锁(true-解锁，false-未解锁)
+  id: number; //等级ID
+  level: number; //等级
+  upgradeAmount: number; //升级消耗金额(GMC)
+  minAmount: number; //最小输入金额(GMC)
+  maxAmount: number; //最大输入金额(GMC)
+  isLocked: boolean; //是否解锁(true-解锁，false-未解锁)
   [x: string]: string | number | any;
 }
 
@@ -113,7 +170,7 @@ export default defineComponent({
         7: Level_7,
         8: Level_8,
         9: Level_9,
-        10: Level_10
+        10: Level_10,
       },
       levelList: [] as Array<levelInfo>,
       timer: null as number | any,
@@ -123,7 +180,7 @@ export default defineComponent({
   computed: {
     userInfo() {
       const { userInfo } = useUserStore();
-      return userInfo
+      return userInfo;
     },
   },
   created() {
@@ -145,12 +202,12 @@ export default defineComponent({
       const { setMessageText } = useMessageStore();
       if (userInfo.gmcAmount < event.upgradeAmount) {
         this.showRecharge = true;
-        return
+        return;
       }
 
       event.loading = true;
       const res = await levelUpgrade({
-        levelId: event.id
+        levelId: event.id,
       });
 
       event.loading = false;
@@ -169,12 +226,12 @@ export default defineComponent({
     },
     // 去邀请
     toFrens() {
-      this.$router.push('/frens');
+      this.$router.push("/frens");
     },
     // 去做任务
     toEarn() {
-      this.$router.push('/earn');
-    }
+      this.$router.push("/earn");
+    },
   },
   mounted() {
     this.$nextTick(() => {
@@ -197,7 +254,7 @@ export default defineComponent({
   .min_text {
     font-size: 20px;
     font-weight: bold;
-    color: #F7F7F7;
+    color: #f7f7f7;
   }
 
   .points {
@@ -211,7 +268,7 @@ export default defineComponent({
     font-size: 16px;
     line-height: 1;
     font-weight: bold;
-    color: #FBB11B;
+    color: #fbb11b;
 
     .v-img {
       flex: none;
@@ -221,7 +278,7 @@ export default defineComponent({
 }
 
 .avatar {
-  border: 4px solid #FFAD2E;
+  border: 4px solid #ffad2e;
   border-radius: 50%;
 }
 
@@ -231,12 +288,11 @@ export default defineComponent({
   .level_text {
     font-weight: bold;
     font-size: 20px;
-    color: #FDEFD6;
+    color: #fdefd6;
   }
 }
 
 .level_panel {
-
   .level_title {
     font-size: 16px;
     font-weight: bold;
@@ -245,11 +301,11 @@ export default defineComponent({
 }
 
 .level_list {
-  &>.level_item+.level_item {
+  & > .level_item + .level_item {
     margin-top: 8px;
   }
 
-  &>.level_item:nth-child(2) {
+  & > .level_item:nth-child(2) {
     margin-top: 0;
   }
 }
@@ -310,7 +366,7 @@ export default defineComponent({
     align-items: center;
     font-size: 14px;
     font-weight: bold;
-    color: #FBB11B;
+    color: #fbb11b;
 
     .v-img {
       flex: none;
@@ -354,13 +410,13 @@ export default defineComponent({
     flex-direction: column;
   }
 
-  .recharge_item+.recharge_item {
+  .recharge_item + .recharge_item {
     margin-top: 8px;
   }
 
-
   .recharge_item {
     background-color: #49b6f6;
+    font-size: 16px;
 
     &.gift {
       background-color: #f33b59;
@@ -369,8 +425,6 @@ export default defineComponent({
     .v-img {
       margin-right: 4px;
     }
-
-    font-size: 16px;
 
     .finished {
       color: #fff;
