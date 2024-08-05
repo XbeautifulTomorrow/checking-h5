@@ -1,5 +1,5 @@
 /// <reference types="vite/client" />
-import { VueRouter } from 'vue-router';
+import { VueRouter, RouteLocationNormalizedLoaded } from 'vue-router';
 import { ComponentCustomProperties } from 'vue';
 
 declare module '*.vue' {
@@ -11,6 +11,7 @@ declare module '*.vue' {
 declare module '@vue/runtime-core' {
   // Provide typings for `this.$router`
   interface ComponentCustomProperties {
+    $route: RouteLocationNormalizedLoaded;
     $router: VueRouter;
   }
 }

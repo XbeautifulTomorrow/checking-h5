@@ -1,6 +1,14 @@
 <template>
   <div>
-    <v-app-bar elevation="2" style="padding: 0 8px;" app fixed dark color="#ff197c" density="compact">
+    <v-app-bar
+      elevation="2"
+      style="padding: 0 8px"
+      app
+      fixed
+      dark
+      color="#ff197c"
+      density="compact"
+    >
       <template v-slot:prepend>
         <div class="back_btn" v-if="$route.path == '/'" @click="toMain()">
           <v-icon color="#fff" size="24" icon="mdi-chevron-left"></v-icon>
@@ -12,31 +20,62 @@
           <v-icon color="#FFF100" :size="20" icon="mdi-lightning-bolt"></v-icon>
           <div class="energy_item">
             <div class="energy_val">{{ userInfo.energyAmount }}</div>
-            <v-fab color="#49B6F6" size="20" icon="mdi-plus" elevation="0" rounded="lg" @click="toFrens()"
-              class="btn_border">
+            <v-fab
+              color="#49B6F6"
+              size="20"
+              icon="mdi-plus"
+              elevation="0"
+              rounded="lg"
+              @click="toFrens()"
+              class="btn_border"
+            >
               <v-icon color="#fff" size="20"></v-icon>
             </v-fab>
           </div>
         </div>
         <div class="energy_box">
-          <v-img :width="20" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
+          <v-img
+            :width="20"
+            cover
+            src="@/assets/images/svg/check_in/gm_coin.svg"
+          ></v-img>
           <div class="energy_item">
-            <div class="energy_val">{{ Number(userInfo?.gmcAmount || 0).toLocaleString() }}</div>
-            <v-fab color="#49B6F6" size="20" icon="mdi-plus" elevation="0" rounded="lg" @click="toEarn()"
-              class="btn_border">
+            <div class="energy_val">
+              {{ Number(userInfo?.gmcAmount || 0).toLocaleString() }}
+            </div>
+            <v-fab
+              color="#49B6F6"
+              size="20"
+              icon="mdi-plus"
+              elevation="0"
+              rounded="lg"
+              @click="toEarn()"
+              class="btn_border"
+            >
               <v-icon color="#fff" size="20"></v-icon>
             </v-fab>
           </div>
         </div>
-        <v-avatar v-if="userInfo.avatar" size="32" :image="userInfo.avatar"></v-avatar>
-        <img v-else width="32" height="32" :avatar="userInfo.userName || 'avatar'" color="#3D3D3D" class="avatar">
+        <v-avatar
+          v-if="userInfo.avatar"
+          size="32"
+          :image="userInfo.avatar"
+        ></v-avatar>
+        <img
+          v-else
+          width="32"
+          height="32"
+          :avatar="userInfo.userName || 'avatar'"
+          color="#3D3D3D"
+          class="avatar"
+        />
       </template>
     </v-app-bar>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 import { useUserStore } from "@/store/user.js";
 import { useCheckInStore } from "@/store/check_in.js";
 import { getUserInfo } from "@/services/api/user";
@@ -69,7 +108,7 @@ export default defineComponent({
     toMain() {
       const checkInStore = useCheckInStore();
       checkInStore.setChallengeId(null);
-      this.$router.push('/activity');
+      this.$router.push("/activity");
     },
     toFrens() {
       // this.$router.push('/frens');
@@ -92,7 +131,7 @@ export default defineComponent({
     "$route.path"() {
       const userStore = useUserStore();
       userStore.fetchUserInfo();
-    }
+    },
   },
 });
 </script>
@@ -102,7 +141,7 @@ export default defineComponent({
   height: 24px;
   border-radius: 8px;
   border: 1px solid #000;
-  background-color: #49B6F6;
+  background-color: #49b6f6;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -138,7 +177,7 @@ export default defineComponent({
 }
 
 .avatar {
-  border: 4px solid #FFAD2E;
+  border: 4px solid #ffad2e;
   border-radius: 50%;
 }
 </style>
