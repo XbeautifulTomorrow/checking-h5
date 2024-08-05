@@ -16,7 +16,8 @@
     },
     "resolveJsonModule": true,
     "types": [
-      "vite/client"
+      "vite/client",
+      "vue-router"
     ],
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
