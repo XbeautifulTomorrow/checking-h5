@@ -1,19 +1,21 @@
 <template>
   <div class="down_wrapper">
-    <slot v-bind="{
-      d: days,
-      h: hours,
-      m: mins,
-      s: seconds,
-      dd: `00${days}`.slice(-2),
-      hh: `00${hours}`.slice(-2),
-      mm: `00${mins}`.slice(-2),
-      ss: `00${seconds}`.slice(-2),
-    }"></slot>
+    <slot
+      v-bind="{
+        d: days,
+        h: hours,
+        m: mins,
+        s: seconds,
+        dd: `00${days}`.slice(-2),
+        hh: `00${hours}`.slice(-2),
+        mm: `00${mins}`.slice(-2),
+        ss: `00${seconds}`.slice(-2),
+      }"
+    ></slot>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 import { useUserStore } from "@/store/user";
 export default defineComponent({
   name: "countDown",

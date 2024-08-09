@@ -1,38 +1,91 @@
 <template>
   <div class="activity_wrapper">
     <div class="challenge_box">
-      <div class="challenge_item" v-for="(item, index) in challengeList" :key="index">
+      <div
+        class="challenge_item"
+        v-for="(item, index) in challengeList"
+        :key="index"
+      >
         <div class="avatar_left">
           <div class="avatar_item" v-if="item.userStatus != 2">
             <div class="challenge_info">
               <div :class="['challenge_time', currentStatus(item.userStatus)]">
-                <v-avatar v-if="userInfo?.avatar" size="30" :image="userInfo?.avatar"></v-avatar>
-                <img v-else width="30" height="30" :avatar="userInfo?.userName || 'avatar'" color="#3D3D3D"
-                  class="avatar">
+                <v-avatar
+                  v-if="userInfo?.avatar"
+                  size="30"
+                  :image="userInfo?.avatar"
+                ></v-avatar>
+                <img
+                  v-else
+                  width="30"
+                  height="30"
+                  :avatar="userInfo?.userName || 'avatar'"
+                  color="#3D3D3D"
+                  class="avatar"
+                />
                 <span v-if="item.userStatus == 1">YOU</span>
                 <span v-else-if="item.userStatus != 3">WIN!</span>
                 <span v-else-if="item.userStatus == 3">FAIL</span>
               </div>
               <div class="challenge_bonus">
-                <v-img :width="16" src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
+                <v-img
+                  :width="16"
+                  src="@/assets/images/svg/check_in/gm_coin.svg"
+                ></v-img>
                 <div :class="['bonus_num', item.userStatus == 3 && 'fail']">
-                  <span v-if="item.userStatus == 3">{{ `- ${unitConversion(item.amount || 0)}` }}</span>
+                  <span v-if="item.userStatus == 3">{{
+                    `- ${unitConversion(item.amount || 0)}`
+                  }}</span>
                   <span v-else>{{ unitConversion(item.amount || 0) }}</span>
                 </div>
               </div>
-              <div :class="['challenge_user', userStatus(item.userStatus)]" v-if="item.userStatus != 3">
-                <v-img :width="16" v-if="item.userStatus == 1" src="@/assets/images/svg/active/in_game.svg"></v-img>
-                <v-img :width="16" v-if="item.userStatus == 4" src="@/assets/images/svg/active/claim.svg"></v-img>
-                <v-img :width="16" v-if="item.userStatus == 5" src="@/assets/images/svg/active/claimed.svg"></v-img>
-                <span>{{ userStatus(item.userStatus) == "IN_GAME" ? "IN GAME" : userStatus(item.userStatus) }}</span>
+              <div
+                :class="['challenge_user', userStatus(item.userStatus)]"
+                v-if="item.userStatus != 3"
+              >
+                <v-img
+                  :width="16"
+                  v-if="item.userStatus == 1"
+                  src="@/assets/images/svg/active/in_game.svg"
+                ></v-img>
+                <v-img
+                  :width="16"
+                  v-if="item.userStatus == 4"
+                  src="@/assets/images/svg/active/claim.svg"
+                ></v-img>
+                <v-img
+                  :width="16"
+                  v-if="item.userStatus == 5"
+                  src="@/assets/images/svg/active/claimed.svg"
+                ></v-img>
+                <span>{{
+                  userStatus(item.userStatus) == "IN_GAME"
+                    ? "IN GAME"
+                    : userStatus(item.userStatus)
+                }}</span>
               </div>
             </div>
           </div>
         </div>
         <div class="avatar_box" @click="toChallenge(item)">
-          <div class="avatar_item" v-for="(nodes, indices) in item.userInfoVOList" :key="indices">
-            <v-avatar v-if="nodes?.avatar" size="34" :image="nodes?.avatar"></v-avatar>
-            <img v-else width="34" height="34" :avatar="nodes?.userName || 'avatar'" color="#3D3D3D" class="avatar">
+          <div
+            class="avatar_item"
+            v-for="(nodes, indices) in item.userInfoVOList"
+            :key="indices"
+          >
+            <v-avatar
+              v-if="nodes?.avatar"
+              size="34"
+              :image="nodes?.avatar"
+            ></v-avatar>
+            <img
+              v-else
+              width="34"
+              height="34"
+              :avatar="nodes?.userName || 'avatar'"
+              color="#3D3D3D"
+              class="avatar"
+            />
           </div>
         </div>
         <div class="avatar_right"></div>
@@ -41,12 +94,22 @@
             {{ `${item.startDateStr || "-"} - ${item.endDateStr || "-"}` }}
           </div>
           <div class="challenge_bonus">
-            <v-img :width="20" src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-            <div class="bonus_num">{{ Number(item.prizePool || 0).toLocaleString() }}</div>
+            <v-img
+              :width="20"
+              src="@/assets/images/svg/check_in/gm_coin.svg"
+            ></v-img>
+            <div class="bonus_num">
+              {{ Number(item.prizePool || 0).toLocaleString() }}
+            </div>
           </div>
           <div class="challenge_user">
-            <v-img :width="20" src="@/assets/images/svg/active/user.svg"></v-img>
-            <div class="bonus_num">{{ Number(item.totalNumber || 0).toLocaleString() }}</div>
+            <v-img
+              :width="20"
+              src="@/assets/images/svg/active/user.svg"
+            ></v-img>
+            <div class="bonus_num">
+              {{ Number(item.totalNumber || 0).toLocaleString() }}
+            </div>
           </div>
         </div>
       </div>
@@ -55,10 +118,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 import { useUserStore } from "@/store/user.js";
-import { getChallengeList } from '@/services/api/challenge';
-import { useCheckInStore } from '@/store/check_in.js';
+import { getChallengeList } from "@/services/api/challenge";
+import { useCheckInStore } from "@/store/check_in.js";
 import { unitConversion } from "@/utils";
 
 interface userInfoVOList {
@@ -109,7 +172,7 @@ export default defineComponent({
 
       const res = await getChallengeList({
         page: _page,
-        size: this.size
+        size: this.size,
       });
       if (res.code == 200) {
         this.challengeTotal = res.data.total;
@@ -131,10 +194,10 @@ export default defineComponent({
           for (let j = 0; j < count; j++) {
             if (j >= counts) {
               this.challengeList[i].userInfoVOList.push({
-                avatar: '',
-                tgId: '',
-                userId: '',
-                userName: ''
+                avatar: "",
+                tgId: "",
+                userId: "",
+                userName: "",
               });
             }
           }
@@ -157,34 +220,34 @@ export default defineComponent({
       const useCheckIn = useCheckInStore();
       useCheckIn.setChallengeId(challengeId);
 
-      this.$router.push('/');
+      this.$router.push("/");
     },
     // 当前状态
     currentStatus(event: number) {
       if (event == 1) {
-        return 'REGISTRATION';
+        return "REGISTRATION";
       } else if (event == 3) {
-        return 'ENDED';
+        return "ENDED";
       } else if (event == 4) {
-        return 'SIGNIN';
+        return "SIGNIN";
       } else if (event == 5) {
-        return 'SIGNIN';
+        return "SIGNIN";
       }
     },
     // 用户状态
     userStatus(event: number) {
       if (event == 1) {
-        return 'IN_GAME';
+        return "IN_GAME";
       } else if (event == 4) {
-        return 'CLAIM';
+        return "CLAIM";
       } else if (event == 5) {
-        return 'CLAIMED';
+        return "CLAIMED";
       }
-    }
+    },
   },
   mounted() {
     const _this = this;
-    window.addEventListener('scroll', function () {
+    window.addEventListener("scroll", function () {
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
         if (!_this.finished) {
           _this.nextQuery();
@@ -235,7 +298,7 @@ export default defineComponent({
       transform: none;
       overflow: initial;
 
-      &>div:last-child {
+      & > div:last-child {
         border-radius: 0 0 8px 8px;
       }
 
@@ -274,7 +337,7 @@ export default defineComponent({
         }
 
         &.CLAIMED {
-          background-color: #A8A7A7;
+          background-color: #a8a7a7;
         }
 
         .v-img {
@@ -295,7 +358,7 @@ export default defineComponent({
   }
 }
 
-.challenge_item+.challenge_item {
+.challenge_item + .challenge_item {
   margin-top: 24px;
 }
 
@@ -328,8 +391,6 @@ export default defineComponent({
   }
 }
 
-
-
 .challenge_info {
   position: absolute;
   top: 50%;
@@ -346,7 +407,7 @@ export default defineComponent({
 
     &.REGISTRATION {
       background-color: #fff;
-      color: #FE3A71;
+      color: #fe3a71;
     }
 
     &.SIGNIN {
@@ -354,7 +415,7 @@ export default defineComponent({
     }
 
     &.ENDED {
-      background-color: #A8A7A7;
+      background-color: #a8a7a7;
     }
   }
 
@@ -373,11 +434,11 @@ export default defineComponent({
 
   .challenge_bonus {
     background-color: #000;
-    color: #FFAD2E;
+    color: #ffad2e;
     font-weight: bold;
 
     .fail {
-      color: #A8A7A7;
+      color: #a8a7a7;
     }
   }
 
@@ -387,7 +448,7 @@ export default defineComponent({
 }
 
 .avatar {
-  border: 4px solid #FFAD2E;
+  border: 4px solid #ffad2e;
   border-radius: 50%;
 }
 </style>

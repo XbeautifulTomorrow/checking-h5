@@ -1,7 +1,7 @@
 import * as http from "@/services/apiService";
 
 /**
- * Telegram登录。
+ * Telegram验证
  * @param params
  */
 const validateToken = (params: any) => http.get("/gm-coin-server-web/tg-user/validate", params);
@@ -15,7 +15,7 @@ const telegramLogin = (params: any) => http.post("/gm-coin-server-web/tg-user/lo
  * 获取用户信息
  * @param params
  */
-const getUserInfo = (params: any) => http.get("/gm-coin-server-web/user/userInfo", params);
+const getUserInfo = (params: any) => http.get("/gm-coin-server-web/user/userInfo", params, { showLoading: false });
 
 /**
  * 获取等级列表
@@ -61,7 +61,7 @@ const buyProduct = (params: any) => http.get("/gm-coin-server-web/product-info/p
 
 
 /**
- * 购买产品
+ * 查询充值状态
  * @param params
  */
 const getOrderList = (params: any) => http.get("/gm-coin-server-web/order/list", params, { showLoading: false });

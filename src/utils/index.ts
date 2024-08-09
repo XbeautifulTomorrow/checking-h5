@@ -422,7 +422,7 @@ export const accurateDecimal = (number: any, format: any, zeroFill: boolean = fa
 
 //非空验证
 function isEmpty(ObjVal: any) {
-  if (ObjVal == null || typeof ObjVal == "undefined" || (typeof ObjVal == "string" && ObjVal != "undefined")) {
+  if (ObjVal == "" || ObjVal == null || ObjVal == undefined || ObjVal == "undefined") {
     return true;
   } else {
     return false;

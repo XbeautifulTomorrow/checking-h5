@@ -3,11 +3,19 @@
     <div class="frens_text">Invite Friends!</div>
     <div class="total_rewards">
       <div class="rewards">
-        <v-img :width="24" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-        <div> {{ Number(userInfo?.totalInviteAmount).toLocaleString() }}</div>
+        <v-img
+          :width="24"
+          cover
+          src="@/assets/images/svg/check_in/gm_coin.svg"
+        ></v-img>
+        <div>{{ Number(userInfo?.totalInviteAmount).toLocaleString() }}</div>
       </div>
       <div class="invitation_ranking" @click="toRanking()">
-        <v-img :width="40" cover src="@/assets/images/svg/frens/report.svg"></v-img>
+        <v-img
+          :width="40"
+          cover
+          src="@/assets/images/svg/frens/report.svg"
+        ></v-img>
         <div>Top 300 Leaders</div>
         <v-icon size="20" icon="mdi-menu-right-outline"></v-icon>
       </div>
@@ -20,7 +28,9 @@
             <div class="dot"></div>
           </div>
         </div>
-        <div class="descriptions_text">Share your invitation link to your frens.</div>
+        <div class="descriptions_text">
+          Share your invitation link to your frens.
+        </div>
       </div>
       <div class="frens_descriptions_item">
         <div class="dots">
@@ -29,7 +39,9 @@
             <div class="dot"></div>
           </div>
         </div>
-        <div class="descriptions_text">Your frens join GMCoin and start any Challenge.</div>
+        <div class="descriptions_text">
+          Your frens join GMCoin and start any Challenge.
+        </div>
       </div>
       <div class="frens_descriptions_item">
         <div class="dots">
@@ -38,7 +50,9 @@
             <div class="dot"></div>
           </div>
         </div>
-        <div class="descriptions_text">You and your frens will receive bonuses.</div>
+        <div class="descriptions_text">
+          You and your frens will receive bonuses.
+        </div>
       </div>
       <div class="frens_descriptions_item">
         <div class="dots">
@@ -49,7 +63,7 @@
         </div>
         <div class="descriptions_text">
           <span>{{ `You'll also get an extra ` }}</span>
-          <span style='color: #49B6ED;'>1%</span>
+          <span style="color: #49b6ed">1%</span>
           <span>{{ ` from each of your frens' check-ins.` }}</span>
         </div>
       </div>
@@ -57,18 +71,30 @@
     <div class="invitation_method">
       <div class="method_item">
         <div class="method_item_img">
-          <v-img :width="50" cover src="@/assets/images/frens/invite_prize.png"></v-img>
+          <v-img
+            :width="50"
+            cover
+            src="@/assets/images/frens/invite_prize.png"
+          ></v-img>
         </div>
         <div class="method_box">
           <div class="method_text">Invite a Friend</div>
           <div class="method_prize">
             <div class="energy">
               <span class="dot">·</span>
-              <v-icon color="#FFF100" :size="18" icon="mdi-lightning-bolt"></v-icon>
+              <v-icon
+                color="#FFF100"
+                :size="18"
+                icon="mdi-lightning-bolt"
+              ></v-icon>
               <span>{{ `+ 1` }}</span>
             </div>
             <div class="bonus">
-              <v-img :width="18" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
+              <v-img
+                :width="18"
+                cover
+                src="@/assets/images/svg/check_in/gm_coin.svg"
+              ></v-img>
               <span>{{ `+ 100` }}</span>
             </div>
             <div class="text">for you and your friend</div>
@@ -77,23 +103,35 @@
       </div>
       <div class="method_item">
         <div class="method_item_img">
-          <v-img :width="60" cover src="@/assets/images/frens/telegram_premium_prize.png"></v-img>
+          <v-img
+            :width="60"
+            cover
+            src="@/assets/images/frens/telegram_premium_prize.png"
+          ></v-img>
         </div>
         <div class="method_box">
           <div class="method_text">
             <div>
               <span>Invite a Friend with </span>
-              <span style="color:#49B6F6;">Telegram Premium</span>
+              <span style="color: #49b6f6">Telegram Premium</span>
             </div>
           </div>
           <div class="method_prize">
             <div class="energy">
               <span class="dot">·</span>
-              <v-icon color="#FFF100" :size="18" icon="mdi-lightning-bolt"></v-icon>
+              <v-icon
+                color="#FFF100"
+                :size="18"
+                icon="mdi-lightning-bolt"
+              ></v-icon>
               <span>{{ `+ 3` }}</span>
             </div>
             <div class="bonus">
-              <v-img :width="18" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
+              <v-img
+                :width="18"
+                cover
+                src="@/assets/images/svg/check_in/gm_coin.svg"
+              ></v-img>
               <span>{{ `+ 500` }}</span>
             </div>
             <div class="text">for you and your friend</div>
@@ -104,30 +142,65 @@
     <div class="frens_list">
       <div class="frens_list_text">{{ `Friend List(${frensTotal})` }}</div>
       <div class="frens_list_content">
-        <div class="frens_list_item" v-for="(item, index) in frensList" :key="index">
+        <div
+          class="frens_list_item"
+          v-for="(item, index) in frensList"
+          :key="index"
+        >
           <div class="frens_list_item_left">
-            <v-avatar v-if="item.avatar" size="40" :image="item.avatar"></v-avatar>
-            <img v-else width="40" height="40" :avatar="item.userName" color="#3D3D3D" class="avatar">
+            <v-avatar
+              v-if="item.avatar"
+              size="40"
+              :image="item.avatar"
+            ></v-avatar>
+            <img
+              v-else
+              width="40"
+              height="40"
+              :avatar="item.userName"
+              color="#3D3D3D"
+              class="avatar"
+            />
             <div class="frens_list_item_left_box">
-              <div :class="['user_name', item.isMember && 'premium']">{{ item.userName }}</div>
+              <div :class="['user_name', item.isMember && 'premium']">
+                {{ item.userName }}
+              </div>
               <div class="user_other">
-                <v-img :width="60" cover :src="levelImages[item.level as keyof typeof levelImages]"></v-img>
+                <v-img
+                  :width="60"
+                  cover
+                  :src="levelImages[item.level as keyof typeof levelImages]"
+                ></v-img>
                 <div class="user_points" v-if="item.points">
-                  <v-img :width="18" cover src="@/assets/images/svg/check_in/points.svg"></v-img>
+                  <v-img
+                    :width="18"
+                    cover
+                    src="@/assets/images/svg/check_in/points.svg"
+                  ></v-img>
                   <span>{{ `${unitConversion(item.points)}` }}</span>
                 </div>
               </div>
             </div>
           </div>
           <div class="frens_list_item_right">
-            <div class="frens_list_item_right_time">{{ timeForStr(item.registrationTime, "MM-dd HH:mm:ss") }}</div>
+            <div class="frens_list_item_right_time">
+              {{ timeForStr(item.registrationTime, "MM-dd HH:mm:ss") }}
+            </div>
             <div class="user_prize">
               <div class="energy" v-if="item.energyAmount">
-                <v-icon color="#FFF100" :size="18" icon="mdi-lightning-bolt"></v-icon>
+                <v-icon
+                  color="#FFF100"
+                  :size="18"
+                  icon="mdi-lightning-bolt"
+                ></v-icon>
                 <span>{{ `+ ${item.energyAmount}` }}</span>
               </div>
               <div class="bonus" v-if="item.gmcAmount">
-                <v-img :width="18" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
+                <v-img
+                  :width="18"
+                  cover
+                  src="@/assets/images/svg/check_in/gm_coin.svg"
+                ></v-img>
                 <span>{{ `+ ${unitConversion(item.gmcAmount)}` }}</span>
               </div>
             </div>
@@ -135,15 +208,29 @@
         </div>
       </div>
     </div>
-    <v-btn class="invite_btn" height="32" width="70%" @click="inviteToTelegram()" rounded="lg" size="small">
-      <v-img :width="24" style="margin-right: 4px;" cover src="@/assets/images/svg/frens/linvite_user.svg"></v-img>
-      <span style="font-size: 20px; text-transform: capitalize;">Invite Friend</span>
+    <v-btn
+      class="invite_btn"
+      height="32"
+      width="70%"
+      @click="inviteToTelegram()"
+      rounded="lg"
+      size="small"
+    >
+      <v-img
+        :width="24"
+        style="margin-right: 4px"
+        cover
+        src="@/assets/images/svg/frens/linvite_user.svg"
+      ></v-img>
+      <span style="font-size: 20px; text-transform: capitalize"
+        >Invite Friend</span
+      >
     </v-btn>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 import { useUserStore } from "@/store/user.js";
 import { getInviteUserList } from "@/services/api/user.js";
 import { shareOnTelegram, timeForStr, unitConversion } from "@/utils";
@@ -161,14 +248,14 @@ import Level_9 from "@/assets/images/svg/main/level_9.svg";
 import Level_10 from "@/assets/images/svg/main/level_10.svg";
 
 interface frensInfo {
-  userId: number, //用户ID
-  userName: string, //用户名
-  avatar: string | any, //头像
-  level: number | string, //用户等级
-  points: number | string | any, //用户积分
-  registrationTime: string, //注册时间
-  energyAmount: number | string | any, //能量数量
-  gmcAmount: number | string | any //GMC数量
+  userId: number; //用户ID
+  userName: string; //用户名
+  avatar: string | any; //头像
+  level: number | string; //用户等级
+  points: number | string | any; //用户积分
+  registrationTime: string; //注册时间
+  energyAmount: number | string | any; //能量数量
+  gmcAmount: number | string | any; //GMC数量
   isMember: boolean; // 是否是会员
   [x: string]: string | number | any;
 }
@@ -188,11 +275,11 @@ export default defineComponent({
         7: Level_7,
         8: Level_8,
         9: Level_9,
-        10: Level_10
+        10: Level_10,
       },
       page: 1,
       size: 10,
-      finished: false
+      finished: false,
     };
   },
   computed: {
@@ -206,7 +293,7 @@ export default defineComponent({
   },
   mounted() {
     const _this = this;
-    window.addEventListener('scroll', function () {
+    window.addEventListener("scroll", function () {
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
         if (!_this.finished) {
           _this.nextQuery();
@@ -229,7 +316,7 @@ export default defineComponent({
 
       const res = await getInviteUserList({
         page: _page,
-        size: this.size
+        size: this.size,
       });
       if (res.code == 200) {
         this.frensTotal = res.data.total;
@@ -261,16 +348,16 @@ export default defineComponent({
       if (import.meta.env.MODE == "prod") {
         inviteUrl = `https://t.me/theGMCoinBot/GMCoin?startapp=${inviteCode}`;
       } else {
-        inviteUrl = `https://t.me/gm_coin_test_bot/checking?startapp=${inviteCode}`
+        inviteUrl = `https://t.me/gm_coin_test_bot/checking?startapp=${inviteCode}`;
       }
       shareOnTelegram(inviteUrl);
     },
     // 打开邀请奖励排行榜
     toRanking() {
       this.$router.push({
-        path: "/frensRanking"
-      })
-    }
+        path: "/frensRanking",
+      });
+    },
   },
 });
 </script>
@@ -283,7 +370,7 @@ export default defineComponent({
 .frens_text {
   font-weight: bold;
   font-size: 24px;
-  color: #FDEFD6;
+  color: #fdefd6;
   text-align: center;
 }
 
@@ -304,7 +391,7 @@ export default defineComponent({
   height: 100%;
   font-weight: bold;
   font-size: 18px;
-  color: #FBB11B;
+  color: #fbb11b;
   border-right: 4px solid #fdefd6;
 
   display: flex;
@@ -319,7 +406,7 @@ export default defineComponent({
 .invitation_ranking {
   flex: 1 0 60%;
   font-size: 16px;
-  color: #FDEFD6;
+  color: #fdefd6;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -335,7 +422,7 @@ export default defineComponent({
 
   .frens_descriptions_text {
     font-size: 14px;
-    color: #FDEFD6;
+    color: #fdefd6;
   }
 }
 
@@ -352,7 +439,7 @@ export default defineComponent({
       transform: translateX(-50%);
       height: 100%;
       width: 2px;
-      background-color: #FBE945;
+      background-color: #fbe945;
     }
 
     .dot_box {
@@ -365,12 +452,10 @@ export default defineComponent({
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background-color: #FEC72F;
-      border: 2px solid #FBE945;
+      background-color: #fec72f;
+      border: 2px solid #fbe945;
     }
   }
-
-
 
   .descriptions_text {
     font-size: 14px;
@@ -405,11 +490,10 @@ export default defineComponent({
 .invitation_method {
   margin-top: 12px;
 
-  .method_item+.method_item {
+  .method_item + .method_item {
     margin-top: 8px;
   }
 }
-
 
 .method_item {
   background-color: rgba(6, 4, 4, 0.65);
@@ -438,7 +522,7 @@ export default defineComponent({
       height: 36px;
       font-weight: bold;
       font-size: 16px;
-      color: #FFFFFF;
+      color: #ffffff;
       line-height: 1;
     }
   }
@@ -448,19 +532,19 @@ export default defineComponent({
     align-items: center;
     line-height: 1;
 
-    &>div {
+    & > div {
       display: flex;
       align-items: center;
       font-size: 14px;
     }
 
-    &>div+div {
+    & > div + div {
       margin-left: 4px;
     }
 
     .energy,
     .bonus {
-      color: #FBB11B;
+      color: #fbb11b;
       font-weight: bold;
 
       .dot {
@@ -485,12 +569,12 @@ export default defineComponent({
   .frens_list_text {
     font-weight: bold;
     font-size: 20px;
-    color: #FDEFD6;
+    color: #fdefd6;
   }
 }
 
 .frens_list_content {
-  .frens_list_item+.frens_list_item {
+  .frens_list_item + .frens_list_item {
     margin-top: 8px;
   }
 }
@@ -508,8 +592,8 @@ export default defineComponent({
   display: flex;
   align-items: center;
 
-  &>img,
-  &>v-img {
+  & > img,
+  & > v-img {
     margin-right: 8px;
     flex: none;
   }
@@ -517,14 +601,14 @@ export default defineComponent({
   .user_name {
     font-weight: bold;
     font-size: 16px;
-    color: #FFFFFF;
+    color: #ffffff;
     max-width: 140px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 
     &.premium {
-      color: #49B6F6;
+      color: #49b6f6;
     }
   }
 
@@ -532,7 +616,7 @@ export default defineComponent({
     display: flex;
     align-items: center;
 
-    &>.v-img {
+    & > .v-img {
       margin-right: 8px;
       flex: none;
     }
@@ -543,9 +627,9 @@ export default defineComponent({
     align-items: center;
     font-size: 14px;
     font-weight: bold;
-    color: #FBB11B;
+    color: #fbb11b;
 
-    &>.v-img {
+    & > .v-img {
       margin-right: 4px;
     }
   }
@@ -554,7 +638,7 @@ export default defineComponent({
 .frens_list_item_right {
   .frens_list_item_right_time {
     font-size: 16px;
-    color: #E1E1E1;
+    color: #e1e1e1;
   }
 
   .user_prize {
@@ -562,14 +646,14 @@ export default defineComponent({
     align-items: center;
     justify-content: flex-end;
 
-    &>div+div {
+    & > div + div {
       margin-left: 8px;
     }
 
-    &>div {
+    & > div {
       display: flex;
       align-items: center;
-      color: #FBB11B;
+      color: #fbb11b;
       font-weight: bold;
       font-size: 14px;
 
@@ -592,7 +676,7 @@ export default defineComponent({
 }
 
 .avatar {
-  border: 4px solid #FFAD2E;
+  border: 4px solid #ffad2e;
   border-radius: 50%;
 }
 </style>

@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="showRecharge" width="100%" transition="dialog-top-transition" fullscreen>
+  <v-dialog
+    v-model="showRecharge"
+    width="100%"
+    transition="dialog-top-transition"
+    fullscreen
+  >
     <div class="dialog_box">
       <div class="recharge_title">RECHARGE</div>
       <div class="recharge_toolbar">
@@ -7,49 +12,103 @@
           <v-img :width="16" cover src="@/assets/images/svg/icon_x.svg"></v-img>
         </div>
         <div class="shading">
-          <img src="@/assets/images/svg/bg_shading.svg">
-          <img src="@/assets/images/svg/bg_shading.svg">
-          <img src="@/assets/images/svg/bg_shading.svg">
-          <img src="@/assets/images/svg/bg_shading.svg">
-          <img src="@/assets/images/svg/bg_shading.svg">
-          <img src="@/assets/images/svg/bg_shading.svg">
-          <img src="@/assets/images/svg/bg_shading.svg">
-          <img src="@/assets/images/svg/bg_shading.svg">
+          <img src="@/assets/images/svg/bg_shading.svg" />
+          <img src="@/assets/images/svg/bg_shading.svg" />
+          <img src="@/assets/images/svg/bg_shading.svg" />
+          <img src="@/assets/images/svg/bg_shading.svg" />
+          <img src="@/assets/images/svg/bg_shading.svg" />
+          <img src="@/assets/images/svg/bg_shading.svg" />
+          <img src="@/assets/images/svg/bg_shading.svg" />
+          <img src="@/assets/images/svg/bg_shading.svg" />
         </div>
       </div>
       <div class="recharge_panel">
         <div class="recharge_box">
           <div class="product_items">
-            <div class="product_item" v-for="(item, index) in productList" :key="index" @click="handleBuy(item)">
+            <div
+              class="product_item"
+              v-for="(item, index) in productList"
+              :key="index"
+              @click="handleBuy(item)"
+            >
               <div class="reward_box">
-                <v-img width="50" cover src="@/assets/images/recharge/reward_bg.png"></v-img>
+                <v-img
+                  width="50"
+                  cover
+                  src="@/assets/images/recharge/reward_bg.png"
+                ></v-img>
                 <div class="bonus">
                   <span class="title">Bonus</span>
-                  <span class="val">{{ `${unitConversion(item.gmcAmount)} $GMC` }}</span>
+                  <span class="val">{{
+                    `${unitConversion(item.gmcAmount)} $GMC`
+                  }}</span>
                 </div>
               </div>
               <div class="energy_img">
-                <v-img width="70" v-if="index == 0" class="reward_img" cover
-                  src="@/assets/images/recharge/energy_1.png"></v-img>
-                <v-img width="70" v-else-if="index == 1" class="reward_img" cover
-                  src="@/assets/images/recharge/energy_2.png"></v-img>
-                <v-img width="70" v-else-if="index == 2" class="reward_img" cover
-                  src="@/assets/images/recharge/energy_3.png"></v-img>
-                <v-img width="70" v-else-if="index == 3" class="reward_img" cover
-                  src="@/assets/images/recharge/energy_4.png"></v-img>
-                <v-img width="70" v-else-if="index == 4" class="reward_img" cover
-                  src="@/assets/images/recharge/energy_5.png"></v-img>
-                <v-img width="70" v-else class="reward_img" cover src="@/assets/images/recharge/energy_6.png"></v-img>
+                <v-img
+                  width="70"
+                  v-if="index == 0"
+                  class="reward_img"
+                  cover
+                  src="@/assets/images/recharge/energy_1.png"
+                ></v-img>
+                <v-img
+                  width="70"
+                  v-else-if="index == 1"
+                  class="reward_img"
+                  cover
+                  src="@/assets/images/recharge/energy_2.png"
+                ></v-img>
+                <v-img
+                  width="70"
+                  v-else-if="index == 2"
+                  class="reward_img"
+                  cover
+                  src="@/assets/images/recharge/energy_3.png"
+                ></v-img>
+                <v-img
+                  width="70"
+                  v-else-if="index == 3"
+                  class="reward_img"
+                  cover
+                  src="@/assets/images/recharge/energy_4.png"
+                ></v-img>
+                <v-img
+                  width="70"
+                  v-else-if="index == 4"
+                  class="reward_img"
+                  cover
+                  src="@/assets/images/recharge/energy_5.png"
+                ></v-img>
+                <v-img
+                  width="70"
+                  v-else
+                  class="reward_img"
+                  cover
+                  src="@/assets/images/recharge/energy_6.png"
+                ></v-img>
               </div>
               <div class="buy_info">
-                <div class="energy_val">{{ `${item.energyAmount} Energy` }}</div>
+                <div class="energy_val">
+                  {{ `${item.energyAmount} Energy` }}
+                </div>
                 <div class="price_val">{{ `$${item.price}` }}</div>
               </div>
             </div>
           </div>
           <div class="interval">OR</div>
-          <v-btn class="connect_btn" :elevation="8" height="40" @click="toFrens()">
-            <v-img width="24" class="reward_img" cover src="@/assets/images/svg/add_user.svg"></v-img>
+          <v-btn
+            class="connect_btn"
+            :elevation="8"
+            height="40"
+            @click="toFrens()"
+          >
+            <v-img
+              width="24"
+              class="reward_img"
+              cover
+              src="@/assets/images/svg/add_user.svg"
+            ></v-img>
             <span class="finished">Invite Friend</span>
           </v-btn>
         </div>
@@ -58,16 +117,16 @@
   </v-dialog>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 import { useUserStore } from "@/store/user.js";
 import { getProductList } from "@/services/api/user.js";
 import { unitConversion } from "@/utils";
 interface productInfo {
-  productId: number, //产品ID
-  energyAmount: number, //能量数量
-  gmcAmount: number, //GMC数量
-  price: number, //产品价格
-  priceCoin: string //价格币种
+  productId: number; //产品ID
+  energyAmount: number; //能量数量
+  gmcAmount: number; //GMC数量
+  price: number; //产品价格
+  priceCoin: string; //价格币种
   [x: string]: string | number | any;
 }
 
@@ -75,23 +134,23 @@ export default defineComponent({
   data() {
     return {
       productList: [] as Array<productInfo>,
-      tonConnect: null as any
-    }
+      tonConnect: null as any,
+    };
   },
   computed: {
     showRecharge: {
       get() {
         const { showRecharge } = useUserStore();
-        return showRecharge
+        return showRecharge;
       },
       set(val: boolean) {
         const { setShowRecharge } = useUserStore();
-        setShowRecharge(val)
-      }
+        setShowRecharge(val);
+      },
     },
   },
   created() {
-    this.fetchProductList()
+    this.fetchProductList();
   },
   methods: {
     unitConversion: unitConversion,
@@ -107,7 +166,7 @@ export default defineComponent({
     // 邀请
     toFrens() {
       this.handleReady();
-      this.$router.push('/frens');
+      this.$router.push("/frens");
     },
     // 处理购买
     async handleBuy(event: productInfo) {
@@ -116,9 +175,9 @@ export default defineComponent({
       // 打开确认弹窗
       setProductId(event.productId);
       this.handleReady();
-    }
-  }
-})
+    },
+  },
+});
 </script>
 <style lang="scss" scoped>
 :deep(.v-overlay__content) {
@@ -142,24 +201,34 @@ export default defineComponent({
 
 .recharge_title {
   width: 90%;
-  color: #FDEFD6;
+  color: #fdefd6;
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 4px;
-  background: linear-gradient(180deg, rgba(210, 70, 49, 1) -3%, rgba(212, 72, 52, 1) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(210, 70, 49, 1) -3%,
+    rgba(212, 72, 52, 1) 100%
+  );
   padding: 8px 24px;
   border-radius: 24px 24px 0 0;
-  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3), 0px 5px 5px 0px rgba(255, 255, 255, 0.3) inset;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3),
+    0px 5px 5px 0px rgba(255, 255, 255, 0.3) inset;
   margin-bottom: -4px;
 }
 
 .recharge_toolbar {
   width: 100%;
   min-height: 40px;
-  background: linear-gradient(180deg, rgba(141, 103, 80, 1) 0%, rgba(141, 103, 80, 1) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(141, 103, 80, 1) 0%,
+    rgba(141, 103, 80, 1) 100%
+  );
   border: none;
   border-radius: 8px;
-  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.9), 0px 5px 5px 0px rgba(255, 255, 255, 0.3) inset;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.9),
+    0px 5px 5px 0px rgba(255, 255, 255, 0.3) inset;
   overflow: hidden;
   position: relative;
   z-index: 10;
@@ -168,8 +237,9 @@ export default defineComponent({
     width: 30px;
     height: 30px;
     border-radius: 30px;
-    background: linear-gradient(180deg, #F0D3B3 0%, #F2D0AC 100%);
-    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3), 0px 5px 5px 0px rgba(255, 255, 255, 0.3) inset;
+    background: linear-gradient(180deg, #f0d3b3 0%, #f2d0ac 100%);
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3),
+      0px 5px 5px 0px rgba(255, 255, 255, 0.3) inset;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -204,14 +274,16 @@ export default defineComponent({
   background-color: rgba(137, 104, 85, 1);
   border-radius: 0 0 20px 20px;
   padding: 16px;
-  box-shadow: 0px 0px 4px rgba(21, 12, 7, 0.5), 0px 5px 5px 0px rgba(96, 69, 54, 1) inset;
+  box-shadow: 0px 0px 4px rgba(21, 12, 7, 0.5),
+    0px 5px 5px 0px rgba(96, 69, 54, 1) inset;
 
   .recharge_box {
     background-color: rgba(117, 87, 72, 1);
     box-sizing: border-box;
     border: 1px solid rgba(96, 69, 54, 1);
     border-radius: 0 0 20px 20px;
-    box-shadow: 2px 2px 5px rgba(21, 12, 7, 0.5), 0px 5px 5px 0px rgba(96, 69, 54, 1) inset;
+    box-shadow: 2px 2px 5px rgba(21, 12, 7, 0.5),
+      0px 5px 5px 0px rgba(96, 69, 54, 1) inset;
     padding: 8px 8px 16px;
   }
 }
@@ -222,15 +294,15 @@ export default defineComponent({
   justify-content: space-between;
   flex-wrap: wrap;
 
-  &>.product_item+.product_item {
+  & > .product_item + .product_item {
     margin-left: 12px;
   }
 
-  &>.product_item:nth-child(2n+1) {
+  & > .product_item:nth-child(2n + 1) {
     margin-left: 0;
   }
 
-  &>.product_item:nth-child(n+3) {
+  & > .product_item:nth-child(n + 3) {
     margin-top: 8px;
   }
 }
@@ -239,7 +311,11 @@ export default defineComponent({
   max-width: 50%;
   min-width: 40%;
   flex: 1;
-  background: linear-gradient(180deg, rgba(255, 231, 199, 1) 7%, rgba(250, 218, 182, 1) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 231, 199, 1) 7%,
+    rgba(250, 218, 182, 1) 100%
+  );
   box-sizing: border-box;
   border-width: 2px;
   border-style: solid;
@@ -269,10 +345,9 @@ export default defineComponent({
     .price_val {
       text-shadow: 1px 1px 5px rgba(197, 27, 24, 1);
       font-weight: bold;
-      color: #FFEDD6;
+      color: #ffedd6;
     }
   }
-
 
   .reward_box {
     position: absolute;
@@ -330,7 +405,7 @@ export default defineComponent({
   font-style: normal;
   font-size: 24px;
   line-height: 1;
-  color: #FFFFFF;
+  color: #ffffff;
   text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.6);
 
   .v-img {

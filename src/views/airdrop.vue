@@ -1,20 +1,37 @@
 <template>
   <div class="airdrop_wrapper">
     <div class="gift_box">
-      <v-img :width="160" cover src="@/assets/images/airdrop/coin_gmc.png"></v-img>
+      <v-img
+        :width="160"
+        cover
+        src="@/assets/images/airdrop/coin_gmc.png"
+      ></v-img>
       <div class="description_text">
-        <span v-if="stageType == 1">Keep up the good habits, the airdrop is coming.</span>
+        <span v-if="stageType == 1"
+          >Keep up the good habits, the airdrop is coming.</span
+        >
         <span v-else-if="stageType == 2 && !isConnect">
           <span class="connect_title">Airdrop Launched</span>
-          <span class="connect_description">Connect wallet and unlock your withdrawals.</span>
+          <span class="connect_description"
+            >Connect wallet and unlock your withdrawals.</span
+          >
         </span>
         <span v-else-if="stageType == 2 && isConnect"></span>
       </div>
     </div>
     <div class="preparation_phase" v-if="stageType == 1">
-      <div class="prepare_item" v-for="(item, index) in prepareList" :key="index">
+      <div
+        class="prepare_item"
+        v-for="(item, index) in prepareList"
+        :key="index"
+      >
         <div :class="['check_box', item.isCheck && 'checked']">
-          <v-img v-if="item.isCheck" :width="14" cover src="@/assets/images/svg/airdrop/checked.svg"></v-img>
+          <v-img
+            v-if="item.isCheck"
+            :width="14"
+            cover
+            src="@/assets/images/svg/airdrop/checked.svg"
+          ></v-img>
         </div>
         <div class="prepare_text">{{ item.text }}</div>
       </div>
@@ -22,16 +39,30 @@
     <div class="connect_panel" v-if="stageType == 2 && !isConnect">
       <div class="connect_wallet_title">Wallet</div>
       <div class="connect_btn" @click="connectToWallet()">
-        <v-img class="wallet_img" :width="40" cover src="@/assets/images/airdrop/wallet.png"></v-img>
+        <v-img
+          class="wallet_img"
+          :width="40"
+          cover
+          src="@/assets/images/airdrop/wallet.png"
+        ></v-img>
         <span>Connect your TON wallet</span>
-        <v-img class="arrow_img" :width="24" cover src="@/assets/images/svg/airdrop/icon_arrow.svg"></v-img>
+        <v-img
+          class="arrow_img"
+          :width="24"
+          cover
+          src="@/assets/images/svg/airdrop/icon_arrow.svg"
+        ></v-img>
       </div>
     </div>
     <div class="exchange_panel" v-else-if="stageType == 2 && isConnect">
       <div class="exchange_balance">
         <div class="exchange_balance_title">Portfolio</div>
         <div class="exchange_balance_val">
-          <v-img :width="28" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
+          <v-img
+            :width="28"
+            cover
+            src="@/assets/images/svg/check_in/gm_coin.svg"
+          ></v-img>
           <span>{{ Number(userInfo.gmcAmount).toLocaleString() }}</span>
         </div>
       </div>
@@ -39,7 +70,12 @@
         <div class="exchange_item">
           <div class="exchange_coin">
             <div class="exchange_text">
-              <v-img :width="40" class="gmc_img" cover src="@/assets/images/airdrop/coin_gmc.png"></v-img>
+              <v-img
+                :width="40"
+                class="gmc_img"
+                cover
+                src="@/assets/images/airdrop/coin_gmc.png"
+              ></v-img>
               <span>GMT</span>
             </div>
             <div class="exchange_val">0</div>
@@ -58,7 +94,11 @@
         <div class="exchange_item">
           <div class="exchange_coin">
             <div class="exchange_text">
-              <v-img :width="40" cover src="@/assets/images/airdrop/coin_ton.png"></v-img>
+              <v-img
+                :width="40"
+                cover
+                src="@/assets/images/airdrop/coin_ton.png"
+              ></v-img>
               <span>TON</span>
             </div>
             <div class="exchange_val">0</div>
@@ -77,11 +117,19 @@
       </div>
       <div class="connect_info">
         <div class="connect_address">
-          <v-img :width="30" cover src="@/assets/images/svg/airdrop/icon_wallet.svg"></v-img>
+          <v-img
+            :width="30"
+            cover
+            src="@/assets/images/svg/airdrop/icon_wallet.svg"
+          ></v-img>
           <span>{{ formatAddr(walletAddr) }}</span>
         </div>
         <div class="disconnect_btn" @click="handleDisconnect()">
-          <v-img :width="20" cover src="@/assets/images/svg/airdrop/icon_disconnect.svg"></v-img>
+          <v-img
+            :width="20"
+            cover
+            src="@/assets/images/svg/airdrop/icon_disconnect.svg"
+          ></v-img>
         </div>
       </div>
     </div>
@@ -89,9 +137,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 import { useUserStore } from "@/store/user.js";
-import { TonConnectUI, ConnectedWallet } from '@tonconnect/ui'
+import { TonConnectUI, ConnectedWallet } from "@tonconnect/ui";
 
 export default defineComponent({
   data() {
@@ -100,25 +148,25 @@ export default defineComponent({
       prepareList: [
         {
           isCheck: true,
-          text: 'Foundation Negotiations'
+          text: "Foundation Negotiations",
         },
         {
           isCheck: true,
-          text: 'Market Maker Preparation'
+          text: "Market Maker Preparation",
         },
         {
           isCheck: true,
-          text: 'Preparation for Market Making Funds'
+          text: "Preparation for Market Making Funds",
         },
         {
           isCheck: true,
-          text: 'Core Partners are Coming'
+          text: "Core Partners are Coming",
         },
         {
           isCheck: false,
-          text: 'Airdrop Task List Release'
-        }
-      ]
+          text: "Airdrop Task List Release",
+        },
+      ],
     };
   },
   computed: {
@@ -129,20 +177,20 @@ export default defineComponent({
     tonConnect: {
       get() {
         const { tonConnect } = useUserStore();
-        return tonConnect
+        return tonConnect;
       },
       set(val: boolean) {
         const { setTonConnect } = useUserStore();
-        setTonConnect(val)
-      }
+        setTonConnect(val);
+      },
     },
     isConnect() {
       const { isConnect } = useUserStore();
-      return isConnect
+      return isConnect;
     },
     walletAddr() {
       const { walletAddr } = useUserStore();
-      return walletAddr
+      return walletAddr;
     },
   },
   created() {
@@ -154,7 +202,7 @@ export default defineComponent({
       let miniappUrl = "https://t.me/gm_coin_test_bot/checking";
 
       this.tonConnect = new TonConnectUI({
-        manifestUrl: "https://file.gmking.io/tonconnect-manifest.json"
+        manifestUrl: "https://file.gmking.io/tonconnect-manifest.json",
       });
 
       if (import.meta.env.MODE == "prod") {
@@ -162,43 +210,48 @@ export default defineComponent({
       }
       // webapp重定向
       this.tonConnect.uiOptions = {
-        twaReturnUrl: miniappUrl
-      }
+        twaReturnUrl: miniappUrl,
+      };
 
       // 监听钱包链接状态
       this.tonConnect.onStatusChange((wallet: ConnectedWallet) => {
         if (wallet) {
           const { listening } = useUserStore();
-          const { account: { publicKey } } = wallet;
+          const {
+            account: { publicKey },
+          } = wallet;
           const isC = this.tonConnect.connected;
           listening({
             isc: isC,
-            account: publicKey
+            account: publicKey,
           });
         }
       });
     },
     async connectToWallet() {
       this.handleDisconnect();
-      this.tonConnect.connectWallet().then((res: any) => {
-        console.log(res);
-      }).catch((err: any) => {
-        console.log(err);
-      })
+      this.tonConnect
+        .connectWallet()
+        .then((res: any) => {
+          console.log(res);
+        })
+        .catch((err: any) => {
+          console.log(err);
+        });
       // 如果需要，可以对connectedWallet做一些事情
     },
-    // 断开连接  
+    // 断开连接
     async handleDisconnect() {
       const isC = this.tonConnect.connected;
       if (isC) {
-        // 如果已连接，断开连接     
+        // 如果已连接，断开连接
         await this.tonConnect.disconnect();
 
         const { listening } = useUserStore();
         listening({
           isc: false,
-          address: null
-        })
+          address: null,
+        });
       }
     },
     // 格式化地址
@@ -226,7 +279,7 @@ export default defineComponent({
     text-align: center;
     font-weight: bold;
     font-size: 20px;
-    color: #FDEFD6;
+    color: #fdefd6;
     margin-top: -10px;
   }
 
@@ -245,7 +298,7 @@ export default defineComponent({
 .preparation_phase {
   margin-top: 24px;
 
-  .prepare_item+.prepare_item {
+  .prepare_item + .prepare_item {
     margin-top: 12px;
   }
 }
@@ -279,7 +332,7 @@ export default defineComponent({
   .prepare_text {
     font-weight: bold;
     font-size: 16px;
-    color: #FDEFD6;
+    color: #fdefd6;
   }
 }
 
@@ -290,7 +343,7 @@ export default defineComponent({
     font-weight: 700;
     font-style: normal;
     font-size: 22px;
-    color: #FDEFD6;
+    color: #fdefd6;
   }
 }
 
@@ -304,7 +357,7 @@ export default defineComponent({
   font-weight: 400;
   font-style: normal;
   font-size: 18px;
-  color: #FFFFFF;
+  color: #ffffff;
   margin-top: 8px;
 
   .v-img {
@@ -332,7 +385,7 @@ export default defineComponent({
   .exchange_balance_title {
     font-size: 20px;
     font-weight: 700;
-    color: #FDEFD6;
+    color: #fdefd6;
   }
 
   .exchange_balance_val {
@@ -341,7 +394,7 @@ export default defineComponent({
     font-weight: 700;
     font-style: normal;
     font-size: 16px;
-    color: #FDEFD6;
+    color: #fdefd6;
 
     .v-img {
       flex: none;
@@ -353,7 +406,7 @@ export default defineComponent({
 .exchange_project {
   padding-top: 20px;
 
-  .exchange_item+.exchange_item {
+  .exchange_item + .exchange_item {
     margin-top: 8px;
   }
 }
@@ -370,7 +423,7 @@ export default defineComponent({
     font-weight: 700;
     font-style: normal;
     font-size: 20px;
-    color: #FDEFD6;
+    color: #fdefd6;
   }
 
   .exchange_text {
@@ -392,7 +445,7 @@ export default defineComponent({
 .exchange_type {
   padding-top: 12px;
 
-  .exchange_btn+.exchange_btn {
+  .exchange_btn + .exchange_btn {
     margin-top: 8px;
   }
 }

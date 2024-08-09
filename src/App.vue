@@ -16,20 +16,40 @@
     <v-dialog v-model="showGift" width="auto">
       <div class="gift_panel">
         <v-img :width="160" cover src="@/assets/images/user/gift.png"></v-img>
-        <div class="gift_text">Congratulations! Your exclusive 3BASE gift has arrived.</div>
-        <div class="gift_bonus">
-          <v-img :width="40" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-          <span class="bonus_num">{{ `+${Number(5000).toLocaleString()}` }}</span>
+        <div class="gift_text">
+          Congratulations! Your exclusive 3BASE gift has arrived.
         </div>
-        <v-btn class="close_btn" @click="showGift = false" height="40" rounded="lg" size="small">CONFIRM</v-btn>
+        <div class="gift_bonus">
+          <v-img
+            :width="40"
+            cover
+            src="@/assets/images/svg/check_in/gm_coin.svg"
+          ></v-img>
+          <span class="bonus_num">{{
+            `+${Number(5000).toLocaleString()}`
+          }}</span>
+        </div>
+        <v-btn
+          class="close_btn"
+          @click="showGift = false"
+          height="40"
+          rounded="lg"
+          size="small"
+          >CONFIRM</v-btn
+        >
       </div>
     </v-dialog>
     <recharge></recharge>
     <confirm v-if="showConfirm"></confirm>
     <v-dialog v-model="showLoading" width="auto" persistent>
       <div class="loading_box">
-        <v-progress-circular color="#fff" indeterminate size="40" bg-color="rgba(255, 255, 255, 0)"
-          width="4"></v-progress-circular>
+        <v-progress-circular
+          color="#fff"
+          indeterminate
+          size="40"
+          bg-color="rgba(255, 255, 255, 0)"
+          width="4"
+        ></v-progress-circular>
         <span class="loading_text">Loading</span>
       </div>
     </v-dialog>
@@ -37,57 +57,56 @@
 </template>
 
 <script lang="ts">
-import TopToolbar from '@/components/TopToolbar.vue';
-import BottomNav from '@/components/BottomNav.vue';
+import TopToolbar from "@/components/TopToolbar.vue";
+import BottomNav from "@/components/BottomNav.vue";
 import { useMessageStore } from "@/store/message.js";
 import { useUserStore } from "@/store/user.js";
 import recharge from "@/components/recharge/index.vue";
 import confirm from "@/components/recharge/confirm.vue";
 
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 export default defineComponent({
   data() {
-    return {
-    };
+    return {};
   },
   components: {
     TopToolbar,
     BottomNav,
     recharge,
-    confirm
+    confirm,
   },
   computed: {
     showMessage: {
       get() {
         const { showMessage } = useMessageStore();
-        return showMessage
+        return showMessage;
       },
       set(val: boolean) {
         const { setShowMessage } = useMessageStore();
-        setShowMessage(val)
-      }
+        setShowMessage(val);
+      },
     },
     showGift: {
       get() {
         const { showGift } = useUserStore();
-        return showGift
+        return showGift;
       },
       set(val: boolean) {
         const { setShowGift } = useUserStore();
-        setShowGift(val)
-      }
+        setShowGift(val);
+      },
     },
     showConfirm() {
       const { showConfirm } = useUserStore();
-      return showConfirm
+      return showConfirm;
     },
     messageText() {
       const { messageText } = useMessageStore();
-      return messageText
+      return messageText;
     },
     showLoading() {
       const { showLoading } = useMessageStore();
-      return showLoading
+      return showLoading;
     },
   },
   methods: {
@@ -95,13 +114,13 @@ export default defineComponent({
     closeMessage() {
       const { setShowMessage } = useMessageStore();
       setShowMessage(false);
-    }
+    },
   },
-})
+});
 </script>
 <style lang="scss" scoped>
 .main {
-  background: linear-gradient(180deg, #ff197c 0%, #fd4c6b 48%, #ff6b6f 100%)
+  background: linear-gradient(180deg, #ff197c 0%, #fd4c6b 48%, #ff6b6f 100%);
 }
 
 .gift_panel {
@@ -122,7 +141,7 @@ export default defineComponent({
 
   .gift_text {
     font-size: 20px;
-    color: #FDEFD6;
+    color: #fdefd6;
     text-align: center;
     line-height: 1.2;
     padding-bottom: 24px;
@@ -134,7 +153,7 @@ export default defineComponent({
     justify-content: center;
     margin-bottom: 24px;
     font-size: 36px;
-    color: #FBB11B;
+    color: #fbb11b;
 
     .v-img {
       flex: none;
@@ -143,8 +162,12 @@ export default defineComponent({
   }
 
   .close_btn {
-    background: linear-gradient(90deg, rgba(253, 239, 213, 1) 0%, rgba(248, 215, 156, 1) 101%);
-    color: #FE2E75;
+    background: linear-gradient(
+      90deg,
+      rgba(253, 239, 213, 1) 0%,
+      rgba(248, 215, 156, 1) 101%
+    );
+    color: #fe2e75;
     font-size: 20px;
     font-weight: bold;
     padding: 0 20px;

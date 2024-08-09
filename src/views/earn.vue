@@ -9,7 +9,11 @@
       <div class="task_list">
         <div class="task_item" v-for="(item, index) in dailyTask" :key="index">
           <div class="task_item_left">
-            <v-img :width="36" cover :src="taskImages[item.abbreviation as keyof typeof taskImages]"></v-img>
+            <v-img
+              :width="36"
+              cover
+              :src="taskImages[item.abbreviation as keyof typeof taskImages]"
+            ></v-img>
             <div class="task_item_reward">
               <div class="task_name" v-if="item.abbreviation == 'AD'">
                 <span>{{ `${item.fullName} ` }}</span>
@@ -18,23 +22,43 @@
               <div class="task_name" v-else>{{ item.fullName }}</div>
               <div class="task_bonus_box">
                 <div class="task_bonus" v-if="item.energyAmount">
-                  <v-icon color="#FFF100" size="20" icon="mdi-lightning-bolt"></v-icon>
+                  <v-icon
+                    color="#FFF100"
+                    size="20"
+                    icon="mdi-lightning-bolt"
+                  ></v-icon>
                   <div class="bonus">{{ `+ ${item.energyAmount}` }}</div>
                 </div>
                 <div class="task_bonus" v-if="item.coinAmount">
-                  <v-img :width="18" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-                  <div class="bonus">{{ `+ ${Number(item.coinAmount).toLocaleString()}` }}</div>
+                  <v-img
+                    :width="18"
+                    cover
+                    src="@/assets/images/svg/check_in/gm_coin.svg"
+                  ></v-img>
+                  <div class="bonus">
+                    {{ `+ ${Number(item.coinAmount).toLocaleString()}` }}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
           <div class="task_item_right">
-            <v-btn :color="item.isFinish ? 'rgb(0,0,0,0)' : '#49B6F6'" :loading="item.loading" height="24"
-              density="compact" @click="completed(item)" :variant="item.isFinish ? 'text' : 'flat'"
-              :readonly="item.isFinish">
+            <v-btn
+              :color="item.isFinish ? 'rgb(0,0,0,0)' : '#49B6F6'"
+              :loading="item.loading"
+              height="24"
+              density="compact"
+              @click="completed(item)"
+              :variant="item.isFinish ? 'text' : 'flat'"
+              :readonly="item.isFinish"
+            >
               <div v-if="!item.isFinish" class="finished">GO</div>
               <div v-else-if="item.isFinish" class="completed">
-                <v-icon size="30" color="#49B6F6" icon="mdi-check-bold"></v-icon>
+                <v-icon
+                  size="30"
+                  color="#49B6F6"
+                  icon="mdi-check-bold"
+                ></v-icon>
               </div>
             </v-btn>
           </div>
@@ -44,37 +68,85 @@
     <div class="task_panel">
       <div class="task_title">Explore</div>
       <div class="task_list">
-        <div class="task_item" v-for="(item, index) in explore" :key="index"
-          @click.stop="item.isFinish ? toTask(item) : null">
+        <div
+          class="task_item"
+          v-for="(item, index) in explore"
+          :key="index"
+          @click.stop="item.isFinish ? toTask(item) : null"
+        >
           <div class="task_item_left">
-            <div class="telegram_img" v-if="item.abbreviation == 'TGGROUP' || item.abbreviation == 'TGCHANNEL'">
-              <v-img :width="26" cover src="@/assets/images/svg/earn/telegram.svg"></v-img>
+            <div
+              class="telegram_img"
+              v-if="
+                item.abbreviation == 'TGGROUP' ||
+                item.abbreviation == 'TGCHANNEL'
+              "
+            >
+              <v-img
+                :width="26"
+                cover
+                src="@/assets/images/svg/earn/telegram.svg"
+              ></v-img>
             </div>
-            <div class="telegram_img twitter" v-else-if="item.abbreviation == 'TW' || item.abbreviation == 'TWEET'">
-              <v-img :width="16" cover src="@/assets/images/svg/earn/twitter.svg"></v-img>
+            <div
+              class="telegram_img twitter"
+              v-else-if="
+                item.abbreviation == 'TW' || item.abbreviation == 'TWEET'
+              "
+            >
+              <v-img
+                :width="16"
+                cover
+                src="@/assets/images/svg/earn/twitter.svg"
+              ></v-img>
             </div>
-            <v-img v-else :width="36" cover src="@/assets/images/svg/earn/3base.svg"></v-img>
+            <v-img
+              v-else
+              :width="36"
+              cover
+              src="@/assets/images/svg/earn/3base.svg"
+            ></v-img>
             <div class="task_item_reward">
               <div class="task_name">{{ item.fullName }}</div>
               <div class="task_bonus_box">
                 <div class="task_bonus" v-if="item.energyAmount">
-                  <v-icon color="#FFF100" size="20" icon="mdi-lightning-bolt"></v-icon>
+                  <v-icon
+                    color="#FFF100"
+                    size="20"
+                    icon="mdi-lightning-bolt"
+                  ></v-icon>
                   <div class="bonus">{{ `+ ${item.energyAmount}` }}</div>
                 </div>
                 <div class="task_bonus" v-if="item.coinAmount">
-                  <v-img :width="18" cover src="@/assets/images/svg/check_in/gm_coin.svg"></v-img>
-                  <div class="bonus">{{ `+ ${Number(item.coinAmount).toLocaleString()}` }}</div>
+                  <v-img
+                    :width="18"
+                    cover
+                    src="@/assets/images/svg/check_in/gm_coin.svg"
+                  ></v-img>
+                  <div class="bonus">
+                    {{ `+ ${Number(item.coinAmount).toLocaleString()}` }}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
           <div class="task_item_right">
-            <v-btn :color="item.isFinish ? 'rgb(0,0,0,0)' : '#49B6F6'" :loading="item.loading" height="24"
-              density="compact" @click.stop="!item.isFinish ? completed(item) : toTask(item)"
-              :variant="item.isFinish ? 'text' : 'flat'" :readonly="item.isFinish">
+            <v-btn
+              :color="item.isFinish ? 'rgb(0,0,0,0)' : '#49B6F6'"
+              :loading="item.loading"
+              height="24"
+              density="compact"
+              @click.stop="!item.isFinish ? completed(item) : toTask(item)"
+              :variant="item.isFinish ? 'text' : 'flat'"
+              :readonly="item.isFinish"
+            >
               <div v-if="!item.isFinish" class="finished">GO</div>
               <div v-else-if="item.isFinish" class="completed">
-                <v-icon size="30" color="#49B6F6" icon="mdi-check-bold"></v-icon>
+                <v-icon
+                  size="30"
+                  color="#49B6F6"
+                  icon="mdi-check-bold"
+                ></v-icon>
               </div>
             </v-btn>
           </div>
@@ -85,19 +157,25 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 import { useUserStore } from "@/store/user.js";
 import { getTaskList, completeTask } from "@/services/api/task.js";
-import { shareOnTelegram, openUrl, setSessionStore, getSessionStore, removeSessionStore } from "@/utils";
+import {
+  shareOnTelegram,
+  openUrl,
+  setSessionStore,
+  getSessionStore,
+  removeSessionStore,
+} from "@/utils";
 
 interface taskInfo {
-  id: string | number, //任务ID
-  type: string, //任务类型(DAILY-日常，EXPLORE-发现)
-  fullName: string, //任务全称
-  abbreviation: string, //任务简称
-  energyAmount: number, //任务奖励能量数量
-  coinAmount: number, //任务奖励代币数量
-  isFinish: boolean //是否完成(true-完成，false-未完成)
+  id: string | number; //任务ID
+  type: string; //任务类型(DAILY-日常，EXPLORE-发现)
+  fullName: string; //任务全称
+  abbreviation: string; //任务简称
+  energyAmount: number; //任务奖励能量数量
+  coinAmount: number; //任务奖励代币数量
+  isFinish: boolean; //是否完成(true-完成，false-未完成)
   [x: string]: string | number | any;
 }
 
@@ -108,13 +186,13 @@ import CHALLENGE from "@/assets/images/svg/earn/join.svg";
 import AD from "@/assets/images/svg/earn/ad.svg";
 import PURCHASE from "@/assets/images/svg/earn/purchase.svg";
 import CHAIN_CHECKIN from "@/assets/images/svg/earn/link_check_in.svg";
-import { TonConnectUI, ConnectedWallet } from '@tonconnect/ui'
-import { toNano, beginCell } from '@ton/ton';
+import { TonConnectUI, ConnectedWallet } from "@tonconnect/ui";
+import { toNano, beginCell } from "@ton/ton";
 
 interface showPromiseResult {
   done: boolean; // true if user watch till the end, otherwise false
   description: string; // event description
-  state: 'load' | 'render' | 'playing' | 'destroy'; // banner state
+  state: "load" | "render" | "playing" | "destroy"; // banner state
   error: boolean; // true if event was emitted due to error, otherwise false
 }
 
@@ -131,8 +209,8 @@ export default defineComponent({
         CHAIN_CHECKIN,
         GM,
         CHALLENGE,
-        AD
-      }
+        AD,
+      },
     };
   },
   computed: {
@@ -143,20 +221,20 @@ export default defineComponent({
     tonConnect: {
       get() {
         const { tonConnect } = useUserStore();
-        return tonConnect
+        return tonConnect;
       },
       set(val: boolean) {
         const { setTonConnect } = useUserStore();
-        setTonConnect(val)
-      }
+        setTonConnect(val);
+      },
     },
     isConnect() {
       const { isConnect } = useUserStore();
-      return isConnect
+      return isConnect;
     },
     walletAddr() {
       const { walletAddr } = useUserStore();
-      return walletAddr
+      return walletAddr;
     },
   },
   created() {
@@ -175,7 +253,10 @@ export default defineComponent({
         for (let i = 0; i < data.length; i++) {
           const element = data[i];
           if (element.type == "DAILY") {
-            if (element.abbreviation != "PURCHASE" && element.abbreviation != "CHAIN_CHECKIN") {
+            if (
+              element.abbreviation != "PURCHASE" &&
+              element.abbreviation != "CHAIN_CHECKIN"
+            ) {
               this.dailyTask.push(element);
             } else {
               linkTask.push(element);
@@ -196,11 +277,10 @@ export default defineComponent({
       event.loading = true;
       if (event.timer) clearTimeout(event.timer);
       event.timer = setTimeout(async () => {
-
         if (event.abbreviation == "AD") {
           this.toAdController(event);
           event.loading = false;
-          return
+          return;
         }
 
         if (event.abbreviation == "CHAIN_CHECKIN") {
@@ -210,7 +290,7 @@ export default defineComponent({
           } else {
             this.connectToWallet();
           }
-          return
+          return;
         }
 
         const isOpen = getSessionStore(event.abbreviation);
@@ -223,7 +303,7 @@ export default defineComponent({
         }
 
         const res = await completeTask({
-          taskId: event.id
+          taskId: event.id,
         });
 
         event.loading = false;
@@ -244,7 +324,7 @@ export default defineComponent({
             this.toTask(event);
           }
         }
-      }, 3000)
+      }, 3000);
     },
     // 广告
     toAdController(event: taskInfo) {
@@ -252,28 +332,30 @@ export default defineComponent({
       const AdController = (window as any).Adsgram.init({ blockId: "233" });
 
       // 显示广告横幅
-      AdController.show().then(async (result: showPromiseResult) => {
-        // user watch ad till the end
-        if (result.done) {
-          const res = await completeTask({
-            taskId: event.id
-          });
-          event.loading = false;
-          if (res.code == 200) {
-            if (res.data) {
-              // 任务完成了，重新获取列表
-              const userStore = useUserStore();
-              userStore.fetchUserInfo();
-              this.fetchChallengeList();
+      AdController.show()
+        .then(async (result: showPromiseResult) => {
+          // user watch ad till the end
+          if (result.done) {
+            const res = await completeTask({
+              taskId: event.id,
+            });
+            event.loading = false;
+            if (res.code == 200) {
+              if (res.data) {
+                // 任务完成了，重新获取列表
+                const userStore = useUserStore();
+                userStore.fetchUserInfo();
+                this.fetchChallengeList();
+              }
             }
           }
-        }
-        // your code to reward user
-      }).catch((result: showPromiseResult) => {
-        // user skipped video or get error during playing ad
-        console.log(result)
-        // do nothing or whatever you want
-      })
+          // your code to reward user
+        })
+        .catch((result: showPromiseResult) => {
+          // user skipped video or get error during playing ad
+          console.log(result);
+          // do nothing or whatever you want
+        });
     },
     // 去做任务
     toTask(event: taskInfo) {
@@ -285,22 +367,21 @@ export default defineComponent({
         if (import.meta.env.MODE == "prod") {
           inviteUrl = `https://t.me/theGMCoinBot/GMCoin?startapp=${inviteCode}`;
         } else {
-          inviteUrl = `https://t.me/gm_coin_test_bot/checking?startapp=${inviteCode}`
+          inviteUrl = `https://t.me/gm_coin_test_bot/checking?startapp=${inviteCode}`;
         }
 
         shareOnTelegram(inviteUrl);
       } else if (abbreviation == "GM") {
         // 去签到
-        this.$router.push('/');
+        this.$router.push("/");
       } else if (abbreviation == "CHALLENGE") {
         // 去参加挑战
-        this.$router.push('/activity');
+        this.$router.push("/activity");
       } else if (abbreviation == "PURCHASE") {
         // 充值消费
         const { setShowRecharge } = useUserStore();
         setShowRecharge(true);
-      }
-      else if (abbreviation == "TGGROUP") {
+      } else if (abbreviation == "TGGROUP") {
         // 加入Telegram群
         openUrl("https://t.me/GMCoinChat1");
       } else if (abbreviation == "TGCHANNEL") {
@@ -322,7 +403,7 @@ export default defineComponent({
       let miniappUrl = "https://t.me/gm_coin_test_bot/checking";
 
       this.tonConnect = new TonConnectUI({
-        manifestUrl: "https://file.gmking.io/tonconnect-manifest.json"
+        manifestUrl: "https://file.gmking.io/tonconnect-manifest.json",
       });
 
       if (import.meta.env.MODE == "prod") {
@@ -330,8 +411,8 @@ export default defineComponent({
       }
       // webapp重定向
       this.tonConnect.uiOptions = {
-        twaReturnUrl: miniappUrl
-      }
+        twaReturnUrl: miniappUrl,
+      };
 
       // 如果未链接，发起链接请求
       if (!this.tonConnect.connected) {
@@ -341,38 +422,43 @@ export default defineComponent({
       this.tonConnect.onStatusChange((wallet: ConnectedWallet) => {
         if (wallet) {
           const { listening } = useUserStore();
-          const { account: { address } } = wallet;
+          const {
+            account: { address },
+          } = wallet;
           const isC = this.tonConnect.connected;
           listening({
             isc: isC,
-            account: address
+            account: address,
           });
 
           this.handleSelfTransfer();
         }
       });
-
     },
     async connectToWallet() {
       this.handleDisconnect();
-      this.tonConnect.connectWallet().then((res: any) => {
-        console.log(res);
-      }).catch((err: any) => {
-        console.log(err);
-        const index = this.dailyTask.findIndex(e => e.abbreviation == this.currentTask.abbreviation);
-        if (index != -1) {
-          this.dailyTask[index].loading = false;
-        }
-      })
+      this.tonConnect
+        .connectWallet()
+        .then((res: any) => {
+          console.log(res);
+        })
+        .catch((err: any) => {
+          console.log(err);
+          const index = this.dailyTask.findIndex(
+            (e) => e.abbreviation == this.currentTask.abbreviation
+          );
+          if (index != -1) {
+            this.dailyTask[index].loading = false;
+          }
+        });
       // 如果需要，可以对connectedWallet做一些事情
     },
     // 处理自我转账
     async handleSelfTransfer() {
-
       // 创建评论
       const body = beginCell()
         .storeUint(0, 32) // 写入32个零位以表示后面将跟随文本评论
-        .storeStringTail('gmcoin') // 写下我们的文本评论
+        .storeStringTail("gmcoin") // 写下我们的文本评论
         .endCell();
 
       // 创建交易体
@@ -382,52 +468,59 @@ export default defineComponent({
           {
             address: this.walletAddr, // 目的地址
             amount: toNano(0.001).toString(), //以nanotons计的Toncoin
-            payload: body.toBoc().toString("base64")
-          }
-        ]
-      }
+            payload: body.toBoc().toString("base64"),
+          },
+        ],
+      };
 
-      this.tonConnect.sendTransaction(transaction).then(async (res: any) => {
-        console.log(res)
-        const taskRes = await completeTask({
-          taskId: this.currentTask.id,
-          remark: res.boc,
-          length: res.boc.length
+      this.tonConnect
+        .sendTransaction(transaction)
+        .then(async (res: any) => {
+          console.log(res);
+          const taskRes = await completeTask({
+            taskId: this.currentTask.id,
+            remark: res.boc,
+            length: res.boc.length,
+          });
+
+          const index = this.dailyTask.findIndex(
+            (e) => e.abbreviation == this.currentTask.abbreviation
+          );
+          if (index != -1) {
+            this.dailyTask[index].loading = false;
+          }
+
+          if (taskRes.code == 200) {
+            if (taskRes.data) {
+              // 任务完成了，重新获取列表
+              const userStore = useUserStore();
+              userStore.fetchUserInfo();
+              this.fetchChallengeList();
+            }
+          }
+        })
+        .catch((err: any) => {
+          console.log(err);
+          const index = this.dailyTask.findIndex(
+            (e) => e.abbreviation == this.currentTask.abbreviation
+          );
+          if (index != -1) {
+            this.dailyTask[index].loading = false;
+          }
         });
-
-        const index = this.dailyTask.findIndex(e => e.abbreviation == this.currentTask.abbreviation);
-        if (index != -1) {
-          this.dailyTask[index].loading = false;
-        }
-
-        if (taskRes.code == 200) {
-          if (taskRes.data) {
-            // 任务完成了，重新获取列表
-            const userStore = useUserStore();
-            userStore.fetchUserInfo();
-            this.fetchChallengeList();
-          }
-        }
-      }).catch((err: any) => {
-        console.log(err);
-        const index = this.dailyTask.findIndex(e => e.abbreviation == this.currentTask.abbreviation);
-        if (index != -1) {
-          this.dailyTask[index].loading = false;
-        }
-      })
     },
-    // 断开连接  
+    // 断开连接
     async handleDisconnect() {
       const isC = this.tonConnect.connected;
       if (isC) {
-        // 如果已连接，断开连接     
+        // 如果已连接，断开连接
         await this.tonConnect.disconnect();
 
         const { listening } = useUserStore();
         listening({
           isc: false,
-          address: null
-        })
+          address: null,
+        });
       }
     },
   },
@@ -456,7 +549,7 @@ export default defineComponent({
     text-align: center;
     font-weight: 700;
     font-size: 20px;
-    color: #FDEFD6;
+    color: #fdefd6;
   }
 }
 
@@ -466,12 +559,12 @@ export default defineComponent({
   .task_title {
     font-size: 20px;
     font-weight: bold;
-    color: #FDEFD6;
+    color: #fdefd6;
   }
 }
 
 .task_list {
-  &>.task_item+.task_item {
+  & > .task_item + .task_item {
     margin-top: 8px;
   }
 }
@@ -503,7 +596,7 @@ export default defineComponent({
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #49B6F6;
+  background-color: #49b6f6;
   border-radius: 10px;
   margin-right: 8px;
 
@@ -541,13 +634,12 @@ export default defineComponent({
     }
   }
 
-  .task_bonus+.task_bonus {
+  .task_bonus + .task_bonus {
     margin-left: 8px;
   }
 }
 
 .task_item_right {
-
   .v-btn {
     color: #fff;
   }
