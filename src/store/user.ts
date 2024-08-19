@@ -17,6 +17,7 @@ export interface userInterface {
   avatar: string, // 头像
   energyAmount: number, // 能量数量
   gmcAmount: number, // GMC数量
+  gmtAmount: number, // GMT数量
   pointAmount: number, // 积分
   level: number, //等级
   minAmount: number, // 最小输入金额(GMC)

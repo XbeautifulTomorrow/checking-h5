@@ -66,6 +66,30 @@ const buyProduct = (params: any) => http.get("/gm-coin-server-web/product-info/p
  */
 const getOrderList = (params: any) => http.get("/gm-coin-server-web/order/list", params, { showLoading: false });
 
+/**
+ * swap 
+ * @param params
+ */
+const transferSwap = (params: any) => http.post("/gm-coin-server-web/transfer/swap", params);
+
+/**
+ * 提币 
+ * @param params
+ */
+const transferWithdraw = (params: any) => http.post("/gm-coin-server-web/transfer/withdraw", params);
+
+/**
+ * 提币记录
+ * @param params
+ */
+const getWithdrawList = (params: any) => http.post("/gm-coin-server-web/transfer/record/withdrawList", params);
+
+/**
+ * 获取汇率 
+ * @param params
+ */
+const getExchangeRate = (params: any) => http.get("/gm-coin-server-web/coin/price/exchangeRate", params, { showLoading: false });
+
 export {
   validateToken,
   telegramLogin,
@@ -77,5 +101,9 @@ export {
   receiveGifts,
   getProductList,
   buyProduct,
-  getOrderList
+  getOrderList,
+  transferSwap,
+  transferWithdraw,
+  getWithdrawList,
+  getExchangeRate
 };

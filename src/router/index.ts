@@ -12,6 +12,10 @@ import frens from '@/views/frens.vue';
 import airdrop from '@/views/airdrop.vue';
 import mine from '@/views/mine.vue';
 import frensRanking from '@/views/frensRanking.vue';
+import swap from '@/views/swap.vue';
+import deposit from '@/views/deposit.vue';
+import withdraw from '@/views/withdraw.vue';
+import history from '@/views/history.vue';
 
 //2. 路由配置
 const routes = [
@@ -49,6 +53,26 @@ const routes = [
     path: '/airdrop',
     name: 'Airdrop',
     component: airdrop
+  },
+  {
+    path: '/swap',
+    name: 'Swap',
+    component: swap
+  },
+  {
+    path: '/deposit',
+    name: 'Deposit',
+    component: deposit
+  },
+  {
+    path: '/withdraw',
+    name: 'Withdraw',
+    component: withdraw
+  },
+  {
+    path: '/history',
+    name: 'History',
+    component: history
   }
 ];
 

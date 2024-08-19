@@ -421,7 +421,7 @@ export const accurateDecimal = (number: any, format: any, zeroFill: boolean = fa
 };
 
 //非空验证
-function isEmpty(ObjVal: any) {
+export function isEmpty(ObjVal: any) {
   if (ObjVal == "" || ObjVal == null || ObjVal == undefined || ObjVal == "undefined") {
     return true;
   } else {
@@ -671,7 +671,7 @@ export const delCookie = (name: any) => {
   * @param {number} val - 金额
   */
 
-export const unitConversion = (val: number) => {
+export const unitConversion = (val: number, type = 2, zeroFill = true) => {
   let h = 1;
   let kh = h * 1000;
   let mh = kh * 1000;
@@ -681,20 +681,22 @@ export const unitConversion = (val: number) => {
   let eh = ph * 1000;
   let texts = 0 as number | string | any;
   val = Number(val || 0);
-  if (val < kh) {
-    texts = val;
-  } else if (val >= kh && val < mh) {
-    texts = accurateDecimal(val / kh, 2) + "K";
-  } else if (val >= mh && val < gh) {
-    texts = accurateDecimal(val / mh, 2) + "M";
-  } else if (val >= gh && val < th) {
-    texts = accurateDecimal(val / gh, 2) + "B";
-  } else if (val >= th && val < ph) {
-    texts = accurateDecimal(val / th, 2) + "T";
-  } else if (val >= ph && val < eh) {
-    texts = accurateDecimal(val / ph, 2) + "P";
-  } else if (val >= eh) {
-    texts = accurateDecimal(val / eh, 2) + "E";
+  const absVal = Math.abs(val); // 可能是负数，取绝对值比对
+
+  if (absVal < kh) {
+    texts = accurateDecimal(val, type, zeroFill);
+  } else if (absVal >= kh && absVal < mh) {
+    texts = accurateDecimal(val / kh, type, zeroFill) + "K";
+  } else if (absVal >= mh && absVal < gh) {
+    texts = accurateDecimal(val / mh, type, zeroFill) + "M";
+  } else if (absVal >= gh && absVal < th) {
+    texts = accurateDecimal(val / gh, type, zeroFill) + "B";
+  } else if (absVal >= th && absVal < ph) {
+    texts = accurateDecimal(val / th, type, zeroFill) + "T";
+  } else if (absVal >= ph && absVal < eh) {
+    texts = accurateDecimal(val / ph, type, zeroFill) + "P";
+  } else if (absVal >= eh) {
+    texts = accurateDecimal(val / eh, type, zeroFill) + "E";
   }
 
   return texts;

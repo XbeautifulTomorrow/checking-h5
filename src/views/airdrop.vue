@@ -81,13 +81,43 @@
             <div class="exchange_val">0</div>
           </div>
           <div class="exchange_type">
-            <div class="exchange_btn">
+            <div class="exchange_btn enable" @click="toSwap()">
+              <v-img
+                :width="24"
+                class="gmc_img"
+                cover
+                src="@/assets/images/svg/airdrop/convert.svg"
+              ></v-img>
               <span>SWAP</span>
-              <span class="tip_text">Soon</span>
             </div>
-            <div class="exchange_btn">
-              <span>WITHDRAW</span>
-              <span class="tip_text">Soon</span>
+            <div class="exchange_operating">
+              <div class="exchange_btn enable" @click="toDeposit()">
+                <v-img
+                  :width="24"
+                  class="gmc_img"
+                  cover
+                  src="@/assets/images/svg/airdrop/deposit.svg"
+                ></v-img>
+                <span>DEPOSIT</span>
+              </div>
+              <div class="exchange_btn enable" @click="toWithdraw()">
+                <v-img
+                  :width="24"
+                  class="gmc_img"
+                  cover
+                  src="@/assets/images/svg/airdrop/withdraw.svg"
+                ></v-img>
+                <span>WITHDRAW</span>
+              </div>
+            </div>
+            <div class="exchange_btn exchange">
+              <span>EXCHANGE</span>
+              <v-icon
+                color="#fe2e75"
+                class="exchange_icon"
+                size="24"
+                icon="mdi-open-in-new"
+              ></v-icon>
             </div>
           </div>
         </div>
@@ -253,6 +283,18 @@ export default defineComponent({
           address: null,
         });
       }
+    },
+    // Swap
+    toSwap() {
+      this.$router.push("/swap");
+    },
+    // Deposit
+    toDeposit() {
+      this.$router.push("/deposit");
+    },
+    // Deposit
+    toWithdraw() {
+      this.$router.push("/withdraw");
     },
     // 格式化地址
     formatAddr(event: string) {
@@ -445,8 +487,21 @@ export default defineComponent({
 .exchange_type {
   padding-top: 12px;
 
-  .exchange_btn + .exchange_btn {
+  & > .exchange_btn + .exchange_btn {
     margin-top: 8px;
+  }
+}
+
+.exchange_operating {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 4px 0;
+
+  & > div {
+    flex: 1;
+    max-width: calc(50% - 2px);
+    margin: 0;
   }
 }
 
@@ -462,6 +517,11 @@ export default defineComponent({
   align-items: center;
   justify-content: center;
 
+  .v-img {
+    flex: none;
+    margin-bottom: -2px;
+  }
+
   .tip_text {
     position: absolute;
     top: -4px;
@@ -476,6 +536,41 @@ export default defineComponent({
     color: #000000;
     font-weight: 400;
     font-size: 14px;
+  }
+
+  &.enable {
+    background-color: rgba(73, 182, 246, 1);
+    box-sizing: border-box;
+    border-width: 2px;
+    border-style: solid;
+    border-color: rgba(36, 36, 36, 1);
+    padding: 4px 0;
+    color: white;
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.64);
+    text-transform: none;
+  }
+
+  &.exchange {
+    background: linear-gradient(
+      90deg,
+      rgba(253, 239, 213, 1) 0%,
+      rgba(248, 215, 156, 1) 101%
+    );
+    box-sizing: border-box;
+    border-width: 2px;
+    border-style: solid;
+    padding: 4px 0;
+    border-color: rgba(0, 0, 0, 1);
+    border-radius: 8px;
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.64);
+    color: #fe2e75;
+    position: relative;
+
+    .exchange_icon {
+      position: absolute;
+      right: 8px;
+      text-shadow: none;
+    }
   }
 }
 
