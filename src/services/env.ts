@@ -1,9 +1,9 @@
 const config = {
   dev: {
-    api: "https://test1.xlab.red:4401/",
+    api: "https://test2.xlab.red:4401/",
   },
   test: {
-    api: "https://test1.xlab.red:4401/",
+    api: "https://test2.xlab.red:4401/",
   },
   prod: {
     api: "https://api.gmking.io/"
