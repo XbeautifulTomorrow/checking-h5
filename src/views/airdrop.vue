@@ -78,7 +78,9 @@
               ></v-img>
               <span>GMT</span>
             </div>
-            <div class="exchange_val">0</div>
+            <div class="exchange_val">
+              {{ Number(userInfo.gmtAmount).toLocaleString() }}
+            </div>
           </div>
           <div class="exchange_type">
             <div class="exchange_btn enable" @click="toSwap()">
