@@ -107,7 +107,7 @@ export default defineComponent({
     },
     maxAmount() {
       const {
-        userInfo: { gmcAmount, rctAmount },
+        userInfo: { gmcAmount, gmtAmount },
       } = useUserStore();
       if (this.coinName == "GMC") {
         // swap只能输入百万以上
@@ -119,8 +119,8 @@ export default defineComponent({
           return "";
         }
       } else {
-        if (rctAmount >= 100) {
-          const rctV = new bigNumber(rctAmount).dividedBy(100).toNumber();
+        if (gmtAmount >= 100) {
+          const rctV = new bigNumber(gmtAmount).dividedBy(100).toNumber();
           return Math.floor(rctV).toLocaleString();
         } else {
           return "";
