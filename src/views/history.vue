@@ -52,7 +52,7 @@
         src="@/assets/images/svg/airdrop/no_data.svg"
       ></v-img>
       <div class="no_data_text">NO DATA</div>
-      <div class="refresh_btn" @click="fetchHistoryList()">FEFRESH</div>
+      <div class="refresh_btn" @click="fetchHistoryList()">Refresh</div>
     </div>
   </div>
 </template>
