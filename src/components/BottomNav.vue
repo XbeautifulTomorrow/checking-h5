@@ -9,7 +9,8 @@
       :active="activeNav"
       rounded="lg"
       class="nav_panel"
-    >
+      :style="{ transform: `translateY(${activeNav ? '-8px' : '54px'})` }"
+      >1
       <v-btn
         value="check_in"
         :to="{ path: '/' }"
@@ -101,8 +102,15 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 
-// 没有导航按钮的页面
-const notNav = [] as Array<string>;
+// 有底部导航的页面
+const navList = [
+  "/",
+  "/activity",
+  "/earn",
+  "/frens",
+  "/mine",
+  "/airdrop",
+] as Array<string>;
 
 export default defineComponent({
   data() {
@@ -114,10 +122,10 @@ export default defineComponent({
   methods: {},
   watch: {
     "$route.path"(val: string) {
-      if (notNav.includes(val)) {
+      if (navList.includes(val)) {
         this.activeNav = true;
       } else {
-        this.activeNav = true;
+        this.activeNav = false;
       }
     },
   },
@@ -131,7 +139,9 @@ export default defineComponent({
 
 .nav_panel {
   width: calc(100% - 16px) !important;
-  margin: 0 8px 8px;
+  margin: 0 8px;
+
+  box-sizing: border-box;
 }
 
 .nav_img {

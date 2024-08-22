@@ -10,7 +10,10 @@
       density="compact"
     >
       <template v-slot:prepend>
-        <div class="back_btn" v-if="$route.path == '/'" @click="toMain()">
+        <div class="back_btn" v-if="isMain" @click="toMain()">
+          <v-icon color="#fff" size="24" icon="mdi-chevron-left"></v-icon>
+        </div>
+        <div class="back_btn" v-else-if="!isTab" @click="goBack()">
           <v-icon color="#fff" size="24" icon="mdi-chevron-left"></v-icon>
         </div>
       </template>
@@ -84,7 +87,10 @@ export default defineComponent({
   data() {
     return {
       title: "GMCoin",
+      isMain: false,
+      isTab: false,
       showMenu: false,
+      NavList: ["/", "/activity", "/earn", "/frens", "/mine", "/airdrop"],
     };
   },
   created() {
@@ -110,6 +116,9 @@ export default defineComponent({
       checkInStore.setChallengeId(null);
       this.$router.push("/activity");
     },
+    goBack() {
+      this.$router.go(-1); // 返回上一页
+    },
     toFrens() {
       // this.$router.push('/frens');
       const { setShowRecharge } = useUserStore();
@@ -128,9 +137,17 @@ export default defineComponent({
         userStore.fetchUserInfo();
       }
     },
-    "$route.path"() {
+    "$route.path"(val: string) {
       const userStore = useUserStore();
       userStore.fetchUserInfo();
+
+      if (val == "/") {
+        this.isTab = false;
+        this.isMain = true;
+      } else {
+        this.isMain = false;
+        this.isTab = this.NavList.includes(val);
+      }
     },
   },
 });
