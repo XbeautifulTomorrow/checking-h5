@@ -1,5 +1,6 @@
 <template>
   <div class="history_wrapper">
+    <div class="history_title">Withdraw History</div>
     <div
       class="history_list"
       @scroll="handleScroll"
@@ -78,7 +79,9 @@ export default defineComponent({
       return userInfo;
     },
   },
-  created() {},
+  created() {
+    this.fetchHistoryList();
+  },
   methods: {
     timeForStr: timeForStr,
     openLink(event: string) {
@@ -136,6 +139,15 @@ export default defineComponent({
 <style lang="scss" scoped>
 .history_list {
   background-color: rgba(0, 0, 0, 0.6);
+}
+
+.history_title {
+  padding: 0 8px;
+  font-size: 24px;
+  font-weight: 700;
+  font-style: normal;
+  color: #fdefd6;
+  padding-top: 16px;
 }
 
 .history_item {

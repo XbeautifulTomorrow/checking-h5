@@ -32,7 +32,7 @@
         </div>
         <div class="withdraw_from_input">
           <v-text-field
-            v-model="walletAddr"
+            v-model="withdrawAddr"
             base-color="#fff"
             bg-color="rgba(0,0,0,0)"
             color="#fff"
@@ -129,13 +129,16 @@ import { unitConversion, isEmpty, accurateDecimal } from "@/utils";
 import { transferWithdraw, getExchangeRate } from "@/services/api/user";
 import { useMessageStore } from "@/store/message.js";
 
+import { TonConnectUI, ConnectedWallet } from "@tonconnect/ui";
+import { Address } from "@ton/ton";
+
 type coin = "GMC" | "GMT";
 
 export default defineComponent({
   data() {
     return {
       coinName: "GMT" as coin,
-      walletAddr: "" as any,
+      withdrawAddr: "" as any,
       fromAmount: "" as string | any,
       toAmount: "" as string | any,
       fromOrTo: false,
@@ -148,6 +151,16 @@ export default defineComponent({
     userInfo() {
       const { userInfo } = useUserStore();
       return userInfo;
+    },
+    tonConnect: {
+      get() {
+        const { tonConnect } = useUserStore();
+        return tonConnect;
+      },
+      set(val: boolean) {
+        const { setTonConnect } = useUserStore();
+        setTonConnect(val);
+      },
     },
     coinRate() {
       const { coinExchangeRate, fromAmount } = this;
@@ -176,14 +189,14 @@ export default defineComponent({
       }
     },
     isWithdraw() {
-      const { fromAmount, isError, walletAddr } = this;
+      const { fromAmount, isError, withdrawAddr } = this;
       let isV = false;
 
       if (!fromAmount) {
         isV = true;
       }
 
-      if (!walletAddr) {
+      if (!withdrawAddr) {
         isV = true;
       }
 
@@ -195,10 +208,47 @@ export default defineComponent({
     },
   },
   created() {
+    this.initTonConnect();
     this.fetchExchangeRate();
   },
   methods: {
     unitConversion: unitConversion,
+
+    // 初始化ton-connect
+    async initTonConnect() {
+      let miniappUrl = "https://t.me/gm_coin_test_bot/checking";
+
+      this.tonConnect = new TonConnectUI({
+        manifestUrl: "https://file.gmking.io/tonconnect-manifest.json",
+      });
+
+      if (import.meta.env.MODE == "prod") {
+        miniappUrl = "https://t.me/theGMCoinBot/GMCoin";
+      }
+      // webapp重定向
+      this.tonConnect.uiOptions = {
+        twaReturnUrl: miniappUrl,
+      };
+
+      // 监听钱包链接状态
+      this.tonConnect.onStatusChange((wallet: ConnectedWallet) => {
+        if (wallet) {
+          const { listening } = useUserStore();
+          const {
+            account: { address },
+          } = wallet;
+          const isC = this.tonConnect.connected;
+          listening({
+            isc: isC,
+            account: address,
+          });
+
+          this.withdrawAddr = Address.parse(address).toString({
+            bounceable: false,
+          });
+        }
+      });
+    },
     handleInput(event: any) {
       let {
         target: { _value },
@@ -264,7 +314,7 @@ export default defineComponent({
       this.fromAmount = this.toAmount;
     },
     async submitSwap() {
-      const { fromAmount, walletAddr, coinName, removeTxt } = this;
+      const { fromAmount, withdrawAddr, coinName, removeTxt } = this;
       let amountVal = Number(removeTxt(fromAmount));
 
       amountVal = new bigNumber(amountVal).multipliedBy(100).toNumber();
@@ -273,7 +323,7 @@ export default defineComponent({
         amount: amountVal,
         coinName: coinName,
         chainName: "TON", //网络
-        address: walletAddr, //提币地址
+        address: Address.parse(withdrawAddr).toRawString(), //提币地址
       });
       if (res.code == 200) {
         const { fetchUserInfo } = useUserStore();
