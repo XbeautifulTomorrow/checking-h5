@@ -107,7 +107,7 @@ import { useUserStore } from "@/store/user.js";
 import { getOrderList } from "@/services/api/user";
 import { unitConversion } from "@/utils";
 import { TonConnectUI, ConnectedWallet } from "@tonconnect/ui";
-import { toNano, beginCell } from "@ton/ton";
+import { toNano, beginCell, Address } from "@ton/ton";
 
 type statusType = "pending" | "complete" | "timeout";
 interface order {
@@ -286,8 +286,12 @@ export default defineComponent({
     // 格式化地址
     formatAddr(event: string) {
       if (!event) return event;
-      var reg = /^(\S{5})\S+(\S{4})$/;
-      return event.replace(reg, "$1...$2");
+      const addr = Address.parse(event).toString({
+        bounceable: false,
+      });
+
+      var reg = /^(\S{8})\S+(\S{6})$/;
+      return addr.replace(reg, "$1...$2");
     },
     // 倒计时
     countDown() {

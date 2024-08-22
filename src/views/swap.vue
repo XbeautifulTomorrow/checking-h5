@@ -1,6 +1,6 @@
 <template>
   <div class="swap_wrapper">
-    <div class="swap_title">SWAP</div>
+    <div class="swap_title">Swap</div>
     <div class="swap_panel">
       <div class="swap_item">
         <div class="swap_item_title">
@@ -107,7 +107,7 @@
           <span v-else>--</span>
         </div>
       </div>
-      <div class="tips_text">1$GMT=10,000$GMC</div>
+      <div class="tips_text">1 $GMT = 10,000 $GMC</div>
     </div>
     <div class="swap_buttons">
       <v-btn
@@ -380,7 +380,7 @@ export default defineComponent({
 }
 
 .swap_title {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
   font-style: normal;
   color: #fdefd6;
@@ -515,13 +515,15 @@ export default defineComponent({
   padding: 4px 8px 0;
 
   .button {
-    padding: 10px 0;
+    height: 40px;
+    padding: 0;
     text-align: center;
     font-weight: bold;
     font-style: normal;
     font-size: 20px;
     line-height: 1;
     border-radius: 8px;
+    box-sizing: border-box;
 
     &.swap {
       background-color: rgba(73, 182, 246, 1);
@@ -532,10 +534,22 @@ export default defineComponent({
       font-weight: 700;
       font-style: normal;
       color: #ffffff;
+
+      &.v-btn--disabled {
+        background-color: rgba(53, 53, 53, 1);
+        color: #696969;
+
+        .btn_text {
+          .v-img {
+            opacity: 0.2;
+          }
+        }
+      }
     }
 
     &.back {
-      margin-top: 20px;
+      margin-top: 12px;
+      line-height: 40px;
       background-color: #ececec;
       box-sizing: border-box;
       color: #000;

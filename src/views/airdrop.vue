@@ -86,17 +86,15 @@
             <div class="exchange_btn enable" @click="toSwap()">
               <v-img
                 :width="24"
-                class="gmc_img"
                 cover
                 src="@/assets/images/svg/airdrop/convert.svg"
               ></v-img>
               <span>SWAP</span>
             </div>
             <div class="exchange_operating">
-              <div class="exchange_btn enable" @click="toDeposit()">
+              <div class="exchange_btn" @click="toDeposit()">
                 <v-img
                   :width="24"
-                  class="gmc_img"
                   cover
                   src="@/assets/images/svg/airdrop/deposit.svg"
                 ></v-img>
@@ -105,14 +103,13 @@
               <div class="exchange_btn enable" @click="toWithdraw()">
                 <v-img
                   :width="24"
-                  class="gmc_img"
                   cover
                   src="@/assets/images/svg/airdrop/withdraw.svg"
                 ></v-img>
                 <span>WITHDRAW</span>
               </div>
             </div>
-            <div class="exchange_btn exchange">
+            <div class="exchange_btn exchange" @click="toExchange()">
               <span>EXCHANGE</span>
               <v-icon
                 color="#fe2e75"
@@ -172,6 +169,8 @@
 import { defineComponent } from "vue";
 import { useUserStore } from "@/store/user.js";
 import { TonConnectUI, ConnectedWallet } from "@tonconnect/ui";
+import { Address } from "@ton/ton";
+import { openUrl } from "@/utils";
 
 export default defineComponent({
   data() {
@@ -250,12 +249,12 @@ export default defineComponent({
         if (wallet) {
           const { listening } = useUserStore();
           const {
-            account: { publicKey },
+            account: { address },
           } = wallet;
           const isC = this.tonConnect.connected;
           listening({
             isc: isC,
-            account: publicKey,
+            account: address,
           });
         }
       });
@@ -298,18 +297,27 @@ export default defineComponent({
     toWithdraw() {
       this.$router.push("/withdraw");
     },
+    // Exchange
+    toExchange() {
+      openUrl(" https://t.me/theGMCoinBot/GMExchange");
+    },
     // 格式化地址
     formatAddr(event: string) {
       if (!event) return event;
+      const addr = Address.parse(event).toString({
+        bounceable: false,
+      });
+
       var reg = /^(\S{8})\S+(\S{6})$/;
-      return event.replace(reg, "$1...$2");
+      return addr.replace(reg, "$1...$2");
     },
   },
 });
 </script>
 <style lang="scss" scoped>
 .airdrop_wrapper {
-  padding: 0 16px;
+  padding: 0 16px 8px;
+  box-sizing: border-box;
 }
 
 .gift_box {
@@ -522,6 +530,7 @@ export default defineComponent({
   .v-img {
     flex: none;
     margin-bottom: -2px;
+    opacity: 0.2;
   }
 
   .tip_text {
@@ -550,6 +559,10 @@ export default defineComponent({
     color: white;
     text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.64);
     text-transform: none;
+
+    .v-img {
+      opacity: 1;
+    }
   }
 
   &.exchange {

@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import { useUserStore } from "@/store/user.js";
 import { validateToken, telegramLogin } from "@/services/api/user";
 import { useCheckInStore, } from '@/store/check_in.js';
-import { setLocalStore, setSessionStore, getSessionStore, removeSessionStore } from "@/utils";
+import { setLocalStore, setSessionStore, getSessionStore, removeSessionStore, isEmpty } from "@/utils";
 
 //1. 定义要使用到的路由组件  （一定要使用文件的全名，得包含文件后缀名）
 import activity from '@/views/activity.vue';
@@ -154,6 +154,13 @@ router.beforeEach(async (to, from, next) => {
       tg_certificate = btoa(WebApp.initData);
       console.log(WebApp.version);
       console.log(tg_certificate);
+    }
+
+    if (isEmpty(tg_certificate)) {
+      const { logoutApi } = useUserStore();
+      logoutApi();
+      next();
+      return;
     }
 
     const inviteCode = getSessionStore("inviteCode");

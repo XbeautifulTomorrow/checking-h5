@@ -53,6 +53,7 @@ import { defineComponent } from "vue";
 import { useUserStore } from "@/store/user.js";
 import { getWithdrawList } from "@/services/api/user";
 import { timeForStr, openUrl } from "@/utils";
+import { Address } from "@ton/ton";
 
 interface orderInfo {
   hash: string; //hash
@@ -118,13 +119,15 @@ export default defineComponent({
       }
     },
 
-    /**
-     * @description: 格式化地址
-     */
+    // 格式化地址
     formatAddr(event: string) {
-      if (!event) return "";
-      var reg = /^(\S{10})\S+(\S{6})$/;
-      return event.replace(reg, "$1***$2");
+      if (!event) return event;
+      const addr = Address.parse(event).toString({
+        bounceable: false,
+      });
+
+      var reg = /^(\S{8})\S+(\S{6})$/;
+      return addr.replace(reg, "$1...$2");
     },
   },
 });

@@ -1,6 +1,6 @@
 <template>
   <div class="withdraw_wrapper">
-    <div class="withdraw_title">WITHDRAW</div>
+    <div class="withdraw_title">Withdraw</div>
     <div class="withdraw_panel">
       <div class="withdraw_item">
         <div class="withdraw_item_title">
@@ -158,7 +158,10 @@ export default defineComponent({
         .multipliedBy(100)
         .multipliedBy(coinExchangeRate)
         .toNumber();
-      return accurateDecimal(rate, 2);
+
+      return Number(accurateDecimal(rate, 2)).toLocaleString(undefined, {
+        maximumFractionDigits: 2,
+      });
     },
     maxAmount() {
       const {
@@ -354,7 +357,7 @@ export default defineComponent({
 }
 
 .withdraw_title {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
   font-style: normal;
   color: #fdefd6;
@@ -516,7 +519,8 @@ export default defineComponent({
 
 .withdraw_buttons {
   .button {
-    padding: 10px 0;
+    height: 40px;
+    padding: 0;
     text-align: center;
     font-weight: bold;
     font-style: normal;
@@ -533,10 +537,22 @@ export default defineComponent({
       font-weight: 700;
       font-style: normal;
       color: #ffffff;
+
+      &.v-btn--disabled {
+        background-color: rgba(53, 53, 53, 1);
+        color: #696969;
+
+        .btn_text {
+          .v-img {
+            opacity: 0.2;
+          }
+        }
+      }
     }
 
     &.back {
-      margin-top: 8px;
+      margin-top: 12px;
+      line-height: 40px;
       background-color: #ececec;
       box-sizing: border-box;
       color: #000;
