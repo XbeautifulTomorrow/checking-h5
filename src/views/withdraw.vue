@@ -451,6 +451,7 @@ export default defineComponent({
     .balance {
       display: flex;
       align-items: center;
+      font-size: 14px;
 
       .v-img {
         flex: none;
@@ -476,6 +477,7 @@ export default defineComponent({
     font-style: normal;
     font-size: 14px;
     color: #b0b5c5;
+    padding-right: 30px;
 
     .v-img {
       flex: none;
@@ -485,16 +487,16 @@ export default defineComponent({
   }
 
   :deep(.v-field__input) {
-    font-size: 16px;
+    font-size: 14px;
     padding: 0;
     min-height: 0;
     line-height: 1.2;
-    font-weight: bold;
   }
 
   .zero_fill {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 700;
+    line-height: 1.2;
     color: #b0b5c5;
   }
 
@@ -539,13 +541,13 @@ export default defineComponent({
   text-align: right;
   font-weight: 700;
   font-style: normal;
-  font-size: 16px;
+  font-size: 14px;
   color: #b0b5c5;
 }
 
 .error_box {
   position: absolute;
-  bottom: 4px;
+  bottom: 0px;
   font-size: 12px;
   color: #ff0000;
 }
@@ -558,7 +560,7 @@ export default defineComponent({
 }
 
 .gas_fee {
-  font-size: 16px;
+  font-size: 14px;
   color: #fdefd6;
   text-align: right;
   padding-top: 4px;
