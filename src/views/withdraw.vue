@@ -162,6 +162,10 @@ export default defineComponent({
         setTonConnect(val);
       },
     },
+    walletAddr() {
+      const { walletAddr } = useUserStore();
+      return walletAddr;
+    },
     coinRate() {
       const { coinExchangeRate, fromAmount } = this;
       if (!fromAmount) return 0;
@@ -208,7 +212,13 @@ export default defineComponent({
     },
   },
   created() {
-    this.initTonConnect();
+    if (!this.tonConnect) {
+      this.initTonConnect();
+    } else {
+      this.withdrawAddr = Address.parse(this.walletAddr).toString({
+        bounceable: false,
+      });
+    }
     this.fetchExchangeRate();
   },
   methods: {

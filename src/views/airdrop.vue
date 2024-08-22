@@ -225,7 +225,9 @@ export default defineComponent({
     },
   },
   created() {
-    this.initTonConnect();
+    if (!this.tonConnect) {
+      this.initTonConnect();
+    }
   },
   methods: {
     // 初始化ton-connect
