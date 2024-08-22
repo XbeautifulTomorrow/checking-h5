@@ -12,8 +12,8 @@
             {{ timeForStr(item.time, "YYYY-MM-DD HH:mm:ss") }}
           </div>
           <div class="info_val">
-            <span>Status:</span>
-            <span>{{ item.status }}</span>
+            <span style="margin-right: 4px">Status:</span>
+            <span :class="[formatStatus(item.status)]">{{ item.status }}</span>
           </div>
         </div>
         <div class="history_info">
@@ -45,7 +45,15 @@
         </div>
       </div>
     </div>
-    <div v-else class="no_data">No Orders Found</div>
+    <div v-else class="no_data">
+      <v-img
+        :width="52"
+        cover
+        src="@/assets/images/svg/airdrop/no_data.svg"
+      ></v-img>
+      <div class="no_data_text">NO DATA</div>
+      <div class="refresh_btn" @click="fetchHistoryList()">FEFRESH</div>
+    </div>
   </div>
 </template>
 
@@ -86,7 +94,7 @@ export default defineComponent({
     timeForStr: timeForStr,
     openLink(event: string) {
       if (!event) return;
-      const tonUrl = "https://tonviewer.com/";
+      const tonUrl = `https://tonscan.org/tx/by-msg-hash/`;
       openUrl(`${tonUrl}${event}`);
     },
     async fetchHistoryList(type = 1, isSearch = true) {
@@ -138,15 +146,21 @@ export default defineComponent({
       var reg = /^(\S{8})\S+(\S{6})$/;
       return addr.replace(reg, "$1...$2");
     },
+    // 格式化地址
+    formatStatus(event: string) {
+      if (event == "In Progress") {
+        return "in_progress";
+      } else if (event == "Successful") {
+        return "successful";
+      } else {
+        return "fail";
+      }
+    },
   },
 });
 </script>
 
 <style lang="scss" scoped>
-.history_list {
-  background-color: rgba(0, 0, 0, 0.6);
-}
-
 .history_title {
   padding: 0 8px;
   font-size: 24px;
@@ -157,7 +171,13 @@ export default defineComponent({
 }
 
 .history_item {
+  background-color: rgba(0, 0, 0, 0.6);
   padding: 8px;
+
+  &:nth-child(2n) {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
   .history_info {
     display: flex;
     align-items: center;
@@ -176,6 +196,18 @@ export default defineComponent({
       font-style: normal;
       font-size: 14px;
       color: #b0b5c5;
+
+      .in_progress {
+        color: #7a93ec;
+      }
+
+      .successful {
+        color: #6ce80e;
+      }
+
+      .fail {
+        color: #ff0000;
+      }
 
       &.amount {
         color: white;
@@ -206,7 +238,28 @@ export default defineComponent({
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  color: #b0b5c5;
+  flex-direction: column;
+  font-size: 18px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+
+  .v-img {
+    flex: none;
+  }
+
+  .no_data_text {
+    margin: 16px 0;
+  }
+
+  .refresh_btn {
+    padding: 8px 16px;
+    background-color: #ececec;
+    font-weight: 700;
+    line-height: 1;
+    font-style: normal;
+    color: #666565;
+    border-radius: 8px;
+    cursor: pointer;
+  }
 }
 </style>
