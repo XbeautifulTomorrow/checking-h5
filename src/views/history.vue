@@ -34,7 +34,7 @@
         <div class="history_info">
           <div class="info_title">HASH:</div>
           <div class="info_val">
-            <span>{{ formatAddr(item.hash) }}</span>
+            <span>{{ formatHash(item.hash) }}</span>
             <v-img
               :width="24"
               cover
@@ -121,7 +121,13 @@ export default defineComponent({
         this.fetchHistoryList(2, false);
       }
     },
-
+    /**
+     * @description: 格式化Hash地址
+     */
+    formatHash(event: string) {
+      if (!event) return "";
+      return event.substring(0, 10);
+    },
     // 格式化地址
     formatAddr(event: string) {
       if (!event) return event;
