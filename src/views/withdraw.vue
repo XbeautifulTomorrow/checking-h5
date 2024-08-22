@@ -88,7 +88,7 @@
         <div v-if="isError" class="error_box">$GMT is not enough.</div>
       </div>
     </div>
-    <div class="gas_fee">Gas Fee: 1 $GMT</div>
+    <div class="gas_fee">Gas Fee: 75 $GMT</div>
     <div class="hint_box">
       <v-img
         :width="16"
