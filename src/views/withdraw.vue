@@ -85,7 +85,7 @@
           <span v-if="coinRate">{{ `≈ ${coinRate} USDT` }}</span>
           <span v-else>--</span>
         </div>
-        <div v-if="isError" class="error_box">$GMC is not enough.</div>
+        <div v-if="isError" class="error_box">$GMT is not enough.</div>
       </div>
     </div>
     <div class="gas_fee">Gas Fee: 1 $GMT</div>
@@ -268,7 +268,7 @@ export default defineComponent({
 
       const res = await transferWithdraw({
         amount: amountVal,
-        coinName: coinName == "GMC" ? "GMT" : "GMC",
+        coinName: coinName,
         chainName: "TON", //网络
         address: walletAddr, //提币地址
       });
