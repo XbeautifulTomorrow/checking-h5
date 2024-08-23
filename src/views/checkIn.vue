@@ -481,7 +481,7 @@
           >
             <span class="operating_text">-</span>
           </v-btn>
-          <div class="quantity">{{ bonusNum }}</div>
+          <div class="quantity">{{ Number(bonusNum).toLocaleString() }}</div>
           <v-btn
             color="#49B6F6"
             height="40"
