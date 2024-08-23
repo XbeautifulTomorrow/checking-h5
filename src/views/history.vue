@@ -94,7 +94,7 @@ export default defineComponent({
     timeForStr: timeForStr,
     openLink(event: string) {
       if (!event) return;
-      const tonUrl = `https://tonscan.org/tx/by-msg-hash/`;
+      const tonUrl = `https://tonviewer.com/transaction/`;
       openUrl(`${tonUrl}${event}`);
     },
     async fetchHistoryList(type = 1, isSearch = true) {
