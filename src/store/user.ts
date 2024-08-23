@@ -51,7 +51,6 @@ export interface productInfo {
   [x: string]: string | number | any;
 }
 
-
 export const useUserStore = defineStore("user", {
   state: () => ({
     locale: langMenu[getLang()],
@@ -68,6 +67,10 @@ export const useUserStore = defineStore("user", {
     walletAddr: null as number | string | any,     // 钱包地址
     isConnect: false,     //链接状态
     showConfirm: false, // 确认弹窗
+
+    orderId: null as number | string | any, // 订单信息
+    showWithdraw: false, // 提币确认弹窗
+
     retryCount: 5, // 登录重试次数
     loadLog: false,
   }),
@@ -116,6 +119,12 @@ export const useUserStore = defineStore("user", {
       }
 
       this.showConfirm = true;
+    },
+    setShowWithdraw(data: any) {
+      this.showWithdraw = data;
+    },
+    setOrderId(data: any) {
+      this.orderId = data;
     },
     listening(data: any) {
       if (data.isc) {

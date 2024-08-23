@@ -15,5 +15,6 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     Rules: typeof import('./src/components/rules/index.vue')['default']
     TopToolbar: typeof import('./src/components/TopToolbar.vue')['default']
+    WithdrawConfirm: typeof import('./src/components/withdrawConfirm/index.vue')['default']
   }
 }

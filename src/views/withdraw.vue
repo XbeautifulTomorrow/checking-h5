@@ -118,6 +118,7 @@
       </v-btn>
       <div class="button back" @click="handleBack()">BACK</div>
     </div>
+    <withdraw></withdraw>
   </div>
 </template>
 
@@ -127,7 +128,7 @@ import { useUserStore } from "@/store/user.js";
 import bigNumber from "bignumber.js";
 import { unitConversion, isEmpty, accurateDecimal } from "@/utils";
 import { transferWithdraw, getExchangeRate } from "@/services/api/user";
-import { useMessageStore } from "@/store/message.js";
+import withdraw from "@/components/withdrawConfirm/index.vue";
 
 import { TonConnectUI, ConnectedWallet } from "@tonconnect/ui";
 import { Address } from "@ton/ton";
@@ -146,6 +147,9 @@ export default defineComponent({
 
       coinExchangeRate: 0,
     };
+  },
+  components: {
+    withdraw,
   },
   computed: {
     userInfo() {
@@ -336,14 +340,12 @@ export default defineComponent({
         address: Address.parse(withdrawAddr).toRawString(), //提币地址
       });
       if (res.code == 200) {
-        const { fetchUserInfo } = useUserStore();
-        fetchUserInfo();
-
         this.fromOrTo = true;
         this.fromAmount = "";
 
-        const { setMessageText } = useMessageStore();
-        setMessageText("Swap successful");
+        const { setOrderId, setShowWithdraw } = useUserStore();
+        setOrderId(res.data);
+        setShowWithdraw(true);
       }
     },
     // 删除指定字符串

@@ -59,6 +59,18 @@
             </v-fab>
           </div>
         </div>
+        <div class="energy_box gmt">
+          <v-img
+            :width="20"
+            cover
+            src="@/assets/images/airdrop/coin_gmt.png"
+          ></v-img>
+          <div class="energy_item">
+            <div class="energy_val">
+              {{ Number(userInfo?.gmtAmount || 0).toLocaleString() }}
+            </div>
+          </div>
+        </div>
         <v-avatar
           v-if="userInfo.avatar"
           size="32"
@@ -172,6 +184,9 @@ export default defineComponent({
   background-color: rgba(210, 210, 214, 1);
   border-radius: 30px;
   margin-right: 8px;
+  &.gmt {
+    padding-right: 10px;
+  }
 
   .energy_item {
     display: flex;

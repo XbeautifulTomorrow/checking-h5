@@ -21,7 +21,7 @@
           <div class="info_val amount">
             <span>{{ Number(item.amount).toLocaleString() }}</span>
             <v-img
-              :width="24"
+              :width="18"
               cover
               src="@/assets/images/airdrop/coin_gmt.png"
             ></v-img>
@@ -36,7 +36,7 @@
           <div class="info_val">
             <span>{{ formatHash(item.hash) }}</span>
             <v-img
-              :width="24"
+              :width="18"
               cover
               @click="openLink(item.hash)"
               src="@/assets/images/svg/airdrop/icon_link.svg"
