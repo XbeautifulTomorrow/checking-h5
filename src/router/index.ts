@@ -115,6 +115,8 @@ router.beforeEach(async (to, from, next) => {
       }
     } else if (urlParam.indexOf("frens") > -1) {
       setSessionStore('nextPath', "/frens");
+    } else if (urlParam.indexOf("earn") > -1) {
+      setSessionStore('nextPath', "/earn");
     } else if (urlParam.indexOf("3base") > -1) {
       setSessionStore('recommend', "3base");
       const inviteArray = urlParam.split("_");
