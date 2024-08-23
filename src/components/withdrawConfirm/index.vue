@@ -128,7 +128,6 @@ export default defineComponent({
   },
   created() {
     this.status = "pending";
-    this.countDown();
   },
   methods: {
     handleReady() {

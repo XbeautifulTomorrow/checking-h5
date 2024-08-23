@@ -301,7 +301,7 @@ export default defineComponent({
     },
     // Exchange
     toExchange() {
-      openUrl(" https://t.me/theGMCoinBot/GMExchange");
+      openUrl("https://t.me/theGMCoinBot/GMExchange");
     },
     // 格式化地址
     formatAddr(event: string) {
