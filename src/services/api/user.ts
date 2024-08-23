@@ -82,7 +82,7 @@ const transferWithdraw = (params: any) => http.post("/gm-coin-server-web/transfe
  * 提币记录
  * @param params
  */
-const getWithdrawList = (params: any) => http.get("/gm-coin-server-web/transfer/record/withdrawList", params);
+const getWithdrawList = (params: any) => http.get("/gm-coin-server-web/transfer/record/withdrawList", params, { showLoading: false });
 
 /**
  * 获取汇率 
