@@ -271,7 +271,6 @@ export default defineComponent({
         description: description,
         payload: payload,
         provider_token: providerToken,
-        start_parameter: "start",
         currency: currency,
         prices: prices,
       });
@@ -287,7 +286,13 @@ export default defineComponent({
 
         const res = await response.json();
         if (res.ok) {
-          openUrl(res.result);
+          const { Telegram } = window as any;
+          if (Telegram) {
+            const { WebApp } = Telegram;
+            console.log(Telegram);
+            console.log(WebApp);
+            WebApp.openInvoice(res.result);
+          }
           console.log("Invoice sent successfully");
         } else {
           console.error("Failed to send invoice", res);
