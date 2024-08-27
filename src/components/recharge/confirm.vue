@@ -109,7 +109,7 @@
 import { defineComponent } from "vue";
 import { useUserStore } from "@/store/user.js";
 import { getOrderList } from "@/services/api/user";
-import { unitConversion } from "@/utils";
+import { openUrl, unitConversion } from "@/utils";
 import { TonConnectUI, ConnectedWallet } from "@tonconnect/ui";
 import { toNano, beginCell, Address } from "@ton/ton";
 
@@ -254,36 +254,46 @@ export default defineComponent({
     // 处理Stars
     async handleStars() {
       const botToken = "7326991349:AAEaunWwKKAH532aVrXty-dPzRyMWAxnsg0"; // 替换为实际的机器人令牌
-      const chatId = "5080589152"; // 替换为实际的聊天 ID
+      // const chatId = "5080589152"; // 替换为实际的聊天 ID
+      const providerToken = ""; // XTR 提供的支付令牌
+      const payload = "unique_payload";
+      const title = "Test Item";
+      const description = "Description of the test item";
+      const currency = "XTR";
+      const prices = [
+        { label: "Test Item", amount: 1000 }, // 价格为 10.00 USD（以分为单位）
+      ];
+
+      const url = `https://api.telegram.org/bot${botToken}/createInvoiceLink`;
+      const body = JSON.stringify({
+        // chat_id: chatId,
+        title: title,
+        description: description,
+        payload: payload,
+        provider_token: providerToken,
+        start_parameter: "start",
+        currency: currency,
+        prices: prices,
+      });
 
       try {
-        const response = await fetch(
-          `https://api.telegram.org/bot${botToken}/api/sendInvoice`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              chatId,
-              title: "Test Item",
-              description: "Description of the test item",
-              payload: "unique_payload",
-              providerToken: "", // XTR 提供的支付令牌
-              currency: "XTR",
-              prices: [{ label: "Test Item", amount: 1 }], // 10.00 USD（以分为单位）
-            }),
-          }
-        );
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: body,
+        });
 
-        const result = await response.json();
-        if (response.ok) {
-          window.location.href = result.invoiceUrl; // Redirect to the payment link
+        const res = await response.json();
+        if (res.ok) {
+          openUrl(res.result);
+          console.log("Invoice sent successfully");
         } else {
-          console.error("Failed to create invoice link", result);
+          console.error("Failed to send invoice", res);
         }
       } catch (error) {
-        console.error("Error creating invoice link", error);
+        console.error("Error sending invoice", error);
       }
     },
     // 处理购买
