@@ -28,29 +28,33 @@
             <div class="product_usd_val">{{ `$${productInfo.price}` }}</div>
           </div>
           <v-btn
-            v-if="!isConnect"
+            class="connect_btn stars"
+            :elevation="8"
+            width="90%"
+            height="36"
+            @click="handleStars()"
+          >
+            <v-img
+              width="20"
+              class="reward_img"
+              cover
+              src="@/assets/images/recharge/icon_stars.png"
+            ></v-img>
+            <span class="finished">1,000 Stars</span>
+          </v-btn>
+          <v-btn
             class="connect_btn"
             :elevation="8"
             width="90%"
-            height="40"
-            @click="connectToWallet()"
+            height="36"
+            @click="!isConnect ? connectToWallet() : handlePayment()"
           >
             <v-img
-              width="24"
+              width="20"
               class="reward_img"
               cover
               src="@/assets/images/recharge/icon_ton.png"
             ></v-img>
-            <span class="finished">TON CONNECT</span>
-          </v-btn>
-          <v-btn
-            v-else
-            class="connect_btn"
-            :elevation="8"
-            width="90%"
-            height="40"
-            @click="handlePayment()"
-          >
             <span class="finished">TON CONNECT</span>
           </v-btn>
         </div>
@@ -245,6 +249,42 @@ export default defineComponent({
           isc: false,
           address: null,
         });
+      }
+    },
+    // 处理Stars
+    async handleStars() {
+      const botToken = "7326991349:AAEaunWwKKAH532aVrXty-dPzRyMWAxnsg0"; // 替换为实际的机器人令牌
+      const chatId = "5080589152"; // 替换为实际的聊天 ID
+
+      try {
+        const response = await fetch(
+          `https://api.telegram.org/bot${botToken}/api/createInvoiceLink`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              botToken,
+              chatId,
+              title: "Test Item",
+              description: "Description of the test item",
+              payload: "unique_payload",
+              providerToken: "", // XTR 提供的支付令牌
+              currency: "XTR",
+              prices: [{ label: "Test Item", amount: 1 }], // 10.00 USD（以分为单位）
+            }),
+          }
+        );
+
+        const result = await response.json();
+        if (response.ok) {
+          window.location.href = result.invoiceUrl; // Redirect to the payment link
+        } else {
+          console.error("Failed to create invoice link", result);
+        }
+      } catch (error) {
+        console.error("Error creating invoice link", error);
       }
     },
     // 处理购买
@@ -562,22 +602,33 @@ export default defineComponent({
   margin-bottom: 16px;
 }
 
+.connect_btn + .connect_btn {
+  margin-top: 8px;
+}
+
 .connect_btn {
   background-color: rgba(73, 182, 246, 1);
   box-sizing: border-box;
   border-width: 2px;
   border-style: solid;
   border-color: rgba(36, 36, 36, 1);
-  border-radius: 10px;
-  -moz-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
-  -webkit-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
   box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
   font-weight: 700;
   font-style: normal;
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1;
   color: #ffffff;
   text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.6);
+
+  &.stars {
+    background: linear-gradient(
+      180deg,
+      rgba(93, 158, 252, 1) 0%,
+      rgba(150, 74, 245, 1) 51%,
+      rgba(230, 57, 173, 1) 98%
+    );
+  }
 
   .v-img {
     flex: none;
