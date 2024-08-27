@@ -291,7 +291,7 @@ export default defineComponent({
             const { WebApp } = Telegram;
             console.log(Telegram);
             console.log(WebApp);
-            WebApp.openInvoice(res.result);
+            WebApp.openTelegramLink(res.result);
           }
           console.log("Invoice sent successfully");
         } else {
