@@ -258,14 +258,13 @@ export default defineComponent({
 
       try {
         const response = await fetch(
-          `https://api.telegram.org/bot${botToken}/api/createInvoiceLink`,
+          `https://api.telegram.org/bot${botToken}/api/sendInvoice`,
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              botToken,
               chatId,
               title: "Test Item",
               description: "Description of the test item",
