@@ -72,6 +72,7 @@ export const useUserStore = defineStore("user", {
     showWithdraw: false, // 提币确认弹窗
 
     retryCount: 5, // 登录重试次数
+    showRetry: false, // 重试弹窗
     loadLog: false,
   }),
   persist: {
@@ -138,6 +139,9 @@ export const useUserStore = defineStore("user", {
     setShowConfirm(data: any) {
       this.showConfirm = data;
     },
+    setShowRetry(data: any) {
+      this.showRetry = data;
+    },
     setLocale(data: any) {
       this.locale = data == "en_US" ? en : zhHant;
     },
@@ -176,10 +180,13 @@ export const useUserStore = defineStore("user", {
       if (import.meta.env.MODE != "dev") {
         if (this.retryCount >= 0) {
           window.location.reload();
+        } else {
+          this.showRetry = true;
         }
 
         this.retryCount--;
       }
+
     }
   }
 });

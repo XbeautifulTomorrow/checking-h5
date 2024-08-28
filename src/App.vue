@@ -35,8 +35,9 @@
           height="40"
           rounded="lg"
           size="small"
-          >CONFIRM</v-btn
         >
+          CONFIRM
+        </v-btn>
       </div>
     </v-dialog>
     <recharge></recharge>
@@ -53,6 +54,20 @@
         <span class="loading_text">Loading</span>
       </div>
     </v-dialog>
+    <!-- <v-dialog v-model="showRetry" max-width="320">
+      <v-list class="py-2" color="primary" elevation="12" rounded="lg">
+        <v-list-item
+          prepend-icon="$vuetify-outline"
+          title="Refreshing Application..."
+        >
+          <template v-slot:prepend>
+            <div class="pe-4">
+              <v-icon color="primary" size="x-large"></v-icon>
+            </div>
+          </template>
+        </v-list-item>
+      </v-list>
+    </v-dialog> -->
   </v-app>
 </template>
 
@@ -99,6 +114,16 @@ export default defineComponent({
     showConfirm() {
       const { showConfirm } = useUserStore();
       return showConfirm;
+    },
+    showRetry: {
+      get() {
+        const { showRetry } = useUserStore();
+        return showRetry;
+      },
+      set(val: boolean) {
+        const { setShowRetry } = useUserStore();
+        setShowRetry(val);
+      },
     },
     messageText() {
       const { messageText } = useMessageStore();

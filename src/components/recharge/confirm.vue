@@ -40,7 +40,7 @@
               cover
               src="@/assets/images/recharge/icon_stars.png"
             ></v-img>
-            <span class="finished">1,000 Stars</span>
+            <span class="finished">1 Stars</span>
           </v-btn>
           <v-btn
             class="connect_btn"
@@ -109,7 +109,7 @@
 import { defineComponent } from "vue";
 import { useUserStore } from "@/store/user.js";
 import { getOrderList } from "@/services/api/user";
-import { openUrl, unitConversion } from "@/utils";
+import { unitConversion } from "@/utils";
 import { TonConnectUI, ConnectedWallet } from "@tonconnect/ui";
 import { toNano, beginCell, Address } from "@ton/ton";
 
@@ -261,7 +261,7 @@ export default defineComponent({
       const description = "Description of the test item"; // 商品描述
       const currency = "XTR"; // 货币代码
       const prices = [
-        { label: "Test Item", amount: 1000 }, // 价格为 10.00 USD（以分为单位）
+        { label: "Test Item", amount: 1 }, //
       ]; // 商品价格
 
       const url = `https://api.telegram.org/bot${botToken}/createInvoiceLink`;
