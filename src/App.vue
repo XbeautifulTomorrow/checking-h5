@@ -54,20 +54,19 @@
         <span class="loading_text">Loading</span>
       </div>
     </v-dialog>
-    <!-- <v-dialog v-model="showRetry" max-width="320">
-      <v-list class="py-2" color="primary" elevation="12" rounded="lg">
-        <v-list-item
-          prepend-icon="$vuetify-outline"
-          title="Refreshing Application..."
-        >
-          <template v-slot:prepend>
-            <div class="pe-4">
-              <v-icon color="primary" size="x-large"></v-icon>
-            </div>
-          </template>
-        </v-list-item>
-      </v-list>
-    </v-dialog> -->
+    <v-dialog v-model="showRetry" max-width="60%" persistent>
+      <span> </span>
+      <div class="dialog_box">
+        <div class="dialog_text">
+          <span>
+            Unable to retrieve your Telegram information, please try again later
+          </span>
+        </div>
+        <v-btn class="invite" width="100%" @click="handleRetry()">
+          <span class="finished">Try again</span>
+        </v-btn>
+      </div>
+    </v-dialog>
   </v-app>
 </template>
 
@@ -139,6 +138,11 @@ export default defineComponent({
     closeMessage() {
       const { setShowMessage } = useMessageStore();
       setShowMessage(false);
+    },
+    // 处理重试
+    handleRetry() {
+      // 这里重试也只能刷新
+      window.location.reload();
     },
   },
 });
@@ -213,6 +217,37 @@ export default defineComponent({
     margin-top: 8px;
     font-size: 16px;
     color: #fff;
+  }
+}
+
+.dialog_box {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  color: #666666;
+  text-align: center;
+  font-size: 18px;
+  line-height: 1.2;
+
+  .dialog_text {
+    margin-bottom: 24px;
+  }
+
+  .invite {
+    background-color: #49b6f6;
+
+    .v-img {
+      margin-right: 4px;
+    }
+  }
+
+  .finished {
+    text-transform: none;
+    letter-spacing: 0;
+    color: white;
   }
 }
 </style>

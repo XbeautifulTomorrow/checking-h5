@@ -71,7 +71,7 @@ export const useUserStore = defineStore("user", {
     orderId: null as number | string | any, // 订单信息
     showWithdraw: false, // 提币确认弹窗
 
-    retryCount: 5, // 登录重试次数
+    retryCount: 2, // 登录重试次数
     showRetry: false, // 重试弹窗
     loadLog: false,
   }),
@@ -177,16 +177,13 @@ export const useUserStore = defineStore("user", {
       this.userInfo = {} as userInterface;
       window.NavigationPreloadManager;
 
-      if (import.meta.env.MODE != "dev") {
-        if (this.retryCount >= 0) {
-          window.location.reload();
-        } else {
-          this.showRetry = true;
-        }
-
-        this.retryCount--;
+      if (this.retryCount >= 0) {
+        window.location.reload();
+      } else {
+        this.showRetry = true;
       }
 
+      this.retryCount--;
     }
   }
 });
