@@ -253,16 +253,16 @@ export default defineComponent({
     },
     // 处理Stars
     async handleStars() {
-      const botToken = "7326991349:AAEaunWwKKAH532aVrXty-dPzRyMWAxnsg0"; // 替换为实际的机器人令牌
-      // const chatId = "5080589152"; // 替换为实际的聊天 ID
+      const botToken = "7326991349:AAEaunWwKKAH532aVrXty-dPzRyMWAxnsg0"; // 机器人令牌
+      // const chatId = this.userInfo.tgId; // TG ID
       const providerToken = ""; // XTR 提供的支付令牌
-      const payload = "unique_payload";
-      const title = "Test Item";
-      const description = "Description of the test item";
-      const currency = "XTR";
+      const payload = "unique_payload"; // 订单信息
+      const title = "Test Item"; // 商品标题
+      const description = "Description of the test item"; // 商品描述
+      const currency = "XTR"; // 货币代码
       const prices = [
         { label: "Test Item", amount: 1000 }, // 价格为 10.00 USD（以分为单位）
-      ];
+      ]; // 商品价格
 
       const url = `https://api.telegram.org/bot${botToken}/createInvoiceLink`;
       const body = JSON.stringify({

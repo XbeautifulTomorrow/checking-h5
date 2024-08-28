@@ -142,7 +142,6 @@ router.beforeEach(async (to, from, next) => {
     const { Telegram } = (window as any)
     if (Telegram) {
       const { WebApp } = Telegram;
-      WebApp.enableClosingConfirmation();
       WebApp.setHeaderColor("#FF197C")
     }
 
@@ -194,7 +193,7 @@ router.beforeEach(async (to, from, next) => {
   const nextPath = getSessionStore('nextPath');
   if (nextPath) {
     removeSessionStore('nextPath');
-    next({ name: "Frens" });
+    next({ path: nextPath });
   } else {
     next();
   }
