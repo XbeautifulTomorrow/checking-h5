@@ -83,11 +83,26 @@ const transferSwap = (params: any) => http.post("/gm-coin-server-web/transfer/sw
  */
 const transferWithdraw = (params: any) => http.post("/gm-coin-server-web/transfer/withdraw", params);
 
+
+
+
 /**
  * 提币记录
  * @param params
  */
 const getWithdrawList = (params: any) => http.get("/gm-coin-server-web/transfer/record/withdrawList", params, { showLoading: false });
+/**
+ * 充币 
+ * @param params
+ */
+const transferDeposit = (params: any) => http.post("/gm-coin-server-web/transfer/deposit", params);
+
+
+/**
+ * 充币记录
+ * @param params
+ */
+const getDepositList = (params: any) => http.get("/gm-coin-server-web/transfer/record/depositList", params, { showLoading: false });
 
 /**
  * 获取汇率 
@@ -110,6 +125,8 @@ export {
   getOrderList,
   transferSwap,
   transferWithdraw,
+  transferDeposit,
+  getDepositList,
   getWithdrawList,
   getExchangeRate
 };

@@ -65,10 +65,12 @@ export const useUserStore = defineStore("user", {
     productInfo: {} as productInfo, // 充值产品信息
     tonConnect: null as any, // 链接对象
     walletAddr: null as number | string | any,     // 钱包地址
+    jettonAddr: null as number | string | any, // jetton地址
     isConnect: false,     //链接状态
     showConfirm: false, // 确认弹窗
 
     orderId: null as number | string | any, // 订单信息
+    currentHistory: 1, // 当前历史记录 1:充币 2:提币
     showWithdraw: false, // 提币确认弹窗
 
     retryCount: 2, // 登录重试次数
@@ -121,8 +123,14 @@ export const useUserStore = defineStore("user", {
 
       this.showConfirm = true;
     },
+    async setProductInfo(data: any) {
+      this.productInfo = data;
+    },
     setShowWithdraw(data: any) {
       this.showWithdraw = data;
+    },
+    setCurrentHistory(data: any) {
+      this.currentHistory = data;
     },
     setOrderId(data: any) {
       this.orderId = data;
@@ -135,6 +143,9 @@ export const useUserStore = defineStore("user", {
         this.isConnect = false;
         this.walletAddr = null;
       }
+    },
+    setJettonAddr(data: any) {
+      this.jettonAddr = data;
     },
     setShowConfirm(data: any) {
       this.showConfirm = data;

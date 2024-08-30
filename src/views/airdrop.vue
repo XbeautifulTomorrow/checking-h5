@@ -92,7 +92,7 @@
               <span>SWAP</span>
             </div>
             <div class="exchange_operating">
-              <div class="exchange_btn" @click="toDeposit()">
+              <div class="exchange_btn enable" @click="toDeposit()">
                 <v-img
                   :width="24"
                   cover

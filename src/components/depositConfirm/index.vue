@@ -1,64 +1,15 @@
 <template>
-  <v-dialog v-model="showConfirm" width="100%">
+  <v-dialog v-model="showWithdraw" width="100%">
     <div class="dialog_box">
       <div class="recharge_panel">
-        <div class="close_btn" @click="showConfirm = false">
-          <v-img :width="16" cover src="@/assets/images/svg/icon_x.svg"></v-img>
+        <div class="close_btn" @click="handleReady()">
+          <v-img
+            :width="16"
+            cover
+            src="@/assets/images/svg/airdrop/icon_close.svg"
+          ></v-img>
         </div>
-        <div class="recharge_box" v-if="!payment">
-          <div class="buy_title">PURCHASE</div>
-          <div class="user_wallet" v-if="isConnect">
-            <div class="address">{{ formatAddr(walletAddr) }}</div>
-            <v-btn
-              class="disconnect_btn"
-              @click="handleDisconnect()"
-              size="x-small"
-              height="30"
-            >
-              <v-img
-                :width="24"
-                cover
-                src="@/assets/images/svg/icon_disconnect.svg"
-              ></v-img>
-            </v-btn>
-          </div>
-          <div class="user_wallet interval" v-else></div>
-          <div class="product_box">
-            <div class="product_ton_val">{{ `${productInfo.amount} TON` }}</div>
-            <div class="product_usd_val">{{ `$${productInfo.price}` }}</div>
-          </div>
-          <v-btn
-            class="connect_btn stars"
-            :elevation="8"
-            width="90%"
-            height="36"
-            @click="handleStars()"
-          >
-            <v-img
-              width="20"
-              class="reward_img"
-              cover
-              src="@/assets/images/recharge/icon_stars.png"
-            ></v-img>
-            <span class="finished">{{ `${productInfo.starPrice} Stars` }}</span>
-          </v-btn>
-          <v-btn
-            class="connect_btn"
-            :elevation="8"
-            width="90%"
-            height="36"
-            @click="!isConnect ? connectToWallet() : handlePayment()"
-          >
-            <v-img
-              width="20"
-              class="reward_img"
-              cover
-              src="@/assets/images/recharge/icon_ton.png"
-            ></v-img>
-            <span class="finished">TON CONNECT</span>
-          </v-btn>
-        </div>
-        <div v-else class="recharge_box">
+        <div class="recharge_box">
           <div v-if="status == 'complete'">
             <div class="success_img">
               <v-img
@@ -67,16 +18,25 @@
                 src="@/assets/images/svg/airdrop/checked.svg"
               ></v-img>
             </div>
-            <div class="success_text">Purchase successfully!</div>
+            <div class="success_text">Your withdrawal is complete.</div>
             <v-btn
               class="connect_btn"
               :elevation="8"
-              width="80%"
+              width="100%"
               height="36"
               @click="handleReady()"
             >
               <span class="finished">OK</span>
             </v-btn>
+            <div class="exchange_btn exchange" @click="toExchange()">
+              <span>EXCHANGE</span>
+              <v-icon
+                color="#fe2e75"
+                class="exchange_icon"
+                size="24"
+                icon="mdi-open-in-new"
+              ></v-icon>
+            </div>
           </div>
           <div v-else>
             <div class="buy_title">PROCESSING</div>
@@ -91,13 +51,26 @@
             <div class="count_down" v-if="status == 'pending'">
               <div class="count_down_time">{{ timeMsg }}</div>
               <div class="count_down_text">
-                The purchase being confirmed, please wait pateintly for a while
+                The withdraw being confirmed, please wait pateintly for a while
               </div>
             </div>
             <div class="timeout" v-if="status == 'timeout'">
               <div>Order processing is taking longer.</div>
               <div>You can keep waiting or close the window.</div>
               <div>We will notify you in bot after success.</div>
+            </div>
+            <div
+              class="exchange_btn exchange"
+              v-if="status == 'timeout'"
+              @click="toExchange()"
+            >
+              <span>EXCHANGE</span>
+              <v-icon
+                color="#fe2e75"
+                class="exchange_icon"
+                size="24"
+                icon="mdi-open-in-new"
+              ></v-icon>
             </div>
           </div>
         </div>
@@ -108,12 +81,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { useUserStore } from "@/store/user.js";
-import { starPayment, getOrderList } from "@/services/api/user";
-import { unitConversion } from "@/utils";
-import { TonConnectUI, ConnectedWallet } from "@tonconnect/ui";
-import { toNano, beginCell, Address } from "@ton/ton";
+import { getOrderList } from "@/services/api/user";
+import { openUrl } from "@/utils";
 
 type statusType = "pending" | "complete" | "timeout";
+
 interface order {
   orderId: number; //订单ID
   userId: number; //用户ID
@@ -149,37 +121,20 @@ export default defineComponent({
       const { userInfo } = useUserStore();
       return userInfo;
     },
-    showConfirm: {
+    showWithdraw: {
       get() {
-        const { showConfirm } = useUserStore();
-        return showConfirm;
+        const { showWithdraw } = useUserStore();
+        return showWithdraw;
       },
       set(val: boolean) {
-        const { setShowConfirm } = useUserStore();
-        setShowConfirm(val);
+        const { setShowWithdraw } = useUserStore();
+
+        if (!val) {
+          this.clearTimerFun();
+        }
+
+        setShowWithdraw(val);
       },
-    },
-    tonConnect: {
-      get() {
-        const { tonConnect } = useUserStore();
-        return tonConnect;
-      },
-      set(val: any) {
-        const { setTonConnect } = useUserStore();
-        setTonConnect(val);
-      },
-    },
-    isConnect() {
-      const { isConnect } = useUserStore();
-      return isConnect;
-    },
-    walletAddr() {
-      const { walletAddr } = useUserStore();
-      return walletAddr;
-    },
-    productId() {
-      const { productId } = useUserStore();
-      return productId;
     },
     productInfo() {
       const { productInfo } = useUserStore();
@@ -187,139 +142,11 @@ export default defineComponent({
     },
   },
   created() {
-    this.payment = false;
+    this.status = "pending";
   },
   methods: {
-    unitConversion: unitConversion,
     handleReady() {
-      this.showConfirm = false;
-    },
-    // 初始化ton-connect
-    async initTonConnect() {
-      let miniappUrl = "https://t.me/gm_coin_test_bot/checking";
-
-      this.tonConnect = new TonConnectUI({
-        manifestUrl: "https://gmking.io/tonconnect-manifest.json",
-      });
-
-      if (import.meta.env.MODE == "prod") {
-        miniappUrl = "https://t.me/theGMCoinBot/GMCoin";
-      }
-      // webapp重定向
-      this.tonConnect.uiOptions = {
-        twaReturnUrl: miniappUrl,
-      };
-
-      // 监听钱包链接状态
-      this.tonConnect.onStatusChange((wallet: ConnectedWallet) => {
-        if (wallet) {
-          const { listening } = useUserStore();
-          const {
-            account: { address },
-          } = wallet;
-          const isC = this.tonConnect.connected;
-          listening({
-            isc: isC,
-            account: address,
-          });
-        }
-      });
-    },
-    async connectToWallet() {
-      this.handleDisconnect();
-      this.tonConnect
-        .connectWallet()
-        .then((res: any) => {
-          console.log(res);
-        })
-        .catch((err: any) => {
-          console.log(err);
-        });
-      // 如果需要，可以对connectedWallet做一些事情
-    },
-    // 断开连接
-    async handleDisconnect() {
-      const isC = this.tonConnect.connected;
-      if (isC) {
-        // 如果已连接，断开连接
-        await this.tonConnect.disconnect();
-
-        const { listening } = useUserStore();
-        listening({
-          isc: false,
-          address: null,
-        });
-      }
-    },
-    // 处理Stars
-    async handleStars() {
-      const {
-        productInfo: { productId, orderId },
-      } = this;
-
-      const res = await starPayment({
-        productId,
-        orderId,
-      });
-      if (res.code == 200) {
-        const { Telegram } = window as any;
-        if (Telegram) {
-          const { WebApp } = Telegram;
-          WebApp.openInvoice(res.data, (e: any) => {
-            if (e == "paid") {
-              this.status = "pending";
-              this.payment = true;
-              this.countDown();
-            }
-          });
-        }
-      }
-    },
-    // 处理购买
-    async handlePayment() {
-      const {
-        productInfo: { publicKey, amount, remark },
-      } = this;
-
-      // 创建评论
-      const body = beginCell()
-        .storeUint(0, 32) // 写入32个零位以表示后面将跟随文本评论
-        .storeStringTail(remark) // 写下我们的文本评论
-        .endCell();
-
-      // 创建交易体
-      const transaction = {
-        validUntil: Math.floor(Date.now() / 1000) + 360,
-        messages: [
-          {
-            address: publicKey, // 目的地址
-            amount: toNano(amount).toString(), //以nanotons计的Toncoin
-            payload: body.toBoc().toString("base64"),
-          },
-        ],
-      };
-
-      this.tonConnect
-        .sendTransaction(transaction)
-        .then((res: any) => {
-          this.status = "pending";
-          this.payment = true;
-          console.log(res);
-          this.countDown();
-        })
-        .catch((err: any) => {
-          console.log(err);
-        });
-    },
-    // 格式化地址
-    formatAddr(event: string) {
-      if (!event) return event;
-      const addr = Address.parse(event).toString({
-        bounceable: false,
-      });
-
-      var reg = /^(\S{8})\S+(\S{6})$/;
-      return addr.replace(reg, "$1...$2");
+      this.showWithdraw = false;
     },
     // 倒计时
     countDown() {
@@ -331,7 +158,7 @@ export default defineComponent({
           if (this.countdown > 0 && this.countdown <= 60) {
             this.countdown--;
 
-            this.fetchPaymentResults();
+            this.fetchWithdrawResults();
             if (this.countdown !== 0) {
               this.timeMsg = this.countdown + "s";
             } else {
@@ -348,8 +175,8 @@ export default defineComponent({
       clearInterval(this.timer);
       this.timer = null;
     },
-    // 获取支付结果（刷新余额
-    async fetchPaymentResults() {
+    // 获取支付结果，刷新余额
+    async fetchWithdrawResults() {
       const {
         productInfo: { orderId },
       } = this;
@@ -371,19 +198,26 @@ export default defineComponent({
         }
       }
     },
-  },
-  mounted() {
-    this.$nextTick(() => {
-      this.initTonConnect();
-    });
+    // Exchange
+    toExchange() {
+      openUrl(" https://t.me/theGMCoinBot/GMExchange");
+    },
   },
   beforeUnmount() {
     this.clearTimerFun();
-    if (this.payment && this.status != "complete") {
+    if (this.status != "complete") {
       // 如果已付款，更新一下用户信息
       const { fetchUserInfo } = useUserStore();
       fetchUserInfo();
     }
+  },
+  watch: {
+    showWithdraw(val) {
+      if (val) {
+        this.status = "pending";
+        this.countDown();
+      }
+    },
   },
 });
 </script>
@@ -394,8 +228,8 @@ export default defineComponent({
 }
 
 .dialog_box {
-  width: 100%;
-  min-width: 80vw;
+  // width: 100%;
+  min-width: calc(100vw - 16px);
   border-radius: 16px 16px 0 0;
   padding: 16px;
   display: flex;
@@ -433,20 +267,20 @@ export default defineComponent({
   max-height: 80vh;
   overflow-y: scroll;
   font-size: 14px;
-  background-color: rgba(137, 104, 85, 1);
+  background-color: #555251;
   border-radius: 16px;
   padding: 16px;
   box-shadow: 0px 0px 4px rgba(21, 12, 7, 0.5),
-    0px 5px 5px 0px rgba(96, 69, 54, 1) inset;
+    0px 5px 5px 0px rgba(96, 69, 54, 0.6) inset;
 
   .recharge_box {
-    background-color: rgba(117, 87, 72, 1);
+    background-color: #413f3d;
     box-sizing: border-box;
-    border: 1px solid rgba(96, 69, 54, 1);
+    border: 1px solid rgb(92, 83, 78);
     border-radius: 16px;
-    box-shadow: 2px 2px 5px rgba(21, 12, 7, 0.5),
-      0px 5px 5px 0px rgba(96, 69, 54, 1) inset;
-    padding: 8px 8px 16px;
+    box-shadow: 2px 2px 5px rgba(92, 83, 78, 0.5),
+      0px 5px 5px 0px rgba(96, 69, 54, 0.6) inset;
+    padding: 8px 16px 16px;
   }
 }
 
@@ -463,8 +297,9 @@ export default defineComponent({
   display: inline-block;
   padding: 6px 32px;
   font-size: 20px;
-  color: #ffffff;
   text-align: center;
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.64);
+  color: #fe2e75;
 }
 
 .user_wallet {
@@ -591,33 +426,22 @@ export default defineComponent({
   margin-bottom: 16px;
 }
 
-.connect_btn + .connect_btn {
-  margin-top: 8px;
-}
-
 .connect_btn {
   background-color: rgba(73, 182, 246, 1);
   box-sizing: border-box;
   border-width: 2px;
   border-style: solid;
   border-color: rgba(36, 36, 36, 1);
-  border-radius: 8px;
+  border-radius: 10px;
+  -moz-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
   box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
   font-weight: 700;
   font-style: normal;
-  font-size: 18px;
+  font-size: 20px;
   line-height: 1;
   color: #ffffff;
   text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.6);
-
-  &.stars {
-    background: linear-gradient(
-      180deg,
-      rgba(93, 158, 252, 1) 0%,
-      rgba(150, 74, 245, 1) 51%,
-      rgba(230, 57, 173, 1) 98%
-    );
-  }
 
   .v-img {
     flex: none;
@@ -628,9 +452,38 @@ export default defineComponent({
 .finished {
   text-transform: none;
   letter-spacing: 0;
-  display: inline-block;
-  height: 20px;
-  line-height: 1.2;
+}
+
+.exchange_btn {
+  position: relative;
+  margin-top: 8px;
+  background: linear-gradient(
+    90deg,
+    rgba(253, 239, 213, 1) 0%,
+    rgba(248, 215, 156, 1) 101%
+  );
+  box-sizing: border-box;
+  border-width: 2px;
+  border-style: solid;
+  padding: 4px 0;
+  border-color: rgba(0, 0, 0, 1);
+  border-radius: 8px;
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.64);
+  color: #fe2e75;
+  font-weight: 400;
+  font-size: 20px;
+  font-weight: 700;
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .exchange_icon {
+    position: absolute;
+    right: 8px;
+    text-shadow: none;
+  }
 }
 
 @keyframes rotate {

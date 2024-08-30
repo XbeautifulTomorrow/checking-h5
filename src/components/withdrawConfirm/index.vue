@@ -118,6 +118,11 @@ export default defineComponent({
       },
       set(val: boolean) {
         const { setShowWithdraw } = useUserStore();
+
+        if (!val) {
+          this.clearTimerFun();
+        }
+
         setShowWithdraw(val);
       },
     },

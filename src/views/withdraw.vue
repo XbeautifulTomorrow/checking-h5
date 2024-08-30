@@ -356,6 +356,8 @@ export default defineComponent({
       this.$router.go(-1);
     },
     toHistory() {
+      const { setCurrentHistory } = useUserStore();
+      setCurrentHistory(2);
       this.$router.push({
         name: "History",
       });

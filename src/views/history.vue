@@ -17,7 +17,10 @@
           </div>
         </div>
         <div class="history_info">
-          <div class="info_title">DEPOSIT AMOUNT:</div>
+          <div v-if="currentHistory == 1" class="info_title">
+            DEPOSIT AMOUNT:
+          </div>
+          <div v-else class="info_title">WITHDRAW AMOUNT:</div>
           <div class="info_val amount">
             <span>{{ Number(item.amount).toLocaleString() }}</span>
             <v-img
@@ -60,7 +63,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { useUserStore } from "@/store/user.js";
-import { getWithdrawList } from "@/services/api/user";
+import { getWithdrawList, getDepositList } from "@/services/api/user";
 import { timeForStr, openUrl } from "@/utils";
 import { Address } from "@ton/ton";
 
@@ -86,6 +89,10 @@ export default defineComponent({
       const { userInfo } = useUserStore();
       return userInfo;
     },
+    currentHistory() {
+      const { currentHistory } = useUserStore();
+      return currentHistory;
+    },
   },
   created() {
     this.fetchHistoryList();
@@ -105,7 +112,14 @@ export default defineComponent({
         _page = 1;
       }
 
-      const res = await getWithdrawList({ page: _page, size: this.size });
+      let res: any;
+
+      if (this.currentHistory == 1) {
+        res = await getDepositList({ page: _page, size: this.size });
+      } else {
+        res = await getWithdrawList({ page: _page, size: this.size });
+      }
+
       if (res.code == 200) {
         if (res.data.current >= res.data.pages) {
           this.finished = true;

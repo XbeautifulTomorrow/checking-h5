@@ -119,6 +119,8 @@ router.beforeEach(async (to, from, next) => {
       setSessionStore('nextPath', "/earn");
     } else if (urlParam.indexOf("withdraw") > -1) {
       setSessionStore('nextPath', "/airdrop");
+    } else if (urlParam.indexOf("ad_") > -1) {
+      setSessionStore('source', "/airdrop");
     } else if (urlParam.indexOf("3base") > -1) {
       setSessionStore('recommend', "3base");
       const inviteArray = urlParam.split("_");
@@ -168,9 +170,11 @@ router.beforeEach(async (to, from, next) => {
     }
 
     const inviteCode = getSessionStore("inviteCode");
+    const source = getSessionStore("source");
     const res = await telegramLogin({
       tgEncodeStr: tg_certificate,
-      inviteCode: inviteCode
+      inviteCode: inviteCode || "",
+      source: source || ""
     });
 
     if (res.code == 200) {

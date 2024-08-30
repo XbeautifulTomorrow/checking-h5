@@ -6,10 +6,14 @@
         <div class="deposit_item_title">
           <div class="operating">From</div>
           <div class="balance">
+            <span>
+              {{ `Bal: ${formatNumber(coinBalance, 2)}` }}
+            </span>
             <v-img
               :width="24"
               cover
               src="@/assets/images/svg/airdrop/history.svg"
+              @click="toHistory()"
             ></v-img>
           </div>
         </div>
@@ -38,7 +42,6 @@
             hide-details="auto"
             reverse
             @input="handleInput"
-            @focus="fromOrTo = true"
             placeholder="0"
           ></v-text-field>
           <div class="zero_fill">00</div>
@@ -50,21 +53,31 @@
               cover
               src="@/assets/images/svg/airdrop/hint.svg"
             ></v-img>
-            <span>Minimum deposit quantity is 100 $GMT</span>
+            <div>
+              <span>Minimum deposit quantity is 100 $GMT. </span>
+              <span
+                style="
+                  text-decoration: underline;
+                  color: #fbb11b;
+                  font-weight: 700;
+                "
+                @click="toExchange()"
+                >No $GMT? Go Exchange</span
+              >
+            </div>
           </div>
-          <div class="hint_right">≈ 15.55 USDT</div>
         </div>
       </div>
     </div>
     <div class="deposit_buttons">
       <v-btn
         class="button swap"
-        @click="submitSwap()"
+        @click="submitDeposit()"
         width="100%"
         height="40"
         rounded="lg"
         size="small"
-        :disabled="!fromAmount"
+        :disabled="isSubmit"
       >
         <div class="btn_text">
           <v-img
@@ -77,16 +90,21 @@
       </v-btn>
       <div class="button back" @click="handleBack()">BACK</div>
     </div>
+    <deposit></deposit>
   </div>
 </template>
 
 <script lang="ts">
+import axios from "axios";
 import { defineComponent } from "vue";
 import { useUserStore } from "@/store/user.js";
 import bigNumber from "bignumber.js";
-import { unitConversion, isEmpty } from "@/utils";
-import { transferSwap } from "@/services/api/user";
-import { useMessageStore } from "@/store/message.js";
+import { accurateDecimal, isEmpty, openUrl } from "@/utils";
+import { transferDeposit, getExchangeRate } from "@/services/api/user";
+import deposit from "@/components/depositConfirm/index.vue";
+
+import { TonConnectUI, ConnectedWallet } from "@tonconnect/ui";
+import { fromNano, toNano, Address } from "@ton/ton";
 
 type coin = "GMC" | "GMT";
 
@@ -94,42 +112,183 @@ export default defineComponent({
   data() {
     return {
       coinName: "GMT" as coin,
+      coinBalance: 0 as number | string | any,
       fromAmount: "" as string | any,
-      toAmount: "" as string | any,
-      fromOrTo: false,
+      withdrawAddr: "" as string | any,
+      coinExchangeRate: 0,
+      gmtJettons: "",
       isError: false,
     };
+  },
+  components: {
+    deposit,
   },
   computed: {
     userInfo() {
       const { userInfo } = useUserStore();
       return userInfo;
     },
-    maxAmount() {
-      const {
-        userInfo: { gmcAmount, gmtAmount },
-      } = useUserStore();
-      if (this.coinName == "GMC") {
-        // swap只能输入百万以上
-        const amount = new bigNumber(gmcAmount).dividedBy(1000000).toNumber();
+    tonConnect: {
+      get() {
+        const { tonConnect } = useUserStore();
+        return tonConnect;
+      },
+      set(val: boolean) {
+        const { setTonConnect } = useUserStore();
+        setTonConnect(val);
+      },
+    },
+    // 链接状态
+    isConnect() {
+      const { isConnect } = useUserStore();
+      return isConnect;
+    },
+    walletAddr() {
+      const { walletAddr } = useUserStore();
+      return walletAddr;
+    },
+    // jetton地址
+    jettonAddr() {
+      const { jettonAddr } = useUserStore();
+      return jettonAddr;
+    },
+    productInfo() {
+      const { productInfo } = useUserStore();
+      return productInfo;
+    },
+    coinRate() {
+      const { coinExchangeRate, fromAmount } = this;
+      if (!fromAmount) return 0;
 
-        if (amount >= 1) {
-          return Math.floor(amount).toLocaleString();
-        } else {
-          return "";
-        }
-      } else {
-        if (gmtAmount >= 100) {
-          const rctV = new bigNumber(gmtAmount).dividedBy(100).toNumber();
-          return Math.floor(rctV).toLocaleString();
-        } else {
-          return "";
-        }
+      const amount = this.removeTxt(fromAmount);
+      const rate = new bigNumber(amount)
+        .multipliedBy(100)
+        .multipliedBy(coinExchangeRate)
+        .toNumber();
+
+      return Number(accurateDecimal(rate, 2)).toLocaleString(undefined, {
+        maximumFractionDigits: 2,
+      });
+    },
+    // 是否可提交
+    isSubmit() {
+      const { isConnect, fromAmount, coinBalance } = this;
+
+      let isPass = false;
+
+      if (!isConnect) {
+        return false;
       }
+
+      if (!fromAmount) {
+        isPass = true;
+      }
+
+      const amount = new bigNumber(this.removeTxt(fromAmount) || 0)
+        .multipliedBy(100)
+        .toNumber();
+
+      if (Number(coinBalance) < Number(amount)) {
+        isPass = true;
+      }
+
+      return isPass;
     },
   },
+  created() {
+    this.gmtJettons =
+      "0:93d1b05e7214a22569548f1addae3facde413d9c38101706542fa5ad5dac446d"; // 测试币(NEOJ)
+
+    if (import.meta.env.MODE == "prod") {
+      this.gmtJettons =
+        "0:e53bbbaf5a62cb28748e917b245b9e322574a42864721b0741b005b62b44a247"; // 正式币(GMT)
+    }
+
+    if (!this.tonConnect) {
+      this.initTonConnect();
+    } else {
+      this.withdrawAddr = Address.parse(this.walletAddr).toString({
+        bounceable: false,
+      });
+
+      // 获取余额和Jetton地址
+      this.fetchBalance();
+    }
+
+    this.fetchExchangeRate();
+  },
   methods: {
-    unitConversion: unitConversion,
+    // 获取余额
+    async fetchBalance() {
+      const { walletAddr, coinName, gmtJettons } = this;
+
+      let fetchUrl = `https://tonapi.io/v2/accounts/${encodeURIComponent(
+        walletAddr
+      )}`;
+
+      if (coinName == "GMT") {
+        fetchUrl += `/jettons/${encodeURIComponent(gmtJettons)}`;
+      }
+
+      axios
+        .get(fetchUrl)
+        .then((res: any) => {
+          if (res.status == 200) {
+            if (coinName == "GMT") {
+              const { balance, jetton, wallet_address } = res.data;
+              this.coinBalance = new bigNumber(balance || 0)
+                .dividedBy(this.formatZeroFill(jetton.decimals) || 0)
+                .toNumber();
+
+              const { setJettonAddr } = useUserStore();
+              setJettonAddr(wallet_address.address);
+            } else {
+              this.coinBalance = fromNano(res.data.balance);
+            }
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+    // 初始化ton-connect
+    async initTonConnect() {
+      let miniappUrl = "https://t.me/gm_coin_test_bot/checking";
+
+      this.tonConnect = new TonConnectUI({
+        manifestUrl: "https://gmking.io/tonconnect-manifest.json",
+      });
+
+      if (import.meta.env.MODE == "prod") {
+        miniappUrl = "https://t.me/theGMCoinBot/GMCoin";
+      }
+      // webapp重定向
+      this.tonConnect.uiOptions = {
+        twaReturnUrl: miniappUrl,
+      };
+
+      // 监听钱包链接状态
+      this.tonConnect.onStatusChange((wallet: ConnectedWallet) => {
+        if (wallet) {
+          const { listening } = useUserStore();
+          const {
+            account: { address },
+          } = wallet;
+          const isC = this.tonConnect.connected;
+          listening({
+            isc: isC,
+            account: address,
+          });
+
+          this.withdrawAddr = Address.parse(address).toString({
+            bounceable: false,
+          });
+
+          // 获取余额和Jetton地址
+          this.fetchBalance();
+        }
+      });
+    },
     handleInput(event: any) {
       let {
         target: { _value },
@@ -147,148 +306,105 @@ export default defineComponent({
       // 处理整数部分添加逗号
       parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-      if (this.coinName == "GMC") {
-        if (!this.fromOrTo) {
-          const past = parts[0] + "00";
-          parts[0] = past.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-          parts[0] = parts[0].slice(0, -2);
-        }
-      } else {
-        if (this.fromOrTo) {
-          const past = parts[0] + "00";
-          parts[0] = past.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-          parts[0] = parts[0].slice(0, -2);
-        }
-      }
-
-      // 判断余额
-      if (
-        Number(this.removeTxt(this.fromAmount)) >
-        Number(this.removeTxt(this.maxAmount))
-      ) {
-        this.isError = true;
-      } else {
-        this.isError = false;
-      }
+      const past = parts[0] + "00";
+      parts[0] = past.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      parts[0] = parts[0].slice(0, -2);
 
       // 更新输入框的值
-      if (this.fromOrTo) {
-        this.fromAmount = parts[0];
-      } else {
-        this.toAmount = parts[0];
-      }
+      this.fromAmount = parts[0];
     },
-    handleMax() {
-      this.fromOrTo = true;
-      this.fromAmount = this.maxAmount;
+    // 获取汇率
+    async fetchExchangeRate() {
+      const res = await getExchangeRate({
+        areaCoin: "GMT",
+        coinName: "USDT",
+      });
 
-      if (!this.fromAmount) {
-        this.isError = false;
+      if (res.code == 200) {
+        this.coinExchangeRate = res.data;
       }
     },
-    async handleConvert() {
-      if (this.coinName == "GMC") {
-        this.coinName = "GMT";
-      } else {
-        this.coinName = "GMC";
-      }
-
-      this.fromOrTo = true;
-      this.fromAmount = this.toAmount;
-    },
-    async submitSwap() {
-      const {
-        fromAmount,
-        coinName,
-        removeTxt,
-        userInfo: { gmcAmount },
-      } = this;
+    async submitDeposit() {
+      const { fromAmount, withdrawAddr, coinName, removeTxt } = this;
       let amountVal = Number(removeTxt(fromAmount));
 
-      if (this.coinName == "GMC") {
-        amountVal = new bigNumber(amountVal).multipliedBy(1000000).toNumber();
-      } else {
-        amountVal = new bigNumber(amountVal).multipliedBy(100).toNumber();
-      }
+      amountVal = new bigNumber(amountVal).multipliedBy(100).toNumber();
 
-      if (coinName == "GMC") {
-        if (amountVal > gmcAmount) {
-          const { setShowRecharge } = useUserStore();
-          setShowRecharge(true);
-          return;
-        }
-      }
-
-      const res = await transferSwap({
+      const res = await transferDeposit({
         amount: amountVal,
-        coinName: coinName == "GMC" ? "GMT" : "GMC",
+        coinName: coinName,
+        formAddress: Address.parse(withdrawAddr).toRawString(), //提币地址
       });
       if (res.code == 200) {
-        const { fetchUserInfo } = useUserStore();
-        fetchUserInfo();
-
-        this.fromOrTo = true;
         this.fromAmount = "";
 
-        const { setMessageText } = useMessageStore();
-        setMessageText("Swap successful");
+        const { setProductInfo } = useUserStore();
+        setProductInfo(res.data);
+        this.handleTransfer();
       }
+    },
+    async handleTransfer() {
+      const {
+        jettonAddr,
+        productInfo: { cell },
+      } = this;
+
+      // 创建交易体
+      const transaction = {
+        validUntil: Math.floor(Date.now() / 1000) + 3600,
+        messages: [
+          {
+            address: jettonAddr,
+            amount: toNano("0.05").toString(), //以nanotons计的Toncoin
+            payload: cell,
+          },
+        ],
+      };
+
+      this.tonConnect
+        .sendTransaction(transaction)
+        .then(async (res: any) => {
+          const { setShowWithdraw } = useUserStore();
+          setShowWithdraw(true);
+        })
+        .catch((err: any) => {
+          console.log(err);
+        });
+    },
+    // Exchange
+    toExchange() {
+      openUrl(" https://t.me/theGMCoinBot/GMExchange");
+    },
+    toHistory() {
+      const { setCurrentHistory } = useUserStore();
+      setCurrentHistory(1);
+      this.$router.push({
+        name: "History",
+      });
+    },
+    // 末尾补零
+    formatZeroFill(event: any) {
+      let str = "1";
+
+      for (let i = 0; i < event; i++) {
+        str += "0";
+      }
+
+      return str;
     },
     // 删除指定字符串
     removeTxt(event: string, type = ",") {
       return String(event).replace(new RegExp(type, "g"), "");
     },
+    // 格式化数字
+    formatNumber(event: number | string, type: number) {
+      const num = accurateDecimal(event, type);
+      return Number(num).toLocaleString(undefined, {
+        maximumFractionDigits: type,
+      });
+    },
     handleBack() {
       this.$router.go(-1);
-    },
-  },
-  watch: {
-    fromAmount(newV: any) {
-      if (!this.fromOrTo) return;
-
-      if (!newV) {
-        this.toAmount = "";
-      }
-
-      const { coinName } = this;
-      const fromV = Number(this.removeTxt(newV));
-      if (coinName == "GMC") {
-        const amount = new bigNumber(fromV || 0).multipliedBy(100).toNumber();
-        this.toAmount = amount
-          ? Math.floor(amount).toLocaleString().slice(0, -2)
-          : "";
-      } else {
-        const amount = new bigNumber(fromV || 0)
-          .multipliedBy(100) // 乘以100
-          .multipliedBy(10000)
-          .dividedBy(1000000)
-          .toNumber();
-
-        this.toAmount = amount ? Math.floor(amount).toLocaleString() : "";
-      }
-    },
-    toAmount(newV: any) {
-      if (this.fromOrTo) return;
-
-      if (!newV) {
-        this.fromAmount = null;
-      }
-
-      const { coinName } = this;
-      const fromV = Number(this.removeTxt(newV));
-      if (coinName == "GMC") {
-        const amount = new bigNumber(fromV || 0)
-          .multipliedBy(100) // 乘以100
-          .multipliedBy(10000)
-          .dividedBy(1000000)
-          .toNumber();
-        this.fromAmount = amount ? Math.floor(amount).toLocaleString() : "";
-      } else {
-        const amount = new bigNumber(fromV || 0).multipliedBy(100).toNumber();
-        this.fromAmount = amount
-          ? Math.floor(amount).toLocaleString().slice(0, -2)
-          : "";
-      }
     },
   },
 });
@@ -464,6 +580,17 @@ export default defineComponent({
       font-weight: 700;
       font-style: normal;
       color: #ffffff;
+
+      &.v-btn--disabled {
+        background-color: rgba(53, 53, 53, 1);
+        color: #696969;
+
+        .btn_text {
+          .v-img {
+            opacity: 0.2;
+          }
+        }
+      }
     }
 
     &.back {
