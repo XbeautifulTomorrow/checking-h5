@@ -251,75 +251,23 @@ export default defineComponent({
         });
       }
     },
-    // // 处理Stars
-    // async handleStars() {
-    //   const {
-    //     productInfo: { productId, orderId },
-    //   } = this;
-
-    //   const res = await starPayment({
-    //     productId,
-    //     orderId,
-    //   });
-
-    //   const { Telegram } = window as any;
-    //   if (Telegram) {
-    //     const { WebApp } = Telegram;
-    //     WebApp.openInvoice(res.data, (e: any) => {
-    //       console.log(e);
-    //     });
-    //   }
-    // },
     // 处理Stars
     async handleStars() {
-      const botToken = "7326991349:AAEaunWwKKAH532aVrXty-dPzRyMWAxnsg0"; // 机器人令牌
-      // const chatId = this.userInfo.tgId; // TG ID
-      const providerToken = ""; // XTR 提供的支付令牌
-      const payload = "unique_payload"; // 订单信息
-      const title = "Test Item"; // 商品标题
-      const description = "Description of the test item"; // 商品描述
-      const currency = "XTR"; // 货币代码
-      const prices = [
-        { label: "Test Item", amount: 1 }, //
-      ]; // 商品价格
+      // const {
+      //   productInfo: { productId, orderId },
+      // } = this;
 
-      const url = `https://api.telegram.org/bot${botToken}/createInvoiceLink`;
-      const body = JSON.stringify({
-        // chat_id: chatId,
-        title: title,
-        description: description,
-        payload: payload,
-        provider_token: providerToken,
-        currency: currency,
-        prices: prices,
-      });
-
-      try {
-        const response = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: body,
+      // const res = await starPayment({
+      //   productId,
+      //   orderId,
+      // });
+      const payUrl = "https://t.me/$ojuF2z3tkVZCAQAAFF0Z3P5yEdE";
+      const { Telegram } = window as any;
+      if (Telegram) {
+        const { WebApp } = Telegram;
+        WebApp.openInvoice(payUrl, (e: any) => {
+          console.log(e);
         });
-
-        const res = await response.json();
-        if (res.ok) {
-          const { Telegram } = window as any;
-          if (Telegram) {
-            const { WebApp } = Telegram;
-            console.log(Telegram);
-            console.log(WebApp);
-            WebApp.openInvoice(res.result, (e: any) => {
-              console.log(e);
-            });
-          }
-          console.log("Invoice sent successfully");
-        } else {
-          console.error("Failed to send invoice", res);
-        }
-      } catch (error) {
-        console.error("Error sending invoice", error);
       }
     },
     // 处理购买
