@@ -59,6 +59,11 @@ const getProductList = (params: any) => http.get("/gm-coin-server-web/product-in
  */
 const buyProduct = (params: any) => http.get("/gm-coin-server-web/product-info/purchase", params);
 
+/**
+ * 星星支付
+ * @param params
+ */
+const starPayment = (params: any) => http.get("/gm-coin-server-web/product-info/starPayment", params);
 
 /**
  * 查询充值状态
@@ -101,6 +106,7 @@ export {
   receiveGifts,
   getProductList,
   buyProduct,
+  starPayment,
   getOrderList,
   transferSwap,
   transferWithdraw,

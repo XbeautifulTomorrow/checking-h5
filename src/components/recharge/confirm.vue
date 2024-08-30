@@ -40,7 +40,7 @@
               cover
               src="@/assets/images/recharge/icon_stars.png"
             ></v-img>
-            <span class="finished">1 Stars</span>
+            <span class="finished">{{ `${productInfo.starPrice} Stars` }}</span>
           </v-btn>
           <v-btn
             class="connect_btn"
@@ -251,6 +251,25 @@ export default defineComponent({
         });
       }
     },
+    // // 处理Stars
+    // async handleStars() {
+    //   const {
+    //     productInfo: { productId, orderId },
+    //   } = this;
+
+    //   const res = await starPayment({
+    //     productId,
+    //     orderId,
+    //   });
+
+    //   const { Telegram } = window as any;
+    //   if (Telegram) {
+    //     const { WebApp } = Telegram;
+    //     WebApp.openInvoice(res.data, (e: any) => {
+    //       console.log(e);
+    //     });
+    //   }
+    // },
     // 处理Stars
     async handleStars() {
       const botToken = "7326991349:AAEaunWwKKAH532aVrXty-dPzRyMWAxnsg0"; // 机器人令牌
@@ -291,7 +310,9 @@ export default defineComponent({
             const { WebApp } = Telegram;
             console.log(Telegram);
             console.log(WebApp);
-            WebApp.openInvoice(res.result);
+            WebApp.openInvoice(res.result, (e: any) => {
+              console.log(e);
+            });
           }
           console.log("Invoice sent successfully");
         } else {
@@ -653,6 +674,9 @@ export default defineComponent({
 .finished {
   text-transform: none;
   letter-spacing: 0;
+  display: inline-block;
+  height: 20px;
+  line-height: 1.2;
 }
 
 @keyframes rotate {
