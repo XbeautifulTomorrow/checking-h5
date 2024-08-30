@@ -33,7 +33,7 @@
         </div>
         <div class="history_info">
           <div class="info_title">ADDRESS:</div>
-          <div class="info_val">{{ formatAddr(item.address) }}</div>
+          <div class="info_val">{{ formatAddr(item.address || "") }}</div>
         </div>
         <div class="history_info">
           <div class="info_title">HASH:</div>
@@ -154,12 +154,17 @@ export default defineComponent({
     // 格式化地址
     formatAddr(event: string) {
       if (!event) return event;
-      const addr = Address.parse(event).toString({
-        bounceable: false,
-      });
 
-      var reg = /^(\S{8})\S+(\S{6})$/;
-      return addr.replace(reg, "$1...$2");
+      try {
+        const addr = Address.parse(event).toString({
+          bounceable: false,
+        });
+
+        var reg = /^(\S{8})\S+(\S{6})$/;
+        return addr.replace(reg, "$1...$2");
+      } catch (error) {
+        return "--";
+      }
     },
     // 格式化地址
     formatStatus(event: string) {
