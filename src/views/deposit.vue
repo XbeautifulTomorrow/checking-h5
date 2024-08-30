@@ -1,6 +1,6 @@
 <template>
   <div class="deposit_wrapper">
-    <div class="deposit_title">SWAP</div>
+    <div class="deposit_title">Deposit</div>
     <div class="deposit_panel">
       <div class="deposit_item">
         <div class="deposit_item_title">
@@ -89,6 +89,23 @@
         </div>
       </v-btn>
       <div class="button back" @click="handleBack()">BACK</div>
+    </div>
+    <div class="connect_info">
+      <div class="connect_address">
+        <v-img
+          :width="30"
+          cover
+          src="@/assets/images/svg/airdrop/icon_wallet.svg"
+        ></v-img>
+        <span>{{ formatAddr(walletAddr) }}</span>
+      </div>
+      <div class="disconnect_btn" @click="handleDisconnect()">
+        <v-img
+          :width="20"
+          cover
+          src="@/assets/images/svg/airdrop/icon_disconnect.svg"
+        ></v-img>
+      </div>
     </div>
     <deposit></deposit>
   </div>
@@ -371,6 +388,22 @@ export default defineComponent({
           console.log(err);
         });
     },
+    // 断开连接
+    async handleDisconnect() {
+      const isC = this.tonConnect.connected;
+      if (isC) {
+        // 如果已连接，断开连接
+        await this.tonConnect.disconnect();
+
+        const { listening } = useUserStore();
+        listening({
+          isc: false,
+          address: null,
+        });
+
+        this.handleBack();
+      }
+    },
     // Exchange
     toExchange() {
       openUrl(" https://t.me/theGMCoinBot/GMExchange");
@@ -402,6 +435,16 @@ export default defineComponent({
       return Number(num).toLocaleString(undefined, {
         maximumFractionDigits: type,
       });
+    },
+    // 格式化地址
+    formatAddr(event: string) {
+      if (!event) return event;
+      const addr = Address.parse(event).toString({
+        bounceable: false,
+      });
+
+      var reg = /^(\S{8})\S+(\S{6})$/;
+      return addr.replace(reg, "$1...$2");
     },
     handleBack() {
       this.$router.go(-1);
@@ -622,5 +665,44 @@ export default defineComponent({
   text-transform: none;
   letter-spacing: 0;
   text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.64);
+}
+
+.connect_info {
+  padding-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .connect_address {
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    font-style: normal;
+    color: #fff;
+    font-size: 16px;
+    background-color: rgba(0, 152, 235, 1);
+    border-radius: 10px;
+    padding: 4px 8px;
+    margin-right: 8px;
+
+    .v-img {
+      flex: none;
+      margin-right: 4px;
+    }
+  }
+
+  .disconnect_btn {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(6, 2, 2, 1);
+    border-radius: 10px;
+
+    .v-img {
+      flex: none;
+    }
+  }
 }
 </style>

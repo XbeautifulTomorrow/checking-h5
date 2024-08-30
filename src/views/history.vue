@@ -1,6 +1,7 @@
 <template>
   <div class="history_wrapper">
-    <div class="history_title">Withdraw History</div>
+    <div v-if="currentHistory == 1" class="history_title">Deposit History</div>
+    <div v-else class="history_title">Withdraw History</div>
     <div
       class="history_list"
       @scroll="handleScroll"
