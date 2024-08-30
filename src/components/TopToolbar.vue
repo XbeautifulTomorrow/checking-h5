@@ -22,7 +22,9 @@
         <div class="energy_box">
           <v-icon color="#FFF100" :size="20" icon="mdi-lightning-bolt"></v-icon>
           <div class="energy_item">
-            <div class="energy_val">{{ userInfo.energyAmount }}</div>
+            <div class="energy_val">
+              {{ formatNumber(userInfo.energyAmount, 0) }}
+            </div>
             <v-fab
               color="#49B6F6"
               size="20"
@@ -44,7 +46,7 @@
           ></v-img>
           <div class="energy_item">
             <div class="energy_val">
-              {{ Number(userInfo?.gmcAmount || 0).toLocaleString() }}
+              {{ unitConversion(userInfo?.gmcAmount || 0) }}
             </div>
             <v-fab
               color="#49B6F6"
@@ -59,7 +61,7 @@
             </v-fab>
           </div>
         </div>
-        <div class="energy_box gmt">
+        <div class="energy_box">
           <v-img
             :width="20"
             cover
@@ -69,6 +71,17 @@
             <div class="energy_val">
               {{ Number(userInfo?.gmtAmount || 0).toLocaleString() }}
             </div>
+            <v-fab
+              color="#49B6F6"
+              size="20"
+              icon="mdi-plus"
+              elevation="0"
+              rounded="lg"
+              @click="toRecharge()"
+              class="btn_border"
+            >
+              <v-icon color="#fff" size="20"></v-icon>
+            </v-fab>
           </div>
         </div>
         <v-avatar
@@ -94,6 +107,7 @@ import { defineComponent } from "vue";
 import { useUserStore } from "@/store/user.js";
 import { useCheckInStore } from "@/store/check_in.js";
 import { getUserInfo } from "@/services/api/user";
+import { accurateDecimal, unitConversion } from "@/utils";
 
 export default defineComponent({
   data() {
@@ -120,9 +134,21 @@ export default defineComponent({
       const { userInfo } = useUserStore();
       return userInfo;
     },
+    isConnect() {
+      const { isConnect } = useUserStore();
+      return isConnect;
+    },
   },
   methods: {
     getUserInfo: getUserInfo,
+    unitConversion: unitConversion,
+    // 格式化数字
+    formatNumber(event: number | string, type: number) {
+      const num = accurateDecimal(event, type);
+      return Number(num).toLocaleString(undefined, {
+        maximumFractionDigits: type,
+      });
+    },
     toMain() {
       const checkInStore = useCheckInStore();
       checkInStore.setChallengeId(null);
@@ -140,6 +166,13 @@ export default defineComponent({
       // this.$router.push('/earn');
       const { setShowRecharge } = useUserStore();
       setShowRecharge(true);
+    },
+    toRecharge() {
+      if (this.isConnect) {
+        this.$router.push("/deposit");
+      } else {
+        this.$router.push("/airdrop");
+      }
     },
   },
   watch: {
@@ -184,9 +217,6 @@ export default defineComponent({
   background-color: rgba(210, 210, 214, 1);
   border-radius: 30px;
   margin-right: 8px;
-  &.gmt {
-    padding-right: 10px;
-  }
 
   .energy_item {
     display: flex;
