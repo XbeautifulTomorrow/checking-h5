@@ -10,7 +10,7 @@
       rounded="lg"
       class="nav_panel"
       :style="{ transform: `translateY(${activeNav ? '-8px' : '54px'})` }"
-      >1
+    >
       <v-btn
         value="check_in"
         :to="{ path: '/' }"
