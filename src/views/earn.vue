@@ -186,6 +186,7 @@ import CHALLENGE from "@/assets/images/svg/earn/join.svg";
 import AD from "@/assets/images/svg/earn/ad.svg";
 import PURCHASE from "@/assets/images/svg/earn/purchase.svg";
 import CHAIN_CHECKIN from "@/assets/images/svg/earn/link_check_in.svg";
+import PLAYMULTIPLIER from "@/assets/images/earn/icon_roller.jpg";
 import { TonConnectUI, ConnectedWallet } from "@tonconnect/ui";
 import { toNano, beginCell } from "@ton/ton";
 
@@ -210,6 +211,7 @@ export default defineComponent({
         GM,
         CHALLENGE,
         AD,
+        PLAYMULTIPLIER,
       },
     };
   },
@@ -381,6 +383,9 @@ export default defineComponent({
         // 充值消费
         const { setShowRecharge } = useUserStore();
         setShowRecharge(true);
+      } else if (abbreviation == "PLAYMULTIPLIER") {
+        // 去过山车
+        openUrl("https://t.me/theRollerCoasterBot/RollerCoaster");
       } else if (abbreviation == "TGGROUP") {
         // 加入Telegram群
         openUrl("https://t.me/GMCoinChat1");
@@ -586,6 +591,7 @@ export default defineComponent({
 
   .v-img {
     flex: none;
+    border-radius: 8px;
     margin-right: 8px;
   }
 }

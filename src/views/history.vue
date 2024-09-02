@@ -195,6 +195,9 @@ export default defineComponent({
   color: #fdefd6;
   padding-top: 16px;
 }
+.history_list {
+  height: calc(100vh - 110px);
+}
 
 .history_item {
   background-color: rgba(0, 0, 0, 0.6);
