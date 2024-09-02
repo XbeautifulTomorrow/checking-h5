@@ -177,6 +177,9 @@ export default defineComponent({
       }
     },
   },
+  beforeUnmount() {
+    window.removeEventListener("scroll", function () {});
+  },
 });
 </script>
 
