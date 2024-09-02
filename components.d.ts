@@ -9,7 +9,6 @@ declare module 'vue' {
   export interface GlobalComponents {
     BottomNav: typeof import('./src/components/BottomNav.vue')['default']
     Confirm: typeof import('./src/components/recharge/confirm.vue')['default']
-    copy: typeof import('./src/components/withdrawConfirm copy/index.vue')['default']
     CountDown: typeof import('./src/components/countDown/index.vue')['default']
     DepositConfirm: typeof import('./src/components/depositConfirm/index.vue')['default']
     Recharge: typeof import('./src/components/recharge/index.vue')['default']

@@ -109,7 +109,6 @@
 import { defineComponent } from "vue";
 import { useUserStore } from "@/store/user.js";
 import { starPayment, getOrderList } from "@/services/api/user";
-import { unitConversion } from "@/utils";
 import { TonConnectUI, ConnectedWallet } from "@tonconnect/ui";
 import { toNano, beginCell, Address } from "@ton/ton";
 
@@ -190,7 +189,6 @@ export default defineComponent({
     this.payment = false;
   },
   methods: {
-    unitConversion: unitConversion,
     handleReady() {
       this.showConfirm = false;
     },
