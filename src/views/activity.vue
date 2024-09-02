@@ -248,6 +248,9 @@ export default defineComponent({
   mounted() {
     const _this = this;
     window.addEventListener("scroll", function () {
+      console.log(window.innerHeight + window.scrollY);
+      console.log(document.body.offsetHeight);
+      console.log(_this.finished);
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
         if (!_this.finished) {
           _this.nextQuery();
