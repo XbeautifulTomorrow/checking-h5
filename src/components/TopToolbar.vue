@@ -116,7 +116,7 @@ export default defineComponent({
       isMain: false,
       isTab: false,
       showMenu: false,
-      NavList: ["/", "/activity", "/earn", "/frens", "/mine", "/airdrop"],
+      NavList: ["", "/", "/activity", "/earn", "/frens", "/mine", "/airdrop"],
     };
   },
   created() {
@@ -185,7 +185,7 @@ export default defineComponent({
     "$route.path"(val: string) {
       const userStore = useUserStore();
       userStore.fetchUserInfo();
-
+      console.log(val);
       if (val == "/") {
         this.isTab = false;
         this.isMain = true;

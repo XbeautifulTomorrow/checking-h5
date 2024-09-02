@@ -83,6 +83,7 @@ export default defineComponent({
       page: 1,
       size: 10,
       finished: false,
+      timer: null as any,
     };
   },
   computed: {
@@ -136,12 +137,17 @@ export default defineComponent({
     // 处理滚动事件
     async handleScroll(event: Event) {
       const target = event.target as HTMLElement;
-      const bottom =
-        target.scrollHeight === target.scrollTop + target.clientHeight;
+
+      const scroll = target.scrollTop + target.clientHeight;
+      const bottom = scroll + 10 >= target.scrollHeight;
 
       if (bottom && !this.finished) {
-        this.page++;
-        this.fetchHistoryList(2, false);
+        if (this.timer) clearTimeout(this.timer);
+
+        this.timer = setTimeout(() => {
+          this.page++;
+          this.fetchHistoryList(2, false);
+        }, 300);
       }
     },
     /**
@@ -176,9 +182,6 @@ export default defineComponent({
         return "fail";
       }
     },
-  },
-  beforeUnmount() {
-    window.removeEventListener("scroll", function () {});
   },
 });
 </script>

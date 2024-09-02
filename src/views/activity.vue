@@ -147,6 +147,7 @@ export default defineComponent({
       page: 1,
       size: 10,
       finished: false,
+      timer: null as any,
     };
   },
   created() {
@@ -212,15 +213,16 @@ export default defineComponent({
     async handleScroll(event: Event) {
       const target = event.target as HTMLElement;
 
-      console.log(target.scrollHeight);
-      console.log(target.scrollTop + target.clientHeight);
-
-      const bottom =
-        target.scrollHeight === target.scrollTop + target.clientHeight;
+      const scroll = target.scrollTop + target.clientHeight;
+      const bottom = scroll + 10 >= target.scrollHeight;
 
       if (bottom && !this.finished) {
-        this.page++;
-        this.fetchChallengeList(2, false);
+        if (this.timer) clearTimeout(this.timer);
+
+        this.timer = setTimeout(() => {
+          this.page++;
+          this.fetchChallengeList(2, false);
+        }, 300);
       }
     },
     // 比赛详情

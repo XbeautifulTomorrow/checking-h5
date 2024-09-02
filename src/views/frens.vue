@@ -141,7 +141,7 @@
     </div>
     <div class="frens_list">
       <div class="frens_list_text">{{ `Friend List(${frensTotal})` }}</div>
-      <div class="frens_list_content">
+      <div class="frens_list_content" @scroll="handleScroll">
         <div
           class="frens_list_item"
           v-for="(item, index) in frensList"
@@ -222,9 +222,9 @@
         cover
         src="@/assets/images/svg/frens/linvite_user.svg"
       ></v-img>
-      <span style="font-size: 20px; text-transform: capitalize"
-        >Invite Friend</span
-      >
+      <span style="font-size: 20px; text-transform: capitalize">
+        Invite Friend
+      </span>
     </v-btn>
   </div>
 </template>
@@ -280,6 +280,7 @@ export default defineComponent({
       page: 1,
       size: 10,
       finished: false,
+      timer: null as any,
     };
   },
   computed: {
@@ -326,10 +327,21 @@ export default defineComponent({
         });
       }
     },
-    // 加载更多
-    nextQuery() {
-      this.page++;
-      this.fetchInviteUserList(2, false);
+    // 处理滚动事件
+    async handleScroll(event: Event) {
+      const target = event.target as HTMLElement;
+
+      const scroll = target.scrollTop + target.clientHeight;
+      const bottom = scroll + 10 >= target.scrollHeight;
+
+      if (bottom && !this.finished) {
+        if (this.timer) clearTimeout(this.timer);
+
+        this.timer = setTimeout(() => {
+          this.page++;
+          this.fetchInviteUserList(2, false);
+        }, 300);
+      }
     },
     // 邀请
     inviteToTelegram() {
@@ -348,19 +360,6 @@ export default defineComponent({
         path: "/frensRanking",
       });
     },
-  },
-  mounted() {
-    const _this = this;
-    window.addEventListener("scroll", function () {
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-        if (!_this.finished) {
-          _this.nextQuery();
-        }
-      }
-    });
-  },
-  beforeUnmount() {
-    window.removeEventListener("scroll", function () {});
   },
 });
 </script>
@@ -577,6 +576,8 @@ export default defineComponent({
 }
 
 .frens_list_content {
+  height: 400px;
+
   .frens_list_item + .frens_list_item {
     margin-top: 8px;
   }
