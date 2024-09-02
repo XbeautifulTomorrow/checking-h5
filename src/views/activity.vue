@@ -1,6 +1,6 @@
 <template>
   <div class="activity_wrapper">
-    <div class="challenge_box">
+    <div class="challenge_box" @scroll="handleScroll">
       <div
         class="challenge_item"
         v-for="(item, index) in challengeList"
@@ -208,10 +208,20 @@ export default defineComponent({
         });
       }
     },
-    // 加载更多
-    nextQuery() {
-      this.page++;
-      this.fetchChallengeList(2, false);
+    // 处理滚动事件
+    async handleScroll(event: Event) {
+      const target = event.target as HTMLElement;
+
+      console.log(target.scrollHeight);
+      console.log(target.scrollTop + target.clientHeight);
+
+      const bottom =
+        target.scrollHeight === target.scrollTop + target.clientHeight;
+
+      if (bottom && !this.finished) {
+        this.page++;
+        this.fetchChallengeList(2, false);
+      }
     },
     // 比赛详情
     toChallenge(event: challenge) {
@@ -244,22 +254,6 @@ export default defineComponent({
         return "CLAIMED";
       }
     },
-  },
-  mounted() {
-    const _this = this;
-    window.addEventListener("scroll", function () {
-      console.log(window.innerHeight + window.scrollY);
-      console.log(document.body.offsetHeight);
-      console.log(_this.finished);
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-        if (!_this.finished) {
-          _this.nextQuery();
-        }
-      }
-    });
-  },
-  beforeUnmount() {
-    window.removeEventListener("scroll", function () {});
   },
 });
 </script>
