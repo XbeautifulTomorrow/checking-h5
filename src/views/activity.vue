@@ -263,8 +263,8 @@ export default defineComponent({
 }
 
 .challenge_box {
-  display: flex;
-  flex-direction: column;
+  height: calc(100vh - 48px);
+  overflow-y: scroll;
 }
 
 .challenge_item {
