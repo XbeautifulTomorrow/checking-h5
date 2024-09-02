@@ -400,7 +400,6 @@ export const accurateDecimal = (number: any, format: any, zeroFill: boolean = fa
     number = Math.floor(Number(new bigNumber(number).multipliedBy(n)));
     number = new bigNumber(number).div(n);
     let str = number.toString();
-
     //是否补零
     if (zeroFill) {
       let index;
@@ -415,6 +414,7 @@ export const accurateDecimal = (number: any, format: any, zeroFill: boolean = fa
         str += "0";
       }
     }
+
     return str;
   }
   return number;
@@ -684,7 +684,7 @@ export const unitConversion = (val: number, type = 2, zeroFill = true) => {
   const absVal = Math.abs(val); // 可能是负数，取绝对值比对
 
   if (absVal < kh) {
-    texts = accurateDecimal(val, type, zeroFill);
+    texts = accurateDecimal(val, type, false);
   } else if (absVal >= kh && absVal < mh) {
     texts = accurateDecimal(val / kh, type, zeroFill) + "K";
   } else if (absVal >= mh && absVal < gh) {

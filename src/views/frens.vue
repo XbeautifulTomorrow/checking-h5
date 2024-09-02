@@ -193,7 +193,7 @@
                   :size="18"
                   icon="mdi-lightning-bolt"
                 ></v-icon>
-                <span>{{ `+ ${item.energyAmount}` }}</span>
+                <span>{{ `+ ${unitConversion(item.energyAmount)}` }}</span>
               </div>
               <div class="bonus" v-if="item.gmcAmount">
                 <v-img

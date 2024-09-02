@@ -84,7 +84,7 @@
 import { defineComponent } from "vue";
 import { useUserStore } from "@/store/user.js";
 import bigNumber from "bignumber.js";
-import { unitConversion, isEmpty } from "@/utils";
+import { isEmpty } from "@/utils";
 import { transferSwap } from "@/services/api/user";
 import { useMessageStore } from "@/store/message.js";
 
@@ -129,7 +129,6 @@ export default defineComponent({
     },
   },
   methods: {
-    unitConversion: unitConversion,
     handleInput(event: any) {
       let {
         target: { _value },

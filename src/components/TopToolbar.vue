@@ -22,7 +22,9 @@
         <div class="energy_box">
           <v-icon color="#FFF100" :size="20" icon="mdi-lightning-bolt"></v-icon>
           <div class="energy_item">
-            <div class="energy_val">{{ userInfo.energyAmount }}</div>
+            <div class="energy_val">
+              {{ Number(userInfo.energyAmount || 0).toLocaleString() }}
+            </div>
             <v-fab
               color="#49B6F6"
               size="20"
