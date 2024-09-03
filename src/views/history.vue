@@ -197,6 +197,7 @@ export default defineComponent({
 }
 .history_list {
   height: calc(100vh - 110px);
+  overflow-y: scroll;
 }
 
 .history_item {

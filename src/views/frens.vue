@@ -577,6 +577,7 @@ export default defineComponent({
 
 .frens_list_content {
   height: 400px;
+  overflow-y: scroll;
 
   .frens_list_item + .frens_list_item {
     margin-top: 8px;

@@ -242,6 +242,7 @@ export default defineComponent({
 .ranking_list {
   padding-top: 16px;
   height: calc(100vh - 224px);
+  overflow-y: scroll;
 
   & > .ranking_list_item + .ranking_list_item {
     margin-top: 8px;
