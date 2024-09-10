@@ -90,7 +90,7 @@ const handleRes = ({ response, url, data }: any) => {
   // 取得服务器时间
   const { setCurrentTime } = useUserStore();
   if (data && data.localDateTime) {
-    setCurrentTime(data.localDateTime);
+    setCurrentTime(data.localDateTime.replace(/-/g, "/"));
   }
   if (data.code === 200 || data.status === 200) {
     return data;

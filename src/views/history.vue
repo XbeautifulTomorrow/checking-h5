@@ -10,7 +10,9 @@
       <div class="history_item" v-for="item in historyList" :key="item.time">
         <div class="history_info">
           <div class="info_title">
-            {{ timeForStr(item.time, "YYYY-MM-DD HH:mm:ss") }}
+            {{
+              timeForStr(item.time.replace(/-/g, "/"), "YYYY-MM-DD HH:mm:ss")
+            }}
           </div>
           <div class="info_val">
             <span style="margin-right: 4px">Status:</span>

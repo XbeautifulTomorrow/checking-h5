@@ -796,8 +796,10 @@ export default defineComponent({
       } = this;
 
       const { currentTime } = useUserStore();
-      const endTime = new Date(timeForStr(endDate, "YYYY-MM-DD"));
-      const currentDate = new Date(timeForStr(currentTime, "YYYY-MM-DD"));
+      const endTime = new Date(
+        timeForStr(endDate.replace(/-/g, "/"), "YYYY/MM/DD")
+      );
+      const currentDate = new Date(timeForStr(currentTime, "YYYY/MM/DD"));
 
       if (currentDate >= endTime) {
         // 当天是否所有挑战已完成或已超时
@@ -1064,7 +1066,7 @@ export default defineComponent({
     },
     // 时间格式化
     formatTime(event: any) {
-      return timeForStr("2001-01-01 " + event, "HH:mm");
+      return timeForStr("2001/01/01 " + event, "HH:mm");
     },
     // 获取倒计时时间
     getCountDown(event: ucCheckInVOs, type = 1) {
@@ -1085,7 +1087,7 @@ export default defineComponent({
       const dd =
         current.getDate() > 10 ? current.getDate() : `0${current.getDate()}`;
       const endTime = new Date(
-        `${yyyy}-${MM}-${dd} ${type == 1 ? startDate : endDate}`
+        `${yyyy}/${MM}/${dd} ${type == 1 ? startDate : endDate}`
       ).toString();
       return endTime;
     },
