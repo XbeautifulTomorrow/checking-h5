@@ -796,10 +796,9 @@ export default defineComponent({
       } = this;
 
       const { currentTime } = useUserStore();
-      const endTime = new Date(
-        timeForStr(endDate.replace(/-/g, "/"), "YYYY/MM/DD")
-      );
+      const endTime = new Date(timeForStr(endDate, "YYYY/MM/DD"));
       const currentDate = new Date(timeForStr(currentTime, "YYYY/MM/DD"));
+      console.log(currentDate, endTime);
 
       if (currentDate >= endTime) {
         // 当天是否所有挑战已完成或已超时
@@ -1066,7 +1065,7 @@ export default defineComponent({
     },
     // 时间格式化
     formatTime(event: any) {
-      return timeForStr("2001/01/01 " + event, "HH:mm");
+      return timeForStr("2001-01-01T" + event, "HH:mm");
     },
     // 获取倒计时时间
     getCountDown(event: ucCheckInVOs, type = 1) {
@@ -1081,14 +1080,15 @@ export default defineComponent({
       const current = new Date(event ? currentTime : startTime);
       const yyyy = current.getFullYear();
       const MM =
-        current.getMonth() + 1 > 10
+        current.getMonth() + 1 >= 10
           ? current.getMonth() + 1
           : `0${current.getMonth() + 1}`;
       const dd =
-        current.getDate() > 10 ? current.getDate() : `0${current.getDate()}`;
+        current.getDate() >= 10 ? current.getDate() : `0${current.getDate()}`;
       const endTime = new Date(
-        `${yyyy}/${MM}/${dd} ${type == 1 ? startDate : endDate}`
+        `${yyyy}-${MM}-${dd}T${type == 1 ? startDate : endDate}`
       ).toString();
+
       return endTime;
     },
     // 倒计时
@@ -1104,6 +1104,7 @@ export default defineComponent({
       // 有可签到项
       const checkIn = ucCheckInVOs.find((e) => e.userStatus == 2);
       if (checkIn) {
+        console.log(this.getCountDown(checkIn, 2));
         that.createPoints.time = this.dateDiff(this.getCountDown(checkIn, 2));
       } else return;
 
@@ -1192,7 +1193,7 @@ export default defineComponent({
           {
             number: newValue,
           },
-          1000
+          300
         )
         .onUpdate((tween) => {
           this.winBonuNum = tween.number.toFixed(0);
@@ -1215,7 +1216,7 @@ export default defineComponent({
           {
             number: newValue,
           },
-          1000
+          300
         )
         .onUpdate((tween) => {
           this.prizePoolNum = tween.number.toFixed(0);

@@ -2,6 +2,7 @@ import bigNumber from "bignumber.js";
 import CryptoJS from "crypto-js";
 import { useUserStore } from "@/store/user";
 import { useMessageStore } from "@/store/message.js";
+import { string } from "vue-types";
 
 export function openUrl(url: string) {
   if (typeof window !== "object") return;
