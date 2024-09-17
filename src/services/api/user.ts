@@ -83,9 +83,6 @@ const transferSwap = (params: any) => http.post("/gm-coin-server-web/transfer/sw
  */
 const transferWithdraw = (params: any) => http.post("/gm-coin-server-web/transfer/withdraw", params);
 
-
-
-
 /**
  * 提币记录
  * @param params
@@ -110,6 +107,26 @@ const getDepositList = (params: any) => http.get("/gm-coin-server-web/transfer/r
  */
 const getExchangeRate = (params: any) => http.get("/gm-coin-server-web/coin/price/exchangeRate", params, { showLoading: false });
 
+/**
+ * 获取滑点
+ * @param params
+ */
+const getSlippage = (params: any) => http.get("/gm-coin-server-web/gmc-order/slippage", params, { showLoading: false });
+
+/**
+ * 购买GMC点数
+ * @param params
+ */
+const purchasePoints = (params: any) => http.get("/gm-coin-server-web/gmc-order/purchase", params);
+/**
+ * 星星购买GMC点数
+ * @param params
+ */
+const starPurchasePoints = (params: any) => http.get("/gm-coin-server-web/gmc-order/starPayment", params);
+
+
+
+
 export {
   validateToken,
   telegramLogin,
@@ -128,5 +145,8 @@ export {
   transferDeposit,
   getDepositList,
   getWithdrawList,
-  getExchangeRate
+  getExchangeRate,
+  getSlippage,
+  purchasePoints,
+  starPurchasePoints
 };

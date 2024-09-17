@@ -23,7 +23,7 @@
           <v-icon color="#FFF100" :size="20" icon="mdi-lightning-bolt"></v-icon>
           <div class="energy_item">
             <div class="energy_val">
-              {{ formatNumber(userInfo.energyAmount, 0) }}
+              {{ formatNumber(userInfo.energyAmount || 0, 0) }}
             </div>
             <v-fab
               color="#49B6F6"

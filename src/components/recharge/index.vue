@@ -24,7 +24,31 @@
       </div>
       <div class="recharge_panel">
         <div class="recharge_box">
-          <div class="product_items">
+          <div class="recharge_tabs">
+            <div
+              :class="['recharge_tab', buyActive == 0 ? 'active' : '']"
+              @click="buyActive = 0"
+            >
+              <v-img
+                :width="75"
+                cover
+                src="@/assets/images/recharge/energy_6.png"
+              ></v-img>
+              <div>ENERGY</div>
+            </div>
+            <div
+              :class="['recharge_tab', buyActive == 1 ? 'active' : '']"
+              @click="buyActive = 1"
+            >
+              <v-img
+                :width="70"
+                cover
+                src="@/assets/images/recharge/icon_gmc.png"
+              ></v-img>
+              <div>$GMC</div>
+            </div>
+          </div>
+          <div class="product_items" v-if="buyActive == 0">
             <div
               class="product_item"
               v-for="(item, index) in productList"
@@ -96,8 +120,10 @@
               </div>
             </div>
           </div>
-          <div class="interval">OR</div>
+          <buyTokens v-else></buyTokens>
+          <div class="interval" v-if="buyActive == 0">OR</div>
           <v-btn
+            v-if="buyActive == 0"
             class="connect_btn"
             :elevation="8"
             height="40"
@@ -121,6 +147,8 @@ import { defineComponent } from "vue";
 import { useUserStore } from "@/store/user.js";
 import { getProductList } from "@/services/api/user.js";
 import { unitConversion } from "@/utils";
+import buyTokens from "./buyTokens.vue";
+
 interface productInfo {
   productId: number; //产品ID
   energyAmount: number; //能量数量
@@ -133,9 +161,13 @@ interface productInfo {
 export default defineComponent({
   data() {
     return {
+      buyActive: 0, // 购买类型 0:能量 1:GMC
       productList: [] as Array<productInfo>,
       tonConnect: null as any,
     };
+  },
+  components: {
+    buyTokens,
   },
   computed: {
     showRecharge: {
@@ -170,7 +202,9 @@ export default defineComponent({
     },
     // 处理购买
     async handleBuy(event: productInfo) {
-      const { setProductId } = useUserStore();
+      const { setProductId, setBuyGmcAmount } = useUserStore();
+      // 防止购买出错
+      setBuyGmcAmount(0);
 
       // 打开确认弹窗
       setProductId(event.productId);
@@ -285,6 +319,46 @@ export default defineComponent({
     box-shadow: 2px 2px 5px rgba(21, 12, 7, 0.5),
       0px 5px 5px 0px rgba(96, 69, 54, 1) inset;
     padding: 8px 8px 16px;
+  }
+}
+
+.recharge_tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 16px;
+
+  .recharge_tab + .recharge_tab {
+    margin-left: 8px;
+  }
+
+  .recharge_tab {
+    width: 100px;
+    height: 78px;
+    background-color: rgba(137, 104, 85, 1);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 14px;
+    color: #ffe6c6;
+
+    &.active {
+      background: linear-gradient(
+        180deg,
+        rgba(255, 231, 199, 1) 7%,
+        rgba(250, 218, 182, 1) 100%
+      );
+      box-shadow: 2px 2px 0px rgba(36, 36, 36, 0.4);
+      color: #c07d5d;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+    }
+
+    .v-img {
+      flex: none;
+    }
   }
 }
 

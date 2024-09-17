@@ -23,40 +23,59 @@
             </v-btn>
           </div>
           <div class="user_wallet interval" v-else></div>
-          <div class="product_box">
+          <div class="product_box" v-if="!buyGmcAmount">
             <div class="product_ton_val">{{ `${productInfo.amount} TON` }}</div>
             <div class="product_usd_val">{{ `$${productInfo.price}` }}</div>
           </div>
-          <v-btn
-            class="connect_btn stars"
-            :elevation="8"
-            width="90%"
-            height="36"
-            @click="handleStars()"
-          >
-            <v-img
-              width="20"
-              class="reward_img"
-              cover
-              src="@/assets/images/recharge/icon_stars.png"
-            ></v-img>
-            <span class="finished">{{ `${productInfo.starPrice} Stars` }}</span>
-          </v-btn>
-          <v-btn
-            class="connect_btn"
-            :elevation="8"
-            width="90%"
-            height="36"
-            @click="!isConnect ? connectToWallet() : handlePayment()"
-          >
-            <v-img
-              width="20"
-              class="reward_img"
-              cover
-              src="@/assets/images/recharge/icon_ton.png"
-            ></v-img>
-            <span class="finished">TON CONNECT</span>
-          </v-btn>
+          <div class="product_box" v-else>
+            <div class="product_ton_val">
+              {{ `${productInfo.tonAmount} TON` }}
+            </div>
+            <div class="product_usd_val">
+              <span>{{ `$${productInfo.actualUsdtAmount}` }}</span>
+              <span v-if="countdown" class="timer">{{ `(${timeMsg})` }}</span>
+            </div>
+          </div>
+          <div v-if="!countdown">
+            <div class="refresh_btn" @click="handleBuy()">Refresh</div>
+            <div class="error_text">
+              The quote has expired. Refresh to get the latest quote.
+            </div>
+          </div>
+          <div v-else>
+            <v-btn
+              class="connect_btn stars"
+              :elevation="8"
+              width="90%"
+              height="36"
+              @click="handleStars()"
+            >
+              <v-img
+                width="20"
+                class="reward_img"
+                cover
+                src="@/assets/images/recharge/icon_stars.png"
+              ></v-img>
+              <span class="finished">{{
+                `${productInfo.starPrice} Stars`
+              }}</span>
+            </v-btn>
+            <v-btn
+              class="connect_btn"
+              :elevation="8"
+              width="90%"
+              height="36"
+              @click="!isConnect ? connectToWallet() : handlePayment()"
+            >
+              <v-img
+                width="20"
+                class="reward_img"
+                cover
+                src="@/assets/images/recharge/icon_ton.png"
+              ></v-img>
+              <span class="finished">TON CONNECT</span>
+            </v-btn>
+          </div>
         </div>
         <div v-else class="recharge_box">
           <div v-if="status == 'complete'">
@@ -108,7 +127,12 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { useUserStore } from "@/store/user.js";
-import { starPayment, getOrderList } from "@/services/api/user";
+import {
+  starPayment,
+  getOrderList,
+  purchasePoints,
+  starPurchasePoints,
+} from "@/services/api/user";
 import { TonConnectUI, ConnectedWallet } from "@tonconnect/ui";
 import { toNano, beginCell, Address } from "@ton/ton";
 
@@ -147,6 +171,10 @@ export default defineComponent({
     userInfo() {
       const { userInfo } = useUserStore();
       return userInfo;
+    },
+    buyGmcAmount() {
+      const { buyGmcAmount } = useUserStore();
+      return buyGmcAmount;
     },
     showConfirm: {
       get() {
@@ -252,13 +280,23 @@ export default defineComponent({
     // 处理Stars
     async handleStars() {
       const {
-        productInfo: { productId, orderId },
+        productInfo: { productId, orderId, gmcOrderId },
+        buyGmcAmount,
       } = this;
 
-      const res = await starPayment({
-        productId,
-        orderId,
-      });
+      let res = null as any;
+
+      if (buyGmcAmount) {
+        res = await starPurchasePoints({
+          gmcOrderId,
+        });
+      } else {
+        res = await starPayment({
+          productId,
+          orderId,
+        });
+      }
+
       if (res.code == 200) {
         const { Telegram } = window as any;
         if (Telegram) {
@@ -276,7 +314,8 @@ export default defineComponent({
     // 处理购买
     async handlePayment() {
       const {
-        productInfo: { publicKey, amount, remark },
+        productInfo: { publicKey, amount, remark, tonAmount },
+        buyGmcAmount,
       } = this;
 
       // 创建评论
@@ -291,7 +330,9 @@ export default defineComponent({
         messages: [
           {
             address: publicKey, // 目的地址
-            amount: toNano(amount).toString(), //以nanotons计的Toncoin
+            amount: buyGmcAmount
+              ? toNano(tonAmount).toString()
+              : toNano(amount).toString(), //以nanotons计的Toncoin
             payload: body.toBoc().toString("base64"),
           },
         ],
@@ -320,15 +361,18 @@ export default defineComponent({
       return addr.replace(reg, "$1...$2");
     },
     // 倒计时
-    countDown() {
-      const Countdown = 60;
+    countDown(event = 60) {
+      const Countdown = event;
+      const { setBuyGmcAmount } = useUserStore();
+      // 防止购买出错
+      setBuyGmcAmount(0);
+
       if (!this.timer) {
         this.countdown = Countdown;
         this.timeMsg = this.countdown + "s";
         this.timer = setInterval(() => {
-          if (this.countdown > 0 && this.countdown <= 60) {
+          if (this.countdown > 0 && this.countdown <= event) {
             this.countdown--;
-
             this.fetchPaymentResults();
             if (this.countdown !== 0) {
               this.timeMsg = this.countdown + "s";
@@ -341,6 +385,35 @@ export default defineComponent({
         }, 1000);
       }
     },
+    // 过期倒计时
+    expiredCountDown(event = 10) {
+      const Countdown = event;
+
+      if (!this.timer) {
+        this.countdown = Countdown;
+        this.timeMsg = this.countdown + "s";
+        this.timer = setInterval(() => {
+          if (this.countdown > 0 && this.countdown <= event) {
+            this.countdown--;
+            if (this.countdown !== 0) {
+              this.timeMsg = this.countdown + "s";
+            } else {
+              this.timeMsg = this.countdown + "s";
+              this.clearTimerFun();
+            }
+          }
+        }, 1000);
+      }
+    },
+    // 处理下单
+    async handleBuy() {
+      const { setProductInfo } = useUserStore();
+      const res = await purchasePoints({ gmcAmount: this.buyGmcAmount });
+      if (res.code == 200) {
+        setProductInfo(res.data);
+        this.expiredCountDown();
+      }
+    },
     // 清除计时器
     clearTimerFun() {
       clearInterval(this.timer);
@@ -349,11 +422,12 @@ export default defineComponent({
     // 获取支付结果（刷新余额
     async fetchPaymentResults() {
       const {
-        productInfo: { orderId },
+        productInfo: { orderId, gmcOrderId },
+        buyGmcAmount,
       } = this;
 
       const res = await getOrderList({
-        orderId: orderId,
+        orderId: buyGmcAmount ? gmcOrderId : orderId,
         page: 1,
         size: 10,
       });
@@ -372,8 +446,15 @@ export default defineComponent({
   },
   mounted() {
     this.$nextTick(() => {
-      this.initTonConnect();
+      if (!this.tonConnect) {
+        this.initTonConnect();
+      }
     });
+  },
+  beforeUpdate() {
+    if (this.buyGmcAmount) {
+      this.expiredCountDown(10);
+    }
   },
   beforeUnmount() {
     this.clearTimerFun();
@@ -517,7 +598,29 @@ export default defineComponent({
     font-size: 20px;
     color: #ffedd6;
     margin-top: 12px;
+
+    .timer {
+      text-shadow: none;
+      font-size: 12px;
+      padding-left: 4px;
+    }
   }
+}
+
+.refresh_btn {
+  background-color: rgba(43, 43, 43, 1);
+  padding: 8px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 20px;
+  color: white;
+}
+
+.error_text {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #fb0a0a;
 }
 
 .wait {

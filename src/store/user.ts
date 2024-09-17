@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { getLocalStore, setSessionStore, getSessionStore, removeSessionStore } from "@/utils";
 import { getUserInfo, receiveGifts } from "@/services/api/user";
-import { buyProduct } from "@/services/api/user.js";
+import { buyProduct, getExchangeRate } from "@/services/api/user.js";
 import { en, zhHant } from 'vuetify/locale'
 import { getLang } from "@/locales/index";
 
@@ -63,6 +63,7 @@ export const useUserStore = defineStore("user", {
     showRecharge: false, // 充值弹窗
     productId: null as number | string | any, // 充值产品ID
     productInfo: {} as productInfo, // 充值产品信息
+    buyGmcAmount: 0, // 购买GMC数量
     tonConnect: null as any, // 链接对象
     walletAddr: null as number | string | any,     // 钱包地址
     jettonAddr: null as number | string | any, // jetton地址
@@ -72,6 +73,9 @@ export const useUserStore = defineStore("user", {
     orderId: null as number | string | any, // 订单信息
     currentHistory: 1, // 当前历史记录 1:充币 2:提币
     showWithdraw: false, // 提币确认弹窗
+
+    gmtConvertUsd: null as number | any, // GMT转化至USD价格
+    tonConvertUsd: null as number | any, // TON转化至USD价格
 
     retryCount: 2, // 登录重试次数
     showRetry: false, // 重试弹窗
@@ -126,6 +130,9 @@ export const useUserStore = defineStore("user", {
     async setProductInfo(data: any) {
       this.productInfo = data;
     },
+    async setBuyGmcAmount(data: any) {
+      this.buyGmcAmount = data;
+    },
     setShowWithdraw(data: any) {
       this.showWithdraw = data;
     },
@@ -176,6 +183,20 @@ export const useUserStore = defineStore("user", {
         })
       }
     },
+    async fetchCoinExchange(data: any) {
+      const res = await getExchangeRate({
+        areaCoin: data,
+        coinName: "USDT"
+      });
+
+      if (res.code == 200) {
+        if (data == "GMT") {
+          this.gmtConvertUsd = res.data;
+        } else {
+          this.tonConvertUsd = res.data;
+        }
+      }
+    },
     async logoutApi() {
       const invateCode = getSessionStore("invateCode");
       sessionStorage.clear();
@@ -191,7 +212,7 @@ export const useUserStore = defineStore("user", {
       if (this.retryCount >= 0) {
         window.location.reload();
       } else {
-        this.showRetry = true;
+        // this.showRetry = true;
       }
 
       this.retryCount--;
