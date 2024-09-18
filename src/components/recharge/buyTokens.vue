@@ -100,16 +100,12 @@ export default defineComponent({
     return {
       toAmount: "1",
       usdPrice: "",
+      gmtConvertUsd: "" as any,
       slippageNum: "",
       timer: null as any,
     };
   },
   computed: {
-    // GMT转化至USD价格
-    gmtConvertUsd() {
-      const { gmtConvertUsd } = useUserStore();
-      return gmtConvertUsd;
-    },
     // TON转化至USD价格
     tonConvertUsd() {
       const { tonConvertUsd } = useUserStore();
@@ -212,6 +208,10 @@ export default defineComponent({
 
       if (res.code == 200) {
         this.usdPrice = res.data;
+        this.gmtConvertUsd = new bigNumber(this.usdPrice)
+          .dividedBy(this.toAmount)
+          .dividedBy(100)
+          .toNumber();
       }
     },
     handleExchangeGMC() {
