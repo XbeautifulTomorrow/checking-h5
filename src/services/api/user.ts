@@ -124,6 +124,12 @@ const purchasePoints = (params: any) => http.get("/gm-coin-server-web/gmc-order/
  */
 const starPurchasePoints = (params: any) => http.get("/gm-coin-server-web/gmc-order/starPayment", params);
 
+/**
+ * 获取GMC购买 U的价格
+ * @param params
+ */
+const getUsdPrice = (params: any) => http.get("/gm-coin-server-web/gmc-order/uPrice", params);
+
 
 
 
@@ -148,5 +154,6 @@ export {
   getExchangeRate,
   getSlippage,
   purchasePoints,
+  getUsdPrice,
   starPurchasePoints
 };

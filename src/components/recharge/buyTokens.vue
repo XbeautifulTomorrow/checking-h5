@@ -37,7 +37,7 @@
     <div class="buy_gmc">
       <div class="buy_gmc_title">
         <div class="operating">Price</div>
-        <div class="number">{{ `$${exchangeUsdAmount || 0}` }}</div>
+        <div class="number">{{ `$${formatRounding(usdPrice) || 0}` }}</div>
       </div>
       <div class="convert_ton">
         {{ `≈ ${formatNumber(exchangeTonAmount || 0, 4)} TON` }}
@@ -89,7 +89,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { useUserStore } from "@/store/user.js";
-import { getSlippage, purchasePoints } from "@/services/api/user";
+import { getSlippage, purchasePoints, getUsdPrice } from "@/services/api/user";
 
 // 工具类
 import bigNumber from "bignumber.js";
@@ -99,6 +99,7 @@ export default defineComponent({
   data() {
     return {
       toAmount: "1",
+      usdPrice: "",
       slippageNum: "",
       timer: null as any,
     };
@@ -140,10 +141,8 @@ export default defineComponent({
     },
     // GMT兑换TON数量
     exchangeTonAmount() {
-      const { tonConvertUsd, exchangeUsdAmount } = this;
-      const ton = new bigNumber(exchangeUsdAmount)
-        .dividedBy(tonConvertUsd)
-        .toNumber();
+      const { tonConvertUsd, usdPrice } = this;
+      const ton = new bigNumber(usdPrice).dividedBy(tonConvertUsd).toNumber();
 
       return ton;
     },
@@ -168,6 +167,7 @@ export default defineComponent({
 
   async created() {
     this.getExchangePrice();
+    this.fetchBuyUsdPrice(this.toAmount);
   },
   methods: {
     handleInput(event: any) {
@@ -203,7 +203,23 @@ export default defineComponent({
 
       this.timer = setTimeout(() => {
         this.fetchSlippage(this.toAmount);
+        this.fetchBuyUsdPrice(this.toAmount);
       }, 300);
+    },
+    // 购买GMC对应USD价值
+    async fetchBuyUsdPrice(event: string) {
+      const { removeTxt } = this;
+      const amount = new bigNumber(removeTxt(event))
+        .multipliedBy(1000000)
+        .toNumber();
+
+      const res = await getUsdPrice({
+        gmcAmount: amount,
+      });
+
+      if (res.code == 200) {
+        this.usdPrice = res.data;
+      }
     },
     handleExchangeGMC() {
       const { toAmount, removeTxt, formatNumber } = this;
@@ -247,6 +263,14 @@ export default defineComponent({
         setProductInfo(res.data);
         setShowConfirm(true);
       }
+    },
+    // 向上取整
+    formatRounding(event: number | string) {
+      const num = new bigNumber(event).multipliedBy(100).toNumber();
+      const amount = new bigNumber(Math.ceil(num)).dividedBy(100).toNumber();
+      return Number(amount).toLocaleString(undefined, {
+        maximumFractionDigits: 2,
+      });
     },
     // 格式化数字
     formatNumber(event: number | string, type: number) {
