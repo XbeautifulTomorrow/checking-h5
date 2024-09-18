@@ -190,6 +190,8 @@ export default defineComponent({
         this.timer = null;
       }
 
+      if (Number(this.removeTxt(parts[0])) <= 0) return;
+
       this.timer = setTimeout(() => {
         this.fetchSlippage(this.toAmount);
         this.fetchBuyUsdPrice(this.toAmount);
