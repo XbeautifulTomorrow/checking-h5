@@ -159,12 +159,14 @@ export default defineComponent({
     },
     toFrens() {
       // this.$router.push('/frens');
-      const { setShowRecharge } = useUserStore();
+      const { setShowRecharge, setRechargeType } = useUserStore();
+      setRechargeType(0);
       setShowRecharge(true);
     },
     toEarn() {
       // this.$router.push('/earn');
-      const { setShowRecharge } = useUserStore();
+      const { setShowRecharge, setRechargeType } = useUserStore();
+      setRechargeType(1);
       setShowRecharge(true);
     },
     toRecharge() {

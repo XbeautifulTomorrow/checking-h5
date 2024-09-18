@@ -26,8 +26,8 @@
         <div class="recharge_box">
           <div class="recharge_tabs">
             <div
-              :class="['recharge_tab', buyActive == 0 ? 'active' : '']"
-              @click="buyActive = 0"
+              :class="['recharge_tab', rechargeType == 0 ? 'active' : '']"
+              @click="rechargeType = 0"
             >
               <v-img
                 :width="75"
@@ -37,8 +37,8 @@
               <div>ENERGY</div>
             </div>
             <div
-              :class="['recharge_tab', buyActive == 1 ? 'active' : '']"
-              @click="buyActive = 1"
+              :class="['recharge_tab', rechargeType == 1 ? 'active' : '']"
+              @click="rechargeType = 1"
             >
               <v-img
                 :width="70"
@@ -48,7 +48,7 @@
               <div>$GMC</div>
             </div>
           </div>
-          <div class="product_items" v-if="buyActive == 0">
+          <div class="product_items" v-if="rechargeType == 0">
             <div
               class="product_item"
               v-for="(item, index) in productList"
@@ -178,6 +178,16 @@ export default defineComponent({
       set(val: boolean) {
         const { setShowRecharge } = useUserStore();
         setShowRecharge(val);
+      },
+    },
+    rechargeType: {
+      get() {
+        const { rechargeType } = useUserStore();
+        return rechargeType;
+      },
+      set(val: number) {
+        const { setRechargeType } = useUserStore();
+        setRechargeType(val);
       },
     },
   },

@@ -25,14 +25,18 @@
           <div class="user_wallet interval" v-else></div>
           <div class="product_box" v-if="!buyGmcAmount">
             <div class="product_ton_val">{{ `${productInfo.amount} TON` }}</div>
-            <div class="product_usd_val">{{ `$${productInfo.price}` }}</div>
+            <div class="product_usd_val">
+              {{ `$${formatNumber(productInfo.price)}` }}
+            </div>
           </div>
           <div class="product_box" v-else>
             <div class="product_ton_val">
               {{ `${productInfo.tonAmount} TON` }}
             </div>
             <div class="product_usd_val">
-              <span>{{ `$${productInfo.actualUsdtAmount}` }}</span>
+              <span>{{
+                `$${formatNumber(productInfo.actualUsdtAmount)}`
+              }}</span>
               <span v-if="countdown" class="timer">{{ `(${timeMsg})` }}</span>
             </div>
           </div>
@@ -135,6 +139,7 @@ import {
 } from "@/services/api/user";
 import { TonConnectUI, ConnectedWallet } from "@tonconnect/ui";
 import { toNano, beginCell, Address } from "@ton/ton";
+import bigNumber from "bignumber.js";
 
 type statusType = "pending" | "complete" | "timeout";
 interface order {
@@ -359,6 +364,14 @@ export default defineComponent({
 
       var reg = /^(\S{8})\S+(\S{6})$/;
       return addr.replace(reg, "$1...$2");
+    },
+    // 格式化数字
+    formatNumber(event: number | string) {
+      const num = new bigNumber(event).multipliedBy(100).toNumber();
+      const amount = new bigNumber(Math.ceil(num)).dividedBy(100).toNumber();
+      return Number(amount).toLocaleString(undefined, {
+        maximumFractionDigits: 2,
+      });
     },
     // 倒计时
     countDown(event = 60) {

@@ -61,6 +61,7 @@ export const useUserStore = defineStore("user", {
     isLogin: getLocalStore("certificate") ? true : false,
     showGift: false, // 礼物弹窗
     showRecharge: false, // 充值弹窗
+    rechargeType: 0, // 充值类型 0：能量，1：GMC
     productId: null as number | string | any, // 充值产品ID
     productInfo: {} as productInfo, // 充值产品信息
     buyGmcAmount: 0, // 购买GMC数量
@@ -116,6 +117,9 @@ export const useUserStore = defineStore("user", {
     },
     setTonConnect(data: any) {
       this.tonConnect = data;
+    },
+    setRechargeType(data: any) {
+      this.rechargeType = data;
     },
     async setProductId(data: any) {
       this.productId = data;

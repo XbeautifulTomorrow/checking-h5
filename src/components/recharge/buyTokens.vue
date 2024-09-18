@@ -155,10 +155,13 @@ export default defineComponent({
       const amount = removeTxt(toAmount);
 
       let receiveFee = 0;
-      receiveFee = new bigNumber(amount).multipliedBy(0.003).toNumber();
-      const usd = new bigNumber(1).dividedBy(gmtConvertUsd).toNumber();
-      const fixedFee = new bigNumber(usd).multipliedBy(0.5).toNumber();
-      const fee = new bigNumber(receiveFee).plus(fixedFee).toNumber();
+      receiveFee = new bigNumber(amount)
+        .multipliedBy(100)
+        .multipliedBy(0.003)
+        .multipliedBy(gmtConvertUsd)
+        .toNumber();
+
+      const fee = new bigNumber(receiveFee).plus(0.2).toNumber();
       return accurateDecimal(fee, 4);
     },
   },

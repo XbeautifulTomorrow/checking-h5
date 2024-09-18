@@ -293,6 +293,7 @@ export default defineComponent({
     font-weight: bold;
     font-size: 18px;
     color: #fff;
+    max-width: 200px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
