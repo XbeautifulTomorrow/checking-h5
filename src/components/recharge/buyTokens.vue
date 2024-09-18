@@ -98,7 +98,7 @@ import { accurateDecimal, isEmpty } from "@/utils";
 export default defineComponent({
   data() {
     return {
-      toAmount: "",
+      toAmount: "1",
       slippageNum: "",
       timer: null as any,
     };
