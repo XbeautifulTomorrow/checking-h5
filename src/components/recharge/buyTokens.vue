@@ -148,17 +148,9 @@ export default defineComponent({
     },
     // 服务费
     serviceFee() {
-      const { toAmount, gmtConvertUsd, removeTxt } = this;
+      const { toAmount, usdPrice } = this;
       if (!toAmount) return 0;
-
-      const amount = removeTxt(toAmount);
-
-      let receiveFee = 0;
-      receiveFee = new bigNumber(amount)
-        .multipliedBy(100)
-        .multipliedBy(0.003)
-        .multipliedBy(gmtConvertUsd)
-        .toNumber();
+      let receiveFee = new bigNumber(usdPrice).multipliedBy(0.003).toNumber();
 
       const fee = new bigNumber(receiveFee).plus(0.2).toNumber();
       return accurateDecimal(fee, 4);
