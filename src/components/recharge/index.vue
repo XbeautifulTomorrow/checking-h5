@@ -121,9 +121,9 @@
             </div>
           </div>
           <buyTokens v-else></buyTokens>
-          <div class="interval" v-if="buyActive == 0">OR</div>
+          <div class="interval" v-if="rechargeType == 0">OR</div>
           <v-btn
-            v-if="buyActive == 0"
+            v-if="rechargeType == 0"
             class="connect_btn"
             :elevation="8"
             height="40"
@@ -161,7 +161,6 @@ interface productInfo {
 export default defineComponent({
   data() {
     return {
-      buyActive: 0, // 购买类型 0:能量 1:GMC
       productList: [] as Array<productInfo>,
       tonConnect: null as any,
     };
