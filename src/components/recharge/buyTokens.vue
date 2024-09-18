@@ -167,6 +167,7 @@ export default defineComponent({
 
   async created() {
     this.getExchangePrice();
+    this.fetchSlippage(this.toAmount);
     this.fetchBuyUsdPrice(this.toAmount);
   },
   methods: {
