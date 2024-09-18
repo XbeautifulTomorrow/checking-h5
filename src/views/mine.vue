@@ -92,40 +92,6 @@
         </div>
       </div>
     </div>
-    <!--充值弹窗-->
-    <v-dialog v-model="showRecharge" width="auto">
-      <div class="dialog_box">
-        <div class="dialog_text">
-          Opps, You $GMC is not enough! You have three ways to get more.
-        </div>
-        <div class="recharge_btns">
-          <v-btn class="recharge_item gift" @click="toRecharge()">
-            <v-img
-              :width="24"
-              cover
-              src="@/assets/images/svg/check_in/icon_gift.svg"
-            ></v-img>
-            <span class="finished">Get Bonus $GMC</span>
-          </v-btn>
-          <v-btn class="recharge_item" @click="toFrens()">
-            <v-img
-              :width="24"
-              cover
-              src="@/assets/images/svg/check_in/icon_invite.svg"
-            ></v-img>
-            <span class="finished">Invite Friend</span>
-          </v-btn>
-          <v-btn class="recharge_item" @click="toEarn()">
-            <v-img
-              :width="24"
-              cover
-              src="@/assets/images/svg/check_in/icon_task.svg"
-            ></v-img>
-            <span class="finished">Daily Task</span>
-          </v-btn>
-        </div>
-      </div>
-    </v-dialog>
   </div>
 </template>
 
@@ -174,7 +140,6 @@ export default defineComponent({
       },
       levelList: [] as Array<levelInfo>,
       timer: null as number | any,
-      showRecharge: false,
     };
   },
   computed: {
@@ -201,7 +166,9 @@ export default defineComponent({
       const { userInfo } = this;
       const { setMessageText } = useMessageStore();
       if (userInfo.gmcAmount < event.upgradeAmount) {
-        this.showRecharge = true;
+        const { setShowRecharge, setRechargeType } = useUserStore();
+        setRechargeType(1);
+        setShowRecharge(true);
         return;
       }
 
@@ -217,12 +184,6 @@ export default defineComponent({
         userStore.fetchUserInfo();
         this.fetchLevelList();
       }
-    },
-    // 去充值
-    toRecharge() {
-      this.showRecharge = false;
-      const { setShowRecharge } = useUserStore();
-      setShowRecharge(true);
     },
     // 去邀请
     toFrens() {
