@@ -59,7 +59,7 @@
         <span>
           <span>GN: </span>
           <span style="font-weight: bold; color: #fdefd6"
-            >FFrom UTC 21:00 to 21:30</span
+            >From UTC 21:00 to 21:30</span
           >
         </span>
         <br />
