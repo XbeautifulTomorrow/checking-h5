@@ -101,6 +101,12 @@
               ></v-img>
             </div>
             <v-img
+              v-else-if="item.abbreviation == 'EARN_TON'"
+              :width="36"
+              cover
+              src="@/assets/images/earn/earn_ton.png"
+            ></v-img>
+            <v-img
               v-else
               :width="36"
               cover
@@ -401,6 +407,9 @@ export default defineComponent({
       } else if (abbreviation == "TWEET") {
         // 转发Twitter帖子，跳到帖子
         openUrl("https://x.com/GMCoin_Fam/status/1808708189967561097");
+      } else if (abbreviation == "EARN_TON") {
+        // 互推
+        openUrl("https://t.me/OctocrazeBot/Social?startapp=Kax31PmUY7");
       }
     },
     // 初始化ton-connect
