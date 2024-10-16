@@ -129,6 +129,11 @@ const starPurchasePoints = (params: any) => http.get("/gm-coin-server-web/gmc-or
  * @param params
  */
 const getUsdPrice = (params: any) => http.get("/gm-coin-server-web/gmc-order/uPrice", params);
+/**
+ * 获取最近十条提款记录
+ * @param params
+ */
+const getLatestWithdrawList = (params: any) => http.get("/gm-coin-server-web/transfer/record/latestWithdrawList", params);
 
 
 
@@ -155,5 +160,6 @@ export {
   getSlippage,
   purchasePoints,
   getUsdPrice,
-  starPurchasePoints
+  starPurchasePoints,
+  getLatestWithdrawList
 };

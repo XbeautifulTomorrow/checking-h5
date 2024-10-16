@@ -467,40 +467,56 @@
             src="@/assets/images/svg/check_in/gm_coin.svg"
           ></v-img>
         </div>
-        <div class="join_quantity">
-          <v-btn
-            color="#49B6F6"
-            height="40"
-            width="40"
-            density="compact"
-            @click="handleQuantityChange(1)"
-            border
-            variant="flat"
-            :disabled="bonusNum <= userInfo?.minAmount"
-            size="x-small"
-          >
-            <span class="operating_text">-</span>
-          </v-btn>
-          <div class="quantity">{{ Number(bonusNum).toLocaleString() }}</div>
-          <v-btn
-            color="#49B6F6"
-            height="40"
-            width="40"
-            density="compact"
-            @click="handleQuantityChange(2)"
-            variant="flat"
-            :disabled="bonusNum >= userInfo?.maxAmount"
-            size="x-small"
-          >
-            <span class="operating_text">+</span>
-          </v-btn>
+        <div class="join_quantity_box">
+          <div class="join_quantity">
+            <v-btn
+              color="#49B6F6"
+              height="40"
+              width="40"
+              density="compact"
+              @click="handleQuantityChange(1)"
+              border
+              variant="flat"
+              :disabled="bonusNum <= userInfo?.minAmount"
+              size="x-small"
+            >
+              <span class="operating_text">-</span>
+            </v-btn>
+            <div class="quantity">{{ Number(bonusNum).toLocaleString() }}</div>
+            <v-btn
+              color="#49B6F6"
+              height="40"
+              width="40"
+              density="compact"
+              @click="handleQuantityChange(2)"
+              variant="flat"
+              size="x-small"
+            >
+              <span class="operating_text">+</span>
+            </v-btn>
+          </div>
+          <div class="expected_revenue">
+            <div class="expected_revenue_title">Expected Returns:</div>
+            <div class="expected_revenue_val">
+              <span>{{ unitConversion(bonusNum * expectedReturn) }}</span>
+              <v-img
+                :width="24"
+                cover
+                src="@/assets/images/svg/check_in/gm_coin.svg"
+              ></v-img>
+            </div>
+          </div>
+          <div class="approximately_val">
+            <span> ≈ $</span>
+            <span>
+              {{ calculateReturn(bonusNum) }}
+            </span>
+          </div>
         </div>
         <div class="join_btns">
-          <div class="join_text">More investment, higher returns.</div>
           <v-btn
             color="#49B6F6"
             height="40"
-            width="260"
             density="compact"
             @click="handleRegistration()"
             variant="flat"
@@ -527,6 +543,17 @@
             src="@/assets/images/svg/check_in/telegram.svg"
           ></v-img>
           <span class="finished">Invite Now</span>
+        </v-btn>
+      </div>
+    </v-dialog>
+    <!--升级提示弹窗-->
+    <v-dialog v-model="showUpgrade" width="auto">
+      <div class="dialog_box">
+        <div class="dialog_text">
+          <span>Level up to unlock higher benefits.</span>
+        </div>
+        <v-btn class="invite" @click="toMine()">
+          <span class="finished">Go To Upgrade</span>
         </v-btn>
       </div>
     </v-dialog>
@@ -601,7 +628,7 @@ import {
 import { useUserStore } from "@/store/user.js";
 import { useCheckInStore } from "@/store/check_in.js";
 import { useMessageStore } from "@/store/message.js";
-import { timeForStr, shareOnTelegram } from "@/utils";
+import { timeForStr, shareOnTelegram, unitConversion } from "@/utils";
 import TWEEN from "@tweenjs/tween.js";
 
 import countDown from "@/components/countDown/index.vue";
@@ -686,6 +713,7 @@ export default defineComponent({
       joinLoading: false, // 报名加载
       reCheckinLoading: false, // 补签加载
       isLoad: true, // 是否第一次加载
+      showUpgrade: false, // 升级提示
     };
   },
   components: {
@@ -696,6 +724,14 @@ export default defineComponent({
     userInfo() {
       const { userInfo } = useUserStore();
       return userInfo;
+    },
+    gmtConvertUsd() {
+      const { gmtConvertUsd } = useUserStore();
+      return gmtConvertUsd;
+    },
+    expectedReturn() {
+      const { expectedReturn } = useCheckInStore();
+      return expectedReturn;
     },
     isLogin() {
       const { isLogin } = useUserStore();
@@ -812,6 +848,7 @@ export default defineComponent({
     this.fetchChallengeList();
   },
   methods: {
+    unitConversion: unitConversion,
     // 获取挑战列表
     async fetchChallengeList() {
       const res = await getChallengeNav({});
@@ -868,17 +905,30 @@ export default defineComponent({
       const {
         userInfo: { minAmount },
       } = this;
+
+      // 获取收益率
+      const { fetchExpectedReturn } = useCheckInStore();
+      fetchExpectedReturn();
+
+      // 获取 GMT > U 汇率
+      const { fetchCoinExchange } = useUserStore();
+      fetchCoinExchange("GMT");
+
       this.bonusNum = minAmount;
       this.showJoin = true;
     },
     // 参加代币数量
     handleQuantityChange(type: number) {
       const {
-        userInfo: { minAmount },
+        userInfo: { minAmount, maxAmount },
       } = this;
 
       if (type == 1) {
         this.bonusNum -= minAmount;
+        return;
+      }
+      if (this.bonusNum == maxAmount) {
+        this.showUpgrade = true;
         return;
       }
       this.bonusNum += minAmount;
@@ -1149,6 +1199,18 @@ export default defineComponent({
 
       return Math.floor(diff / ns);
     },
+    // 计算收益
+    calculateReturn(event: number) {
+      const { expectedReturn, gmtConvertUsd } = this;
+
+      const returnVal = new bigNumber(event)
+        .multipliedBy(expectedReturn)
+        .dividedBy(10000)
+        .multipliedBy(gmtConvertUsd)
+        .toNumber();
+
+      return returnVal.toFixed(2);
+    },
     // 去充值
     toRecharge() {
       this.showRecharge = false;
@@ -1162,6 +1224,10 @@ export default defineComponent({
     // 去做任务
     toEarn() {
       this.$router.push("/earn");
+    },
+    // 去升级
+    toMine() {
+      this.$router.push("/mine");
     },
   },
   watch: {
@@ -1837,6 +1903,13 @@ export default defineComponent({
     }
   }
 
+  .join_quantity_box {
+    width: 100%;
+    padding: 16px 8px;
+    border-radius: 8px;
+    background-color: rgba(17, 16, 16, 0.5);
+  }
+
   .join_quantity {
     width: 240px;
     display: flex;
@@ -1844,6 +1917,7 @@ export default defineComponent({
     justify-content: center;
     background-color: rgb(49, 49, 49, 0.9);
     border-radius: 16px;
+    margin: 0 auto;
 
     .v-btn {
       border: 2px solid #000;
@@ -1873,12 +1947,39 @@ export default defineComponent({
     }
   }
 
-  .join_btns {
-    .join_text {
+  .expected_revenue {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0 4px;
+
+    .expected_revenue_title {
       font-size: 16px;
-      color: #ffffff;
-      margin: 24px 0 4px;
+      color: #fdefd6;
     }
+
+    .expected_revenue_val {
+      display: flex;
+      align-items: center;
+      color: white;
+      font-size: 16px;
+
+      .v-img {
+        flex: none;
+        margin-left: 4px;
+      }
+    }
+  }
+
+  .approximately_val {
+    text-align: right;
+    color: #fdefd6;
+    font-size: 16px;
+  }
+
+  .join_btns {
+    width: 100%;
+    padding-top: 16px;
 
     .v-btn {
       width: 100%;

@@ -116,7 +116,45 @@
           <span class="finished">WITHDRAW</span>
         </div>
       </v-btn>
-      <div class="button back" @click="handleBack()">BACK</div>
+    </div>
+    <div class="withdraw_record">
+      <div class="withdraw_title">Last Withdraw</div>
+      <div class="withdraw_record_list" v-if="latestWithdrawList.length > 0">
+        <div
+          class="withdraw_record_item"
+          v-for="(item, index) in latestWithdrawList"
+          :key="index"
+          @click="openLink(item.hash)"
+        >
+          <div class="avatar_box">
+            <img
+              width="40"
+              height="40"
+              :avatar="item.userName"
+              color="#3D3D3D"
+              class="avatar"
+            />
+          </div>
+          <div class="withdraw_info">
+            <div class="withdraw_amount">
+              <span class="gmt">
+                {{ `${Number(item.amount).toLocaleString()} $GMT` }}
+              </span>
+              <span class="usd">
+                {{ `≈ $${calculatConversion(item.amount)}U` }}
+              </span>
+            </div>
+            <div class="withdraw_time">{{ timeFormat(item.time) }}</div>
+          </div>
+          <div class="line_box">
+            <v-img
+              :width="16"
+              cover
+              src="@/assets/images/svg/airdrop/icon_line.svg"
+            ></v-img>
+          </div>
+        </div>
+      </div>
     </div>
     <withdraw></withdraw>
   </div>
@@ -126,12 +164,30 @@
 import { defineComponent } from "vue";
 import { useUserStore } from "@/store/user.js";
 import bigNumber from "bignumber.js";
-import { unitConversion, isEmpty, accurateDecimal } from "@/utils";
-import { transferWithdraw, getExchangeRate } from "@/services/api/user";
+import {
+  timeFormat,
+  unitConversion,
+  isEmpty,
+  accurateDecimal,
+  openUrl,
+} from "@/utils";
+import {
+  transferWithdraw,
+  getExchangeRate,
+  getLatestWithdrawList,
+} from "@/services/api/user";
 import withdraw from "@/components/withdrawConfirm/index.vue";
 
 import { TonConnectUI, ConnectedWallet } from "@tonconnect/ui";
 import { Address } from "@ton/ton";
+
+interface withdrawInterface {
+  hash: string; //hash
+  userName: string; //用户名
+  amount: number; //提币数量
+  uRate: number; //U汇率
+  time: string; //提币时间
+}
 
 type coin = "GMC" | "GMT";
 
@@ -146,6 +202,7 @@ export default defineComponent({
       isError: false,
 
       coinExchangeRate: 0,
+      latestWithdrawList: [] as Array<withdrawInterface>,
     };
   },
   components: {
@@ -155,6 +212,10 @@ export default defineComponent({
     userInfo() {
       const { userInfo } = useUserStore();
       return userInfo;
+    },
+    gmtConvertUsd() {
+      const { gmtConvertUsd } = useUserStore();
+      return gmtConvertUsd;
     },
     tonConnect: {
       get() {
@@ -224,8 +285,15 @@ export default defineComponent({
       });
     }
     this.fetchExchangeRate();
+
+    // 获取 GMT > U 汇率
+    const { fetchCoinExchange } = useUserStore();
+    fetchCoinExchange("GMT");
+
+    this.fetchLatestWithdrawList();
   },
   methods: {
+    timeFormat: timeFormat,
     unitConversion: unitConversion,
 
     // 初始化ton-connect
@@ -262,6 +330,16 @@ export default defineComponent({
           });
         }
       });
+    },
+    async fetchLatestWithdrawList() {
+      const res = await getLatestWithdrawList({});
+      if (res.code == 200) {
+        this.latestWithdrawList = res.data;
+
+        this.$nextTick(() => {
+          (window as any).LetterAvatar.transform();
+        });
+      }
     },
     handleInput(event: any) {
       let {
@@ -352,8 +430,16 @@ export default defineComponent({
     removeTxt(event: string, type = ",") {
       return String(event).replace(new RegExp(type, "g"), "");
     },
-    handleBack() {
-      this.$router.go(-1);
+    // 计算转化至USD
+    calculatConversion(event: any) {
+      const { gmtConvertUsd } = useUserStore();
+      const usd = new bigNumber(event).multipliedBy(gmtConvertUsd).toNumber();
+      return usd.toFixed(2);
+    },
+    openLink(event: string) {
+      if (!event) return;
+      const tonUrl = `https://tonviewer.com/transaction/`;
+      openUrl(`${tonUrl}${event}`);
     },
     toHistory() {
       const { setCurrentHistory } = useUserStore();
@@ -646,5 +732,65 @@ export default defineComponent({
   text-transform: none;
   letter-spacing: 0;
   text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.64);
+}
+
+.withdraw_record {
+}
+
+.withdraw_record_list {
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.withdraw_record_item {
+  display: flex;
+  align-items: center;
+  padding: 6px 4px;
+
+  .avatar_box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .withdraw_info {
+    padding-left: 8px;
+  }
+
+  .withdraw_amount {
+    line-height: 1.2;
+
+    .gmt {
+      font-size: 16px;
+      font-weight: bold;
+      color: #fdefd6;
+    }
+
+    .usd {
+      color: white;
+      font-size: 12px;
+    }
+  }
+
+  .withdraw_time {
+    color: #f7f1e6;
+    font-size: 14px;
+    line-height: 1.2;
+  }
+
+  .line_box {
+    flex: 1;
+    display: grid;
+
+    .v-img {
+      justify-self: end;
+    }
+  }
+}
+
+.avatar {
+  border: 4px solid #ffad2e;
+  border-radius: 50%;
 }
 </style>

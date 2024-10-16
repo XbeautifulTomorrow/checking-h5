@@ -62,6 +62,16 @@
                   }}
                 </div>
               </div>
+              <div class="level_expected_revenue">
+                <span>Daily Revenue: </span>
+                <span style="color: #55e60c; font-weight: bold">
+                  ${{ calculateReturn(item.minAmount) }}
+                </span>
+                <span style="color: #55e60c; font-weight: bold">-</span>
+                <span style="color: #55e60c; font-weight: bold">
+                  ${{ calculateReturn(item.maxAmount) }}
+                </span>
+              </div>
             </div>
           </div>
           <div class="level_item_right">
@@ -69,7 +79,7 @@
               :color="item.isLocked ? 'rgb(0,0,0,0)' : '#49B6F6'"
               :loading="item.loading"
               height="24"
-              width="100"
+              width="80"
               density="compact"
               @click="levelUp(item)"
               :variant="item.isLocked ? 'elevated' : 'flat'"
@@ -77,16 +87,19 @@
               size="x-small"
               v-if="item.level <= userInfo?.level + 1"
             >
-              <v-img
-                v-if="!item.isLocked"
-                :width="18"
-                cover
-                src="@/assets/images/svg/check_in/gm_coin.svg"
-              ></v-img>
-              <div v-if="!item.isLocked" class="finished">
-                {{ Number(item.upgradeAmount).toLocaleString() }}
+              <div class="btn_box">
+                <v-img
+                  v-if="!item.isLocked"
+                  :width="18"
+                  cover
+                  src="@/assets/images/svg/check_in/gm_coin.svg"
+                ></v-img>
+                <div v-if="!item.isLocked" class="finished">
+                  {{ unitConversion(item.upgradeAmount) }}
+                </div>
+                <div v-if="item.isLocked" class="finished">Unlocked</div>
+                <div class="dot" v-else-if="userInfo.isUpgrade"></div>
               </div>
-              <div v-if="item.isLocked" class="finished">Unlocked</div>
             </v-btn>
           </div>
         </div>
@@ -98,8 +111,10 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { useUserStore } from "@/store/user.js";
+import { useCheckInStore } from "@/store/check_in.js";
 import { getLevelList, levelUpgrade } from "@/services/api/user.js";
 import { useMessageStore } from "@/store/message.js";
+import { unitConversion } from "@/utils";
 
 // 等级图标
 import Level_1 from "@/assets/images/svg/main/level_1.svg";
@@ -112,6 +127,7 @@ import Level_7 from "@/assets/images/svg/main/level_7.svg";
 import Level_8 from "@/assets/images/svg/main/level_8.svg";
 import Level_9 from "@/assets/images/svg/main/level_9.svg";
 import Level_10 from "@/assets/images/svg/main/level_10.svg";
+import bigNumber from "bignumber.js";
 
 interface levelInfo {
   id: number; //等级ID
@@ -147,11 +163,28 @@ export default defineComponent({
       const { userInfo } = useUserStore();
       return userInfo;
     },
+    gmtConvertUsd() {
+      const { gmtConvertUsd } = useUserStore();
+      return gmtConvertUsd;
+    },
+    expectedReturn() {
+      const { expectedReturn } = useCheckInStore();
+      return expectedReturn;
+    },
   },
   created() {
     this.fetchLevelList();
+
+    // 获取收益率
+    const { fetchExpectedReturn } = useCheckInStore();
+    fetchExpectedReturn();
+
+    // 获取 GMT > U 汇率
+    const { fetchCoinExchange } = useUserStore();
+    fetchCoinExchange("GMT");
   },
   methods: {
+    unitConversion: unitConversion,
     // 获取等级列表
     async fetchLevelList() {
       const res = await getLevelList({});
@@ -184,6 +217,17 @@ export default defineComponent({
         userStore.fetchUserInfo();
         this.fetchLevelList();
       }
+    },
+    calculateReturn(event: number) {
+      const { expectedReturn, gmtConvertUsd } = this;
+
+      const returnVal = new bigNumber(event)
+        .multipliedBy(expectedReturn)
+        .dividedBy(10000)
+        .multipliedBy(gmtConvertUsd)
+        .toNumber();
+
+      return returnVal.toFixed(2);
     },
     // 去邀请
     toFrens() {
@@ -334,17 +378,19 @@ export default defineComponent({
       margin-right: 2px;
     }
   }
+
+  .level_expected_revenue {
+    font-size: 12px;
+  }
 }
 
 .level_item_right {
-  width: 100px;
-
   .v-btn {
     color: #fff;
   }
 
   .finished {
-    font-size: 14px;
+    font-size: 12px;
     color: #fff;
     text-transform: capitalize;
   }
@@ -395,5 +441,26 @@ export default defineComponent({
 
 .finished {
   text-transform: none;
+}
+
+.btn_box {
+  display: flex;
+  align-items: center;
+  position: relative;
+
+  .v-img {
+    flex: none;
+  }
+
+  .dot {
+    position: absolute;
+    top: 0;
+    right: -8px;
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    border: 2px solid #fff;
+    border-radius: 50%;
+  }
 }
 </style>

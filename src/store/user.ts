@@ -24,6 +24,7 @@ export interface userInterface {
   maxAmount: number, // 最大输入金额(GMC)
   inviteCode: string, // 邀请码
   totalInviteAmount: number // 总返佣金额
+  isUpgrade: boolean, // 是否可以升级
   [x: string]: string | number | any;
 }
 

@@ -36,11 +36,21 @@ const challengeCheckIn = (params: any) => http.post("/gm-coin-server-web/user-ch
  * @param params
  */
 const challengeReCheckin = (params: any) => http.post("/gm-coin-server-web/user-challenge/supplementary", params);
+
 /**
  * 挑战领取
  * @param params
  */
 const challengePickUp = (params: any) => http.get("/gm-coin-server-web/user-challenge/pickUp", params);
+
+/**
+ * 预期收益率
+ * @param params
+ */
+const challengeExpectedReturn = (params: any) => http.get("/gm-coin-server-web/challenge/expectedReturn", params);
+
+
+
 
 export {
   getChallengeList,
@@ -49,5 +59,6 @@ export {
   challengeRegistration,
   challengeCheckIn,
   challengeReCheckin,
-  challengePickUp
+  challengePickUp,
+  challengeExpectedReturn
 };
