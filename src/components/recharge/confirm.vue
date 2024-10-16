@@ -60,9 +60,9 @@
                 cover
                 src="@/assets/images/recharge/icon_stars.png"
               ></v-img>
-              <span class="finished">{{
-                `${productInfo.starPrice} Stars`
-              }}</span>
+              <span class="finished">
+                {{ `${productInfo.starPrice} Stars` }}
+              </span>
             </v-btn>
             <v-btn
               class="connect_btn"

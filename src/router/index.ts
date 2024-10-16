@@ -120,7 +120,7 @@ router.beforeEach(async (to, from, next) => {
     } else if (urlParam.indexOf("withdraw") > -1) {
       setSessionStore('nextPath', "/airdrop");
     } else if (urlParam.indexOf("ad_") > -1) {
-      setSessionStore('source', "/airdrop");
+      setSessionStore('source', urlParam);
     } else if (urlParam.indexOf("3base") > -1) {
       setSessionStore('recommend', "3base");
       const inviteArray = urlParam.split("_");
