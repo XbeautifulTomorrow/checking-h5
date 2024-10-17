@@ -1241,7 +1241,7 @@ export default defineComponent({
       const timeZone = new Date(currentTime).getTimezoneOffset() / 60;
 
       let current = new Date("2001-01-01T" + event);
-      current.setHours(current.getHours() - (timeZone + this.timeZoneNum));
+      current.setHours(current.getHours() - timeZone);
       return timeForStr(current, "HH:mm");
     },
     // 根据时区偏移手动调整时间
