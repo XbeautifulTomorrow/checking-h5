@@ -81,6 +81,7 @@ export const useUserStore = defineStore("user", {
 
     retryCount: 2, // 登录重试次数
     showRetry: false, // 重试弹窗
+    timeZoneNum: 7, // 时区偏移
     loadLog: false,
   }),
   persist: {

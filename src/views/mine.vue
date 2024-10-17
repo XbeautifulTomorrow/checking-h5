@@ -62,7 +62,10 @@
                   }}
                 </div>
               </div>
-              <div class="level_expected_revenue" v-if="!item.isLocked">
+              <div
+                class="level_expected_revenue"
+                v-if="!item.isLocked || item.level == userInfo?.level"
+              >
                 <span>Daily Earn: </span>
                 <span style="color: #55e60c; font-weight: bold">
                   ${{ calculateReturn(item.minAmount) }}

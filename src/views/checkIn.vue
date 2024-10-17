@@ -725,6 +725,10 @@ export default defineComponent({
       const { userInfo } = useUserStore();
       return userInfo;
     },
+    timeZoneNum() {
+      const { timeZoneNum } = useUserStore();
+      return timeZoneNum;
+    },
     gmtConvertUsd() {
       const { gmtConvertUsd } = useUserStore();
       return gmtConvertUsd;
@@ -1235,9 +1239,23 @@ export default defineComponent({
     fetchTimeZone(event: string) {
       const { currentTime } = useUserStore();
       const timeZone = new Date(currentTime).getTimezoneOffset() / 60;
+
       let current = new Date("2001-01-01T" + event);
-      current.setHours(current.getHours() - timeZone);
+      current.setHours(current.getHours() - (timeZone + this.timeZoneNum));
       return timeForStr(current, "HH:mm");
+    },
+    // 根据时区偏移手动调整时间
+    setTimeZone(dateString: string, targetOffset: number) {
+      const date = new Date(dateString); // 将时间字符串转换为 Date 对象
+
+      // 获取当前时间的 UTC 时间戳（以毫秒为单位）
+      const utcTime = date.getTime() + date.getTimezoneOffset() * 60000;
+
+      // 将 UTC 时间加上目标时区的偏移量（分钟）
+      const targetTime = utcTime + targetOffset * 60 * 60000;
+
+      // 创建新的 Date 对象
+      return new Date(targetTime);
     },
     // 获取小数点后第一个非0的索引
     getNonZeroDecimalIndex(number: number) {
