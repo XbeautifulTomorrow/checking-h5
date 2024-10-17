@@ -141,7 +141,7 @@
                 {{ `${Number(item.amount).toLocaleString()} $GMT` }}
               </span>
               <span class="usd">
-                {{ `≈ $${calculatConversion(item.amount)}U` }}
+                {{ `≈ $${calculatConversion(item.amount)}` }}
               </span>
             </div>
             <div class="withdraw_time">{{ timeFormat(item.time) }}</div>
