@@ -116,7 +116,7 @@
             <template v-if="challengeInfo?.userStatus != 2">
               <!--未开始-->
               <div v-if="item.userStatus == 1" class="check_in_time">
-                {{ formatTime(item.startDate) }}
+                {{ fetchTimeZone(item.startDate) }}
               </div>
               <!--可签到倒计时-->
               <div v-else-if="item.userStatus == 2" class="check_in_time">
@@ -169,7 +169,7 @@
             <!--未报名-->
             <template v-else>
               <div class="check_in_time">
-                {{ formatTime(item.startDate) }}
+                {{ fetchTimeZone(item.startDate) }}
               </div>
             </template>
           </div>
@@ -553,7 +553,7 @@
           <span>Level up to unlock higher benefits.</span>
         </div>
         <v-btn class="invite" @click="toMine()">
-          <span class="finished">Go To Upgrade</span>
+          <span class="finished">LEVEL UP</span>
         </v-btn>
       </div>
     </v-dialog>
@@ -1209,7 +1209,9 @@ export default defineComponent({
         .multipliedBy(gmtConvertUsd)
         .toNumber();
 
-      return returnVal.toFixed(2);
+      const index = this.getNonZeroDecimalIndex(returnVal);
+
+      return returnVal.toFixed(index > 1 ? index + 1 : 2);
     },
     // 去充值
     toRecharge() {
@@ -1228,6 +1230,26 @@ export default defineComponent({
     // 去升级
     toMine() {
       this.$router.push("/mine");
+    },
+    // 获取当前时区
+    fetchTimeZone(event: string) {
+      const { currentTime } = useUserStore();
+      const timeZone = new Date(currentTime).getTimezoneOffset() / 60;
+      let current = new Date("2001-01-01T" + event);
+      current.setHours(current.getHours() - timeZone);
+      return timeForStr(current, "HH:mm");
+    },
+    // 获取小数点后第一个非0的索引
+    getNonZeroDecimalIndex(number: number) {
+      const decimalPart = number.toString().split(".")[1];
+      if (!decimalPart) return -1; // 如果没有小数部分，返回 -1
+
+      for (let i = 0; i < decimalPart.length; i++) {
+        if (decimalPart[i] !== "0") {
+          return i; // 返回第一个不为 0 的索引
+        }
+      }
+      return -1; // 如果全部为 0，返回 -1
     },
   },
   watch: {
@@ -1459,6 +1481,16 @@ export default defineComponent({
     &.fail {
       color: #b7b6b4;
       font-size: 14px;
+    }
+
+    .utc_time {
+      line-height: 1;
+    }
+
+    .current_time {
+      text-align: center;
+      line-height: 1;
+      font-size: 12px;
     }
   }
 
@@ -1963,6 +1995,8 @@ export default defineComponent({
       align-items: center;
       color: white;
       font-size: 16px;
+      color: #fdefd6;
+      font-weight: bold;
 
       .v-img {
         flex: none;
@@ -1973,8 +2007,9 @@ export default defineComponent({
 
   .approximately_val {
     text-align: right;
-    color: #fdefd6;
+    color: #55e60c;
     font-size: 16px;
+    font-weight: bold;
   }
 
   .join_btns {

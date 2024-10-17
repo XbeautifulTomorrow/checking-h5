@@ -148,7 +148,7 @@
           </div>
           <div class="line_box">
             <v-img
-              :width="16"
+              :width="10"
               cover
               src="@/assets/images/svg/airdrop/icon_line.svg"
             ></v-img>

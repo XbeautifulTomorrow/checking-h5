@@ -62,8 +62,8 @@
                   }}
                 </div>
               </div>
-              <div class="level_expected_revenue">
-                <span>Daily Revenue: </span>
+              <div class="level_expected_revenue" v-if="!item.isLocked">
+                <span>Daily Earn: </span>
                 <span style="color: #55e60c; font-weight: bold">
                   ${{ calculateReturn(item.minAmount) }}
                 </span>
@@ -227,7 +227,9 @@ export default defineComponent({
         .multipliedBy(gmtConvertUsd)
         .toNumber();
 
-      return returnVal.toFixed(2);
+      const index = this.getNonZeroDecimalIndex(returnVal);
+
+      return returnVal.toFixed(index > 1 ? index + 1 : 2);
     },
     // 去邀请
     toFrens() {
@@ -236,6 +238,18 @@ export default defineComponent({
     // 去做任务
     toEarn() {
       this.$router.push("/earn");
+    },
+    // 获取小数点后第一个非0的索引
+    getNonZeroDecimalIndex(number: number) {
+      const decimalPart = number.toString().split(".")[1];
+      if (!decimalPart) return -1; // 如果没有小数部分，返回 -1
+
+      for (let i = 0; i < decimalPart.length; i++) {
+        if (decimalPart[i] !== "0") {
+          return i; // 返回第一个不为 0 的索引
+        }
+      }
+      return -1; // 如果全部为 0，返回 -1
     },
   },
   mounted() {
@@ -455,7 +469,7 @@ export default defineComponent({
   .dot {
     position: absolute;
     top: 0;
-    right: -8px;
+    right: -10px;
     width: 10px;
     height: 10px;
     background-color: red;
