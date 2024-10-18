@@ -31,35 +31,35 @@
         <span>
           <span>GM: </span>
           <span style="font-weight: bold; color: #fdefd6"
-            >From UTC 07:00 to 07:30</span
+            >From UTC+6 07:00 to 07:30</span
           >
         </span>
         <br />
         <span>
           <span>Breakfast: </span>
           <span style="font-weight: bold; color: #fdefd6"
-            >From UTC 08:30 to 09:00</span
+            >From UTC+6 08:30 to 09:00</span
           >
         </span>
         <br />
         <span>
           <span>Lunch: </span>
           <span style="font-weight: bold; color: #fdefd6"
-            >From UTC 12:00 to 12:30</span
+            >From UTC+6 12:00 to 12:30</span
           >
         </span>
         <br />
         <span>
           <span>Dinner: </span>
           <span style="font-weight: bold; color: #fdefd6"
-            >From UTC 18:00 to 18:30</span
+            >From UTC+6 18:00 to 18:30</span
           >
         </span>
         <br />
         <span>
           <span>GN: </span>
           <span style="font-weight: bold; color: #fdefd6"
-            >From UTC 21:00 to 21:30</span
+            >From UTC+6 21:00 to 21:30</span
           >
         </span>
         <br />
