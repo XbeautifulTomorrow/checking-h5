@@ -579,7 +579,7 @@
         <div class="dialog_text">
           <template v-if="currentSignType">
             <span>Bingo! You have earned </span>
-            <span style="font-size: 24px; font-weight: 700">
+            <span style="font-size: 24px; font-weight: 700; color: #fdefd6">
               {{ Number(getPoints).toLocaleString() }}
             </span>
             <span> points.</span>
