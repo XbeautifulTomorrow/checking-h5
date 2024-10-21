@@ -756,7 +756,7 @@ export default defineComponent({
         timer: null as number | any,
       },
       showJoin: false, // 参加弹窗
-      showAdvertise: false, // 广告弹窗
+      showAdvertise: true, // 广告弹窗
       showInvite: false, // 邀请弹窗
       showReCheckin: false, // 补签弹窗
       showRecharge: false, // 充值弹窗
@@ -1339,7 +1339,7 @@ export default defineComponent({
     toAdController() {
       // 看广告
       const AdController = (window as any).Adsgram.init({
-        blockId: "233",
+        // blockId: "233",
         debug: true,
       });
 
