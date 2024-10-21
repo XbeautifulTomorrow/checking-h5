@@ -1024,8 +1024,8 @@ export default defineComponent({
     handleAdvertise() {
       const { createPoints } = this;
 
-      // 如果剩余奖励时间大于60秒，则显示广告弹窗
-      if (createPoints.time > 60) {
+      // 如果剩余奖励时间大于30秒，则显示广告弹窗
+      if (createPoints.time > 30) {
         this.showAdvertise = true;
       } else {
         this.handleCheckIn(false);
