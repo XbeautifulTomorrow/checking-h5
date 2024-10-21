@@ -122,7 +122,7 @@
               <div v-else-if="item.userStatus == 2" class="check_in_time">
                 <countDown
                   v-slot="timeObj"
-                  @onEnd="fetchChallengeDetail()"
+                  @onEnd="fetchChallengeDetail(false)"
                   :time="getCountDown(item, 2)"
                 >
                   <span class="check_in">
@@ -231,7 +231,7 @@
             <countDown
               class="finished"
               v-slot="timeObj"
-              @onEnd="fetchChallengeDetail()"
+              @onEnd="fetchChallengeDetail(false)"
               :time="getCountDown(isNotStart)"
               v-if="isLastDay"
             >
@@ -574,11 +574,22 @@
       </div>
     </v-dialog>
     <!--邀请弹窗-->
-    <v-dialog v-model="showInvite" width="auto">
+    <v-dialog v-model="showInvite" min-width="200">
       <div class="dialog_box">
         <div class="dialog_text">
+          <template v-if="currentSignType">
+            <span>Bingo! You have earned </span>
+            <span style="font-size: 24px; font-weight: 700">
+              {{ Number(getPoints).toLocaleString() }}
+            </span>
+            <span> points.</span>
+            <br />
+          </template>
           <span>Invite Friends. Split </span>
-          <span style="font-weight: 700">$1M $GMC !</span>
+          <br />
+          <span style="font-size: 24px; font-weight: 700; color: #fd516c">
+            $1M $GMC !
+          </span>
         </div>
         <v-btn class="invite" @click="inviteToTelegram()">
           <v-img
@@ -757,6 +768,7 @@ export default defineComponent({
       },
       showJoin: false, // 参加弹窗
       showAdvertise: false, // 广告弹窗
+      currentSignType: null as ucCheckInVOs["signType"] | any, // 签到类型
       showInvite: false, // 邀请弹窗
       showReCheckin: false, // 补签弹窗
       showRecharge: false, // 充值弹窗
@@ -899,6 +911,20 @@ export default defineComponent({
         return true;
       }
     },
+    // 本次获得的积分
+    getPoints() {
+      const { currentSignType, challengeInfo } = this;
+      //  当前是否可签到
+      const checkIn = challengeInfo?.ucCheckInVOs.find(
+        (e) => e.signType == currentSignType
+      );
+
+      if (checkIn) {
+        return checkIn.points;
+      }
+
+      return 3600;
+    },
   },
   async created() {
     this.fetchChallengeList();
@@ -906,7 +932,7 @@ export default defineComponent({
   methods: {
     unitConversion: unitConversion,
     // 获取挑战列表
-    async fetchChallengeList() {
+    async fetchChallengeList(isInvite = false) {
       const res = await getChallengeNav({});
       if (res.code == 200) {
         this.challengeList = res.data;
@@ -921,7 +947,7 @@ export default defineComponent({
             setChallengeId(this.challengeList[index].challengeId);
           }
 
-          this.fetchChallengeDetail();
+          this.fetchChallengeDetail(isInvite);
           return;
         }
 
@@ -933,11 +959,11 @@ export default defineComponent({
         }
 
         this.$forceUpdate();
-        this.fetchChallengeDetail();
+        this.fetchChallengeDetail(isInvite);
       }
     },
     // 获取挑战详情
-    async fetchChallengeDetail() {
+    async fetchChallengeDetail(isInvite: boolean) {
       this.isLoad = false; // 是否第一次加载
       const { currentChallenge } = this;
       if (!currentChallenge) return;
@@ -946,10 +972,13 @@ export default defineComponent({
       const res = await getChallengeDetails({
         challengeId,
       });
+
       if (res.code == 200) {
         this.challengeInfo = res.data;
         this.$forceUpdate();
         this.timerFun();
+
+        this.showInvite = false;
 
         this.$nextTick(() => {
           (window as any).LetterAvatar.transform();
@@ -1050,10 +1079,11 @@ export default defineComponent({
           });
 
           if (res.code == 200) {
+            this.currentSignType = checkIn?.signType;
             this.showInvite = true;
             const userStore = useUserStore();
             userStore.fetchUserInfo();
-            this.fetchChallengeList();
+            this.fetchChallengeList(true);
           }
         }
       }
@@ -1423,6 +1453,12 @@ export default defineComponent({
       }
 
       animate();
+    },
+    // 关闭弹窗时，清除本次签到类型
+    showInvite(newV: boolean) {
+      if (!newV) {
+        this.currentSignType = null;
+      }
     },
   },
   beforeUnmount() {
