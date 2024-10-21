@@ -125,9 +125,9 @@
                   @onEnd="fetchChallengeDetail()"
                   :time="getCountDown(item, 2)"
                 >
-                  <span class="check_in">{{
-                    `${timeObj.mm}m${timeObj.ss}s Left`
-                  }}</span>
+                  <span class="check_in">
+                    {{ `${timeObj.mm}m${timeObj.ss}s Left` }}
+                  </span>
                 </countDown>
               </div>
               <!--已签到，显示获得积分-->
@@ -207,7 +207,7 @@
           <v-btn
             class="check_in_btn"
             height="42"
-            @click="handleCheckIn()"
+            @click="handleAdvertise()"
             v-if="checkStart"
             :elevation="8"
           >
@@ -247,7 +247,7 @@
         <!-- 失败 -->
         <template v-else-if="challengeInfo?.userStatus == 3">
           <v-btn class="check_in_btn failed" readonly :elevation="8">
-            <span class="finished">You Failed</span>
+            <span class="finished">Why this is failed</span>
           </v-btn>
         </template>
         <!--结束，领取奖励-->
@@ -457,6 +457,7 @@
       <span class="help">?</span>
       <span class="rules_text">RULE</span>
     </div>
+    <!--参加弹窗-->
     <v-dialog v-model="showJoin" width="100%" :opacity="0.8">
       <div class="join_dialog_panel">
         <div class="join_title">Join To Split Bonus.</div>
@@ -526,6 +527,49 @@
           >
             <span class="btn_text">CHECK-IN NOW</span>
           </v-btn>
+        </div>
+      </div>
+    </v-dialog>
+    <!--广告弹窗-->
+    <v-dialog v-model="showAdvertise" width="auto">
+      <div class="advertise_box">
+        <div class="advertise_img">
+          <v-img
+            :width="280"
+            cover
+            src="@/assets/images/check_in/double.png"
+          ></v-img>
+        </div>
+        <div class="advertise_description">
+          <span>
+            Awesome, Self-discipline acquires wealth! You have earned
+          </span>
+          <span style="font-size: 20px; font-weight: bold; color: #fdefd6">
+            {{ Number(createPoints.time).toLocaleString() }}
+          </span>
+          <span> points. Watch ads to get more to win super prizes.</span>
+        </div>
+        <v-btn class="advertise_btn" @click="toAdController()">
+          <div class="advertise_text">
+            <v-img
+              :width="32"
+              cover
+              src="@/assets/images/svg/check_in/icon_AD.svg"
+            ></v-img>
+            <span style="padding: 0 4px">GET</span>
+            <v-img
+              :width="24"
+              cover
+              src="@/assets/images/svg/check_in/points.svg"
+            ></v-img>
+            <span style="font-size: 24px; font-weight: bold">
+              {{ Number(createPoints.time * 2).toLocaleString() }}
+            </span>
+          </div>
+        </v-btn>
+        <div class="not_advertise" @click="handleCheckIn(false)">
+          <span>{{ Number(createPoints.time).toLocaleString() }}</span>
+          <span>Points is ok</span>
         </div>
       </div>
     </v-dialog>
@@ -642,13 +686,13 @@ import GN from "@/assets/images/svg/check_in/GN.svg";
 import bigNumber from "bignumber.js";
 
 interface ucCheckInVOs {
-  challengeId: number; //挑战ID
-  signType: string; //签到类型(GM-起床，BREAKFAST-早饭、LUNCH-午饭、SUPPER-晚饭、 GN-睡觉)
-  startDate: string; //开始时间
-  endDate: string; //结束时间
-  pointValue: number; //积分价值（1秒几积分）
-  userStatus: number; //用户签到状态（1：未开始，2：未签到，3：已签到，4：待补签，5：失败）
-  points: number | any; //所得积分
+  challengeId: number; // 挑战ID
+  signType: string; // 签到类型(GM-起床，BREAKFAST-早饭、LUNCH-午饭、SUPPER-晚饭、 GN-睡觉)
+  startDate: string; // 开始时间
+  endDate: string; // 结束时间
+  pointValue: number; // 积分价值（1秒几积分）
+  userStatus: number; // 用户签到状态（1：未开始，2：未签到，3：已签到，4：待补签，5：失败）
+  points: number | any; // 所得积分
   [x: string]: string | number | any;
 }
 
@@ -660,6 +704,13 @@ interface cpRankingVOs {
   winAmount: number; //奖励金额
   points: number; //总积分
   [x: string]: string | number | any;
+}
+
+interface showPromiseResult {
+  done: boolean; // true if user watch till the end, otherwise false
+  description: string; // event description
+  state: "load" | "render" | "playing" | "destroy"; // banner state
+  error: boolean; // true if event was emitted due to error, otherwise false
 }
 
 interface challenge {
@@ -705,6 +756,7 @@ export default defineComponent({
         timer: null as number | any,
       },
       showJoin: false, // 参加弹窗
+      showAdvertise: false, // 广告弹窗
       showInvite: false, // 邀请弹窗
       showReCheckin: false, // 补签弹窗
       showRecharge: false, // 充值弹窗
@@ -968,8 +1020,12 @@ export default defineComponent({
         this.fetchChallengeList();
       }
     },
+    // 挑战广告
+    handleAdvertise() {
+      this.showAdvertise = true;
+    },
     // 挑战签到
-    async handleCheckIn() {
+    async handleCheckIn(isAdvertise: boolean) {
       const { challengeInfo } = this;
       if (challengeInfo?.ucCheckInVOs.length > 0) {
         //  当前是否可签到
@@ -981,6 +1037,7 @@ export default defineComponent({
           const res = await challengeCheckIn({
             challengeId: challengeInfo?.challengeId,
             signType: checkIn?.signType,
+            isWatchAd: isAdvertise,
           });
 
           if (res.code == 200) {
@@ -1268,6 +1325,27 @@ export default defineComponent({
         }
       }
       return -1; // 如果全部为 0，返回 -1
+    },
+    // 广告
+    toAdController() {
+      // 看广告
+      const AdController = (window as any).Adsgram.init({ blockId: "4488" });
+
+      // 显示广告横幅
+      AdController.show()
+        .then(async (result: showPromiseResult) => {
+          // user watch ad till the end
+          if (result.done) {
+            this.handleCheckIn(true);
+          }
+          // your code to reward user
+        })
+        .catch((result: showPromiseResult) => {
+          // user skipped video or get error during playing ad
+          console.log(result);
+          // do nothing or whatever you want
+          this.handleCheckIn(false);
+        });
     },
   },
   watch: {
@@ -2052,6 +2130,58 @@ export default defineComponent({
       letter-spacing: 0;
     }
   }
+}
+
+.advertise_box {
+  background: #fd516c;
+  border-radius: 8px;
+  padding: 16px;
+
+  .v-img {
+    flex: none;
+  }
+}
+
+.advertise_img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.advertise_description {
+  color: white;
+  font-size: 16px;
+  text-align: center;
+  padding-bottom: 14px;
+}
+
+.advertise_btn {
+  width: 100%;
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    rgba(253, 239, 213, 1) 0%,
+    rgba(248, 215, 156, 1) 101%
+  );
+  color: #fe2e75;
+  font-size: 20px;
+}
+
+.advertise_text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.not_advertise {
+  text-align: center;
+  color: white;
+  font-size: 16px;
+  margin-top: 14px;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .finished {
