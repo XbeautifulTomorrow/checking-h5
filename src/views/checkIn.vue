@@ -1022,7 +1022,14 @@ export default defineComponent({
     },
     // 挑战广告
     handleAdvertise() {
-      this.showAdvertise = true;
+      const { createPoints } = this;
+
+      // 如果剩余奖励时间大于60秒，则显示广告弹窗
+      if (createPoints.time > 60) {
+        this.showAdvertise = true;
+      } else {
+        this.handleCheckIn(false);
+      }
     },
     // 挑战签到
     async handleCheckIn(isAdvertise: boolean) {
@@ -1034,6 +1041,8 @@ export default defineComponent({
         );
 
         if (checkIn) {
+          this.showAdvertise = false;
+
           const res = await challengeCheckIn({
             challengeId: challengeInfo?.challengeId,
             signType: checkIn?.signType,
@@ -1329,7 +1338,7 @@ export default defineComponent({
     // 广告
     toAdController() {
       // 看广告
-      const AdController = (window as any).Adsgram.init({ blockId: "4488" });
+      const AdController = (window as any).Adsgram.init({ blockId: "233" });
 
       // 显示广告横幅
       AdController.show()
