@@ -1369,7 +1369,7 @@ export default defineComponent({
     toAdController() {
       // 看广告
       const AdController = (window as any).Adsgram.init({
-        blockId: "233",
+        blockId: "4488",
       });
 
       // 显示广告横幅
