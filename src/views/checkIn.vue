@@ -978,7 +978,7 @@ export default defineComponent({
         this.$forceUpdate();
         this.timerFun();
 
-        this.showInvite = false;
+        this.showInvite = isInvite;
 
         this.$nextTick(() => {
           (window as any).LetterAvatar.transform();
