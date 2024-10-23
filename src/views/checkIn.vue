@@ -697,14 +697,14 @@
       <div class="dialog_box">
         <div class="dialog_text">Re-check in will cost energy.</div>
         <div class="energy_box">
-          <span class="finished">{{
-            `- ${challengeInfo?.supplementaryEnergy}`
-          }}</span>
+          <span class="finished">
+            {{ `- ${challengeInfo?.supplementaryEnergy}` }}
+          </span>
           <v-icon color="#FFF100" :size="16" icon="mdi-lightning-bolt"></v-icon>
         </div>
         <v-btn
           class="re_check_in"
-          @click="toAdController()"
+          @click="handleReCheckinAdvertise()"
           :loading="reCheckinLoading"
         >
           <span class="finished">Re-Check In</span>
@@ -1184,9 +1184,13 @@ export default defineComponent({
         setShowRecharge(true);
       }
     },
+    // 补签打开广告
+    handleReCheckinAdvertise() {
+      this.showAdvertise = true;
+      this.reCheckinLoading = true;
+    },
     // 补签
     async handleReCheckin(isInvite: boolean) {
-      this.reCheckinLoading = true;
       const { reCheckinInfo } = this;
       const { setMessageText } = useMessageStore();
 
