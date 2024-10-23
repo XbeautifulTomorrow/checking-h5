@@ -1162,7 +1162,6 @@ export default defineComponent({
 
           if (res.code == 200) {
             this.currentSignType = checkIn?.signType;
-            this.showInvite = true;
             const userStore = useUserStore();
             userStore.fetchUserInfo();
             this.fetchChallengeList(true);
@@ -1192,7 +1191,6 @@ export default defineComponent({
     async handleReCheckin(isInvite: boolean) {
       this.reCheckinLoading = true;
       const { reCheckinInfo } = this;
-      const { setMessageText } = useMessageStore();
 
       const res = await challengeReCheckin({
         challengeId: reCheckinInfo.challengeId,
@@ -1206,10 +1204,9 @@ export default defineComponent({
         this.showAdvertise = false;
         this.currentSignType = reCheckinInfo.signType;
 
-        setMessageText("Re-check in successfully");
         const userStore = useUserStore();
         userStore.fetchUserInfo();
-        this.fetchChallengeList();
+        this.fetchChallengeList(true);
       }
     },
     // 领取奖金
