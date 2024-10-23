@@ -33,11 +33,41 @@
                   src="@/assets/images/svg/check_in/gm_coin.svg"
                 ></v-img>
                 <div :class="['bonus_num', item.userStatus == 3 && 'fail']">
-                  <span v-if="item.userStatus == 3">{{
-                    `- ${unitConversion(item.amount || 0)}`
-                  }}</span>
+                  <span v-if="item.userStatus == 3">
+                    {{ `- ${unitConversion(item.amount || 0)}` }}
+                  </span>
                   <span v-else>{{ unitConversion(item.amount || 0) }}</span>
                 </div>
+              </div>
+              <div
+                v-if="item.userStatus == 3 && item.helpStatus > 0"
+                :class="[
+                  'challenge_help',
+                  item.helpStatus == 1
+                    ? 'wait'
+                    : item.helpStatus == 2
+                    ? 'receive'
+                    : 'claim',
+                ]"
+                @click="
+                  item.helpStatus == 1 && handleHelpInvite(item.challengeId)
+                "
+              >
+                <template v-if="item.helpStatus == 1">
+                  <v-img
+                    :width="14"
+                    src="@/assets/images/svg/check_in/icon_telegram.svg"
+                  ></v-img>
+                  <span>ASK HELP</span>
+                </template>
+                <template v-else-if="item.helpStatus == 2">
+                  <v-img
+                    :width="16"
+                    src="@/assets/images/svg/check_in/icon_refund.svg"
+                  ></v-img>
+                  <span>REFUND</span>
+                </template>
+                <template v-else class="help_refunded">REFUNDED</template>
               </div>
               <div
                 :class="['challenge_user', userStatus(item.userStatus)]"
@@ -58,11 +88,13 @@
                   v-if="item.userStatus == 5"
                   src="@/assets/images/svg/active/claimed.svg"
                 ></v-img>
-                <span>{{
-                  userStatus(item.userStatus) == "IN_GAME"
-                    ? "IN GAME"
-                    : userStatus(item.userStatus)
-                }}</span>
+                <span>
+                  {{
+                    userStatus(item.userStatus) == "IN_GAME"
+                      ? "IN GAME"
+                      : userStatus(item.userStatus)
+                  }}
+                </span>
               </div>
             </div>
           </div>
@@ -122,7 +154,7 @@ import { defineComponent } from "vue";
 import { useUserStore } from "@/store/user.js";
 import { getChallengeList } from "@/services/api/challenge";
 import { useCheckInStore } from "@/store/check_in.js";
-import { unitConversion } from "@/utils";
+import { unitConversion, shareOnTelegram } from "@/utils";
 
 interface userInfoVOList {
   avatar: string;
@@ -187,11 +219,11 @@ export default defineComponent({
         } else {
           this.challengeList.push.apply(this.challengeList, res.data.records);
         }
-
         const count = 10;
 
         for (let i = 0; i < this.challengeList.length; i++) {
           const counts = this.challengeList[i].userInfoVOList.length;
+
           for (let j = 0; j < count; j++) {
             if (j >= counts) {
               this.challengeList[i].userInfoVOList.push({
@@ -224,6 +256,20 @@ export default defineComponent({
           this.fetchChallengeList(2, false);
         }, 300);
       }
+    },
+    // 求助邀请
+    handleHelpInvite(event: any) {
+      const {
+        userInfo: { inviteCode },
+      } = this;
+      let inviteUrl = "";
+      if (import.meta.env.MODE == "prod") {
+        inviteUrl = `https://t.me/theGMCoinBot/GMCoin?startapp=${inviteCode}_${event}`;
+      } else {
+        inviteUrl = `https://t.me/gm_coin_test_bot/checking?startapp=${inviteCode}_${event}`;
+      }
+
+      shareOnTelegram(inviteUrl);
     },
     // 比赛详情
     toChallenge(event: challenge) {
@@ -446,6 +492,36 @@ export default defineComponent({
 
   .challenge_user {
     background-color: #ffad2e;
+  }
+
+  .challenge_help {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    min-height: 20px;
+    line-height: 1;
+    font-weight: bold;
+
+    .v-img {
+      flex: none;
+      margin-right: 4px;
+    }
+
+    &.wait {
+      background-color: #49b6f6;
+      color: white;
+    }
+
+    &.receive {
+      background-color: #ffae2e;
+      color: #000;
+    }
+
+    &.claim {
+      background-color: #a8a7a7;
+      color: white;
+    }
   }
 }
 

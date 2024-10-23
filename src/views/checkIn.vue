@@ -176,7 +176,9 @@
         </div>
       </div>
     </div>
-    <div class="interval_panel">
+    <div
+      :class="['interval_panel', challengeInfo?.helpStatus > 0 ? 'help' : '']"
+    >
       <div class="interval"></div>
       <div class="join_panel">
         <template v-if="challengeInfo?.userStatus == 2">
@@ -211,9 +213,9 @@
             v-if="checkStart"
             :elevation="8"
           >
-            <span class="finished">{{
-              `Check In +${Number(createPoints.time).toLocaleString()}`
-            }}</span>
+            <span class="finished">
+              {{ `Check In +${Number(createPoints.time).toLocaleString()}` }}
+            </span>
             <v-img
               :width="24"
               cover
@@ -239,16 +241,73 @@
                 `Next check-in start in ${timeObj.hh}:${timeObj.mm}:${timeObj.ss}`
               }}
             </countDown>
-            <span v-else class="finished"
-              >Challenge complete, reward coming soon.</span
-            >
+            <span v-else class="finished">
+              Challenge complete, reward coming soon.
+            </span>
           </v-btn>
         </template>
         <!-- 失败 -->
         <template v-else-if="challengeInfo?.userStatus == 3">
           <v-btn class="check_in_btn failed" readonly :elevation="8">
-            <span class="finished">Why this is failed</span>
+            <span class="finished">You Failed</span>
           </v-btn>
+          <div
+            v-if="challengeInfo?.helpStatus != 0"
+            :class="[
+              'help_btn',
+              challengeInfo?.helpStatus == 1
+                ? 'wait'
+                : challengeInfo?.helpStatus == 2
+                ? 'receive'
+                : 'claim',
+            ]"
+            @click="handleHelp()"
+          >
+            <div class="help_received" v-if="challengeInfo?.helpStatus == 3">
+              <v-img
+                :width="18"
+                cover
+                src="@/assets/images/svg/check_in/icon_finish.svg"
+              ></v-img>
+            </div>
+            <div class="help_text">
+              <v-img
+                :width="18"
+                cover
+                src="@/assets/images/svg/check_in/icon_telegram.svg"
+                v-if="challengeInfo?.helpStatus == 1"
+              ></v-img>
+              <span v-if="challengeInfo?.helpStatus == 3">
+                {{
+                  `${Number(
+                    challengeInfo?.registrationAmount | 0
+                  ).toLocaleString()} $GMC Has Returned To Your Wallet.`
+                }}
+              </span>
+              <span v-else>
+                {{
+                  `Take ${Number(
+                    challengeInfo?.registrationAmount | 0
+                  ).toLocaleString()} $GMC Back`
+                }}
+              </span>
+            </div>
+            <div class="help_hint" v-if="challengeInfo?.helpStatus != 3">
+              <v-img
+                :width="18"
+                cover
+                src="@/assets/images/svg/check_in/icon_invite1.svg"
+                v-if="challengeInfo?.helpStatus == 1"
+              ></v-img>
+              <v-img
+                :width="18"
+                cover
+                src="@/assets/images/svg/check_in/icon_invite2.svg"
+                v-if="challengeInfo?.helpStatus == 2"
+              ></v-img>
+              <span>{{ `${challengeInfo?.helpStatus > 1 ? 1 : 0}/1` }}</span>
+            </div>
+          </div>
         </template>
         <!--结束，领取奖励-->
         <template v-else-if="challengeInfo?.userStatus > 3">
@@ -259,9 +318,11 @@
             :loading="claimLoading"
             :elevation="8"
           >
-            <span class="finished">{{
-              `Claim +${Number(challengeInfo?.rewardAmount).toLocaleString()}`
-            }}</span>
+            <span class="finished">
+              {{
+                `Claim +${Number(challengeInfo?.rewardAmount).toLocaleString()}`
+              }}
+            </span>
             <v-img
               :width="24"
               cover
@@ -274,11 +335,13 @@
             :loading="claimLoading"
             :elevation="8"
           >
-            <span class="finished">{{
-              `${Number(
-                challengeInfo?.rewardAmount
-              ).toLocaleString()} $GMC Claimed`
-            }}</span>
+            <span class="finished">
+              {{
+                `${Number(
+                  challengeInfo?.rewardAmount
+                ).toLocaleString()} $GMC Claimed`
+              }}
+            </span>
           </v-btn>
         </template>
       </div>
@@ -545,7 +608,11 @@
             Awesome, Self-discipline acquires wealth! You have earned
           </span>
           <span style="font-size: 20px; font-weight: bold; color: #fdefd6">
-            {{ Number(createPoints.time).toLocaleString() }}
+            {{
+              signMode == 1
+                ? Number(createPoints.time).toLocaleString()
+                : Number(1000).toLocaleString()
+            }}
           </span>
           <span> points. Watch ads to get more to win super prizes.</span>
         </div>
@@ -563,13 +630,26 @@
               src="@/assets/images/svg/check_in/points.svg"
             ></v-img>
             <span style="font-size: 24px; font-weight: bold">
-              {{ Number(createPoints.time * 2).toLocaleString() }}
+              {{
+                signMode == 1
+                  ? Number(createPoints.time * 2).toLocaleString()
+                  : Number(2000).toLocaleString()
+              }}
             </span>
           </div>
         </v-btn>
-        <div class="not_advertise" @click="handleCheckIn(false)">
-          <span>{{ Number(createPoints.time).toLocaleString() }}</span>
-          <span>Points is ok</span>
+        <div
+          class="not_advertise"
+          @click="signMode == 1 ? handleCheckIn(false) : handleReCheckin(false)"
+        >
+          <span>
+            {{
+              signMode == 1
+                ? Number(createPoints.time).toLocaleString()
+                : Number(1000).toLocaleString()
+            }}
+          </span>
+          <span> Points is ok</span>
         </div>
       </div>
     </v-dialog>
@@ -588,7 +668,7 @@
           <span>Invite Friends. Split </span>
           <br />
           <span style="font-size: 24px; font-weight: 700; color: #fd516c">
-            $1M $GMC !
+            1,000,000 $GMC !
           </span>
         </div>
         <v-btn class="invite" @click="inviteToTelegram()">
@@ -624,7 +704,7 @@
         </div>
         <v-btn
           class="re_check_in"
-          @click="handleReCheckin()"
+          @click="toAdController()"
           :loading="reCheckinLoading"
         >
           <span class="finished">Re-Check In</span>
@@ -679,6 +759,7 @@ import {
   challengeCheckIn,
   challengeReCheckin,
   challengePickUp,
+  backPickUp,
 } from "@/services/api/challenge";
 import { useUserStore } from "@/store/user.js";
 import { useCheckInStore } from "@/store/check_in.js";
@@ -769,6 +850,7 @@ export default defineComponent({
       showJoin: false, // 参加弹窗
       showAdvertise: false, // 广告弹窗
       currentSignType: null as ucCheckInVOs["signType"] | any, // 签到类型
+      signMode: 1, // 签到模式 1：签到；2：补签
       showInvite: false, // 邀请弹窗
       showReCheckin: false, // 补签弹窗
       showRecharge: false, // 充值弹窗
@@ -1043,10 +1125,9 @@ export default defineComponent({
       if (res.code == 200) {
         this.showJoin = false;
         this.bonusNum = userInfo?.minAmount;
-        this.showInvite = true;
         const userStore = useUserStore();
         userStore.fetchUserInfo();
-        this.fetchChallengeList();
+        this.fetchChallengeList(true);
       }
     },
     // 挑战广告
@@ -1071,6 +1152,7 @@ export default defineComponent({
 
         if (checkIn) {
           this.showAdvertise = false;
+          this.signMode = 1;
 
           const res = await challengeCheckIn({
             challengeId: challengeInfo?.challengeId,
@@ -1096,13 +1178,14 @@ export default defineComponent({
       if (energyAmount > 0) {
         this.reCheckinInfo = item;
         this.showReCheckin = true;
+        this.signMode = 2;
       } else {
         const { setShowRecharge } = useUserStore();
         setShowRecharge(true);
       }
     },
     // 补签
-    async handleReCheckin() {
+    async handleReCheckin(isInvite: boolean) {
       this.reCheckinLoading = true;
       const { reCheckinInfo } = this;
       const { setMessageText } = useMessageStore();
@@ -1110,11 +1193,13 @@ export default defineComponent({
       const res = await challengeReCheckin({
         challengeId: reCheckinInfo.challengeId,
         signType: reCheckinInfo.signType,
+        isWatchAd: isInvite,
       });
 
       this.reCheckinLoading = false;
       if (res.code == 200) {
         this.showReCheckin = false;
+        this.currentSignType = reCheckinInfo.signType;
 
         setMessageText("Re-check in successfully");
         const userStore = useUserStore();
@@ -1377,7 +1462,11 @@ export default defineComponent({
         .then(async (result: showPromiseResult) => {
           // user watch ad till the end
           if (result.done) {
-            this.handleCheckIn(true);
+            if (this.signMode == 1) {
+              this.handleCheckIn(true);
+            } else {
+              this.handleReCheckin(true);
+            }
           }
           // your code to reward user
         })
@@ -1385,8 +1474,53 @@ export default defineComponent({
           // user skipped video or get error during playing ad
           console.log(result);
           // do nothing or whatever you want
-          this.handleCheckIn(false);
+          if (this.signMode == 1) {
+            this.handleCheckIn(false);
+          } else {
+            this.handleReCheckin(false);
+          }
         });
+    },
+    handleHelp() {
+      const {
+        challengeInfo: { helpStatus },
+      } = this;
+
+      if (helpStatus == 1) {
+        // 求助邀请
+        this.handleHelpInvite();
+      } else if (helpStatus == 2) {
+        // 领取返还
+        this.handleHelpClaim();
+      }
+    },
+    // 求助邀请
+    handleHelpInvite() {
+      const {
+        challengeInfo: { challengeId },
+        userInfo: { inviteCode },
+      } = this;
+      let inviteUrl = "";
+      if (import.meta.env.MODE == "prod") {
+        inviteUrl = `https://t.me/theGMCoinBot/GMCoin?startapp=${inviteCode}_${challengeId}`;
+      } else {
+        inviteUrl = `https://t.me/gm_coin_test_bot/checking?startapp=${inviteCode}_${challengeId}`;
+      }
+
+      shareOnTelegram(inviteUrl);
+    },
+    // 领取返还
+    async handleHelpClaim() {
+      const {
+        challengeInfo: { challengeId },
+      } = this;
+
+      const res = await backPickUp({ challengeId });
+      if (res.code == 200) {
+        const { setMessageText } = useMessageStore();
+        setMessageText("Received successfully");
+        this.fetchChallengeList();
+      }
     },
   },
   watch: {
@@ -1689,6 +1823,15 @@ export default defineComponent({
       rgba(253, 190, 175, 1) 103%
     );
     border-radius: 10px;
+  }
+
+  &.help {
+    .join_panel {
+      padding: 14px 0;
+    }
+    .interval {
+      height: 110px;
+    }
   }
 }
 
@@ -2229,6 +2372,70 @@ export default defineComponent({
   margin-top: 14px;
   text-decoration: underline;
   cursor: pointer;
+}
+
+.help_btn {
+  width: 100%;
+  margin-top: 8px;
+  padding: 4px 8px;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-size: 14px;
+  cursor: pointer;
+
+  .v-img {
+    flex: none;
+    margin-right: 4px;
+  }
+
+  &.wait {
+    background-color: #49b6f6;
+  }
+
+  &.receive {
+    background-color: #feefd5;
+    color: #fe2e75;
+  }
+
+  &.claim {
+    background-color: #797978;
+    color: #c8c1c1;
+    cursor: not-allowed;
+  }
+
+  .help_received {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    left: 8px;
+
+    .v-img {
+      flex: none;
+      margin-left: 0;
+    }
+  }
+
+  .help_text {
+    display: flex;
+    align-items: center;
+    .v-img {
+      flex: none;
+      margin-left: 4px;
+    }
+  }
+
+  .help_hint {
+    position: absolute;
+    font-weight: 400;
+    right: 8px;
+    display: flex;
+    align-items: center;
+  }
 }
 
 .finished {

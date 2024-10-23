@@ -50,6 +50,11 @@ const challengePickUp = (params: any) => http.get("/gm-coin-server-web/user-chal
 const challengeExpectedReturn = (params: any) => http.get("/gm-coin-server-web/challenge/expectedReturn", params);
 
 
+/**
+ * 返还领取
+ * @param params
+ */
+const backPickUp = (params: any) => http.get("/gm-coin-server-web/user-challenge/backPickUp", params);
 
 
 export {
@@ -60,5 +65,6 @@ export {
   challengeCheckIn,
   challengeReCheckin,
   challengePickUp,
-  challengeExpectedReturn
+  challengeExpectedReturn,
+  backPickUp
 };

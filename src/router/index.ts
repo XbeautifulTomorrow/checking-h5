@@ -134,8 +134,17 @@ router.beforeEach(async (to, from, next) => {
         }
       }
     } else {
-      // 保存邀请码
-      setSessionStore('inviteCode', urlParam);
+      const inviteArray = urlParam.split("_");
+      if (inviteArray.length >= 2) {
+        // 保存邀请码
+        setSessionStore('inviteCode', inviteArray[0]);
+
+        // 挑战ID
+        setSessionStore('helpId', inviteArray[1]);
+      } else {
+        // 保存邀请码
+        setSessionStore('inviteCode', urlParam);
+      }
     }
   }
 
@@ -171,9 +180,12 @@ router.beforeEach(async (to, from, next) => {
 
     const inviteCode = getSessionStore("inviteCode");
     const source = getSessionStore("source");
+    const helpId = getSessionStore("helpId");
+
     const res = await telegramLogin({
       tgEncodeStr: tg_certificate,
       inviteCode: inviteCode || "",
+      challengeId: helpId || "",
       source: source || ""
     });
 
