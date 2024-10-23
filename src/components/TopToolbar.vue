@@ -124,6 +124,14 @@ export default defineComponent({
       const userStore = useUserStore();
       userStore.fetchUserInfo();
     }
+
+    if (this.$route.path == "/") {
+      this.isTab = false;
+      this.isMain = true;
+    } else {
+      this.isMain = false;
+      this.isTab = this.NavList.includes(this.$route.path);
+    }
   },
   computed: {
     isLogin() {

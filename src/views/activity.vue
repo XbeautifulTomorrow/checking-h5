@@ -8,7 +8,7 @@
       >
         <div class="avatar_left">
           <div class="avatar_item" v-if="item.userStatus != 2">
-            <div class="challenge_info">
+            <div class="challenge_info" @click="toChallenge(item)">
               <div :class="['challenge_time', currentStatus(item.userStatus)]">
                 <v-avatar
                   v-if="userInfo?.avatar"
@@ -49,7 +49,7 @@
                     ? 'receive'
                     : 'claim',
                 ]"
-                @click="
+                @click.stop="
                   item.helpStatus == 1 && handleHelpInvite(item.challengeId)
                 "
               >
