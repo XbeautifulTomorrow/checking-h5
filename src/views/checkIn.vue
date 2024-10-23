@@ -1203,6 +1203,7 @@ export default defineComponent({
       this.reCheckinLoading = false;
       if (res.code == 200) {
         this.showReCheckin = false;
+        this.showAdvertise = false;
         this.currentSignType = reCheckinInfo.signType;
 
         setMessageText("Re-check in successfully");
