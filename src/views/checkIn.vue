@@ -663,7 +663,6 @@
               {{ Number(getPoints).toLocaleString() }}
             </span>
             <span> points.</span>
-            <br />
           </template>
           <span>Invite Friends. Split </span>
           <br />
