@@ -1187,10 +1187,10 @@ export default defineComponent({
     // 补签打开广告
     handleReCheckinAdvertise() {
       this.showAdvertise = true;
-      this.reCheckinLoading = true;
     },
     // 补签
     async handleReCheckin(isInvite: boolean) {
+      this.reCheckinLoading = true;
       const { reCheckinInfo } = this;
       const { setMessageText } = useMessageStore();
 
