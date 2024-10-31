@@ -409,7 +409,7 @@ export default defineComponent({
         openUrl("https://x.com/GMCoin_Fam/status/1808708189967561097");
       } else if (abbreviation == "EARN_TON") {
         // 互推
-        openUrl("https://t.me/OctocrazeBot/Social?startapp=Kax31PmUY7");
+        openUrl("https://t.me/womeclubBot?start=WOME-4E4A83");
       }
     },
     // 初始化ton-connect
