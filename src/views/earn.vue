@@ -107,10 +107,16 @@
               src="@/assets/images/earn/earn_ton.png"
             ></v-img>
             <v-img
-              v-else
+              v-else-if="item.abbreviation == '3BASE'"
               :width="36"
               cover
               src="@/assets/images/svg/earn/3base.svg"
+            ></v-img>
+            <v-img
+              v-else
+              :width="36"
+              cover
+              :src="taskImages[item.abbreviation as keyof typeof taskImages]"
             ></v-img>
             <div class="task_item_reward">
               <div class="task_name">{{ item.fullName }}</div>
@@ -193,6 +199,10 @@ import AD from "@/assets/images/svg/earn/ad.svg";
 import PURCHASE from "@/assets/images/svg/earn/purchase.svg";
 import CHAIN_CHECKIN from "@/assets/images/svg/earn/link_check_in.svg";
 import PLAYMULTIPLIER from "@/assets/images/earn/icon_roller.jpg";
+import PLAY_REFLECTION from "@/assets/images/earn/PLAY_REFLECTION.png";
+import EXPLORE_TWITTON from "@/assets/images/earn/EXPLORE_TWITTON.png";
+import PLAY_TELLUCKY from "@/assets/images/earn/PLAY_TELLUCKY.png";
+
 import { TonConnectUI, ConnectedWallet } from "@tonconnect/ui";
 import { toNano, beginCell } from "@ton/ton";
 
@@ -218,6 +228,10 @@ export default defineComponent({
         CHALLENGE,
         AD,
         PLAYMULTIPLIER,
+        // 换量任务
+        PLAY_REFLECTION,
+        EXPLORE_TWITTON,
+        PLAY_TELLUCKY,
       },
     };
   },
@@ -410,6 +424,17 @@ export default defineComponent({
       } else if (abbreviation == "EARN_TON") {
         // 互推
         openUrl("https://t.me/womeclubBot?start=WOME-4E4A83");
+      } else if (abbreviation == "PLAY_REFLECTION") {
+        // 换量
+        openUrl("https://t.me/RectCoinBot/app?startapp=ref_dMrd5d");
+      } else if (abbreviation == "EXPLORE_TWITTON") {
+        // 换量
+        openUrl("https://t.me/twitton_bot/app?startapp=ZLMFVA");
+      } else if (abbreviation == "PLAY_TELLUCKY") {
+        // 换量
+        openUrl(
+          "https://t.me/TelLuckyBot/MiniApp?startapp=miningCode_GCG7KPHC"
+        );
       }
     },
     // 初始化ton-connect
