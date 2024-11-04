@@ -47,6 +47,7 @@
           <span :class="['btn_text', activeItem == 'earn' && 'active']">
             EARN
           </span>
+          <div class="dot" v-if="userInfo.isUnFinish"></div>
         </div>
       </v-btn>
       <v-btn

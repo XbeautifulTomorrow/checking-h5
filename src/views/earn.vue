@@ -189,7 +189,7 @@
       <div class="task_tab_box">
         <div class="tab_btn">
           <div>Explore</div>
-          <div class="dot">{{ taskData.officialCount }}</div>
+          <div class="dot">{{ taskData.exploreCount }}</div>
         </div>
       </div>
       <div class="task_list">
@@ -851,7 +851,7 @@ export default defineComponent({
 
   .dot {
     position: absolute;
-    right: -14px;
+    right: -16px;
     top: 0;
     width: 16px;
     height: 16px;
@@ -866,6 +866,7 @@ export default defineComponent({
     align-items: center;
     justify-content: center;
     color: white;
+    font-weight: bold;
   }
 
   .tab_btn_text {
