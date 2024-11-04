@@ -13,7 +13,9 @@
           >
             Daily Task
           </div>
-          <div class="dot">{{ taskData.dailyCount }}</div>
+          <div class="dot" v-if="taskData.dailyCount">
+            {{ taskData.dailyCount }}
+          </div>
         </div>
         <div class="tab_btn">
           <div
@@ -22,7 +24,9 @@
           >
             Official
           </div>
-          <div class="dot">{{ taskData.officialCount }}</div>
+          <div class="dot" v-if="taskData.officialCount">
+            {{ taskData.officialCount }}
+          </div>
         </div>
       </div>
       <div class="task_list">
@@ -189,7 +193,9 @@
       <div class="task_tab_box">
         <div class="tab_btn">
           <div>Explore</div>
-          <div class="dot">{{ taskData.exploreCount }}</div>
+          <div class="dot" v-if="taskData.exploreCount">
+            {{ taskData.exploreCount }}
+          </div>
         </div>
       </div>
       <div class="task_list">
