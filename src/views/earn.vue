@@ -5,9 +5,33 @@
       <div class="description_text">Earn More $GMC</div>
     </div>
     <div class="task_panel">
-      <div class="task_title">Daily Task</div>
+      <div class="task_tab_box">
+        <div class="tab_btn">
+          <div
+            :class="['tab_btn_text', taskType == 1 ? 'active' : '']"
+            @click="taskType = 1"
+          >
+            Daily Task
+          </div>
+          <div class="dot">{{ taskData.dailyCount }}</div>
+        </div>
+        <div class="tab_btn">
+          <div
+            :class="['tab_btn_text', taskType == 2 ? 'active' : '']"
+            @click="taskType = 2"
+          >
+            Official
+          </div>
+          <div class="dot">{{ taskData.officialCount }}</div>
+        </div>
+      </div>
       <div class="task_list">
-        <div class="task_item" v-for="(item, index) in dailyTask" :key="index">
+        <div
+          v-if="taskType == 1"
+          class="task_item"
+          v-for="(item, index) in dailyTask"
+          :key="index"
+        >
           <div class="task_item_left">
             <v-img
               :width="36"
@@ -63,14 +87,115 @@
             </v-btn>
           </div>
         </div>
+        <div
+          v-if="taskType == 2"
+          class="task_item"
+          v-for="(item, index) in officialTask"
+          :key="index"
+          @click.stop="item.isFinish ? toTask(item) : null"
+        >
+          <div class="task_item_left">
+            <div
+              class="telegram_img"
+              v-if="
+                item.abbreviation == 'TGGROUP' ||
+                item.abbreviation == 'TGCHANNEL'
+              "
+            >
+              <v-img
+                :width="26"
+                cover
+                src="@/assets/images/svg/earn/telegram.svg"
+              ></v-img>
+            </div>
+            <div
+              class="telegram_img twitter"
+              v-else-if="
+                item.abbreviation == 'TW' || item.abbreviation == 'TWEET'
+              "
+            >
+              <v-img
+                :width="16"
+                cover
+                src="@/assets/images/svg/earn/twitter.svg"
+              ></v-img>
+            </div>
+            <v-img
+              v-else-if="item.abbreviation == 'EARN_TON'"
+              :width="36"
+              cover
+              src="@/assets/images/earn/earn_ton.png"
+            ></v-img>
+            <v-img
+              v-else-if="item.abbreviation == '3BASE'"
+              :width="36"
+              cover
+              src="@/assets/images/svg/earn/3base.svg"
+            ></v-img>
+            <v-img
+              v-else
+              :width="36"
+              cover
+              :src="taskImages[item.abbreviation as keyof typeof taskImages]"
+            ></v-img>
+            <div class="task_item_reward">
+              <div class="task_name">{{ item.fullName }}</div>
+              <div class="task_bonus_box">
+                <div class="task_bonus" v-if="item.energyAmount">
+                  <v-icon
+                    color="#FFF100"
+                    size="20"
+                    icon="mdi-lightning-bolt"
+                  ></v-icon>
+                  <div class="bonus">{{ `+ ${item.energyAmount}` }}</div>
+                </div>
+                <div class="task_bonus" v-if="item.coinAmount">
+                  <v-img
+                    :width="18"
+                    cover
+                    src="@/assets/images/svg/check_in/gm_coin.svg"
+                  ></v-img>
+                  <div class="bonus">
+                    {{ `+ ${Number(item.coinAmount).toLocaleString()}` }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="task_item_right">
+            <v-btn
+              :color="item.isFinish ? 'rgb(0,0,0,0)' : '#49B6F6'"
+              :loading="item.loading"
+              height="24"
+              density="compact"
+              @click.stop="!item.isFinish ? completed(item) : toTask(item)"
+              :variant="item.isFinish ? 'text' : 'flat'"
+              :readonly="item.isFinish"
+            >
+              <div v-if="!item.isFinish" class="finished">GO</div>
+              <div v-else-if="item.isFinish" class="completed">
+                <v-icon
+                  size="30"
+                  color="#49B6F6"
+                  icon="mdi-check-bold"
+                ></v-icon>
+              </div>
+            </v-btn>
+          </div>
+        </div>
       </div>
     </div>
     <div class="task_panel">
-      <div class="task_title">Explore</div>
+      <div class="task_tab_box">
+        <div class="tab_btn">
+          <div>Explore</div>
+          <div class="dot">{{ taskData.officialCount }}</div>
+        </div>
+      </div>
       <div class="task_list">
         <div
           class="task_item"
-          v-for="(item, index) in explore"
+          v-for="(item, index) in exploreTask"
           :key="index"
           @click.stop="item.isFinish ? toTask(item) : null"
         >
@@ -180,6 +305,13 @@ import {
   removeSessionStore,
 } from "@/utils";
 
+interface taskOverview {
+  dailyCount: number; // DAILY 待完成数量
+  officialCount: number; //OFFICIAL 待完成数量
+  exploreCount: number; //EXPLORE 待完成数量
+  taskListVOList: Array<taskInfo>;
+}
+
 interface taskInfo {
   id: string | number; //任务ID
   type: string; //任务类型(DAILY-日常，EXPLORE-发现)
@@ -216,8 +348,11 @@ interface showPromiseResult {
 export default defineComponent({
   data() {
     return {
+      taskType: 1, // 1-日常，2-发现, 3-换量
+      taskData: {} as taskOverview,
       dailyTask: [] as Array<taskInfo>,
-      explore: [] as Array<taskInfo>,
+      officialTask: [] as Array<taskInfo>,
+      exploreTask: [] as Array<taskInfo>,
       currentTask: {} as taskInfo,
       taskImages: {
         LOGIN,
@@ -267,13 +402,20 @@ export default defineComponent({
     async fetchChallengeList() {
       const res = await getTaskList({});
       if (res.code == 200) {
-        const { data } = res;
+        this.taskData = res.data;
+
+        const {
+          data: { taskListVOList },
+        } = res;
+
         this.dailyTask = [];
-        this.explore = [];
+        this.officialTask = [];
+        this.exploreTask = [];
+
         const linkTask = [];
 
-        for (let i = 0; i < data.length; i++) {
-          const element = data[i];
+        for (let i = 0; i < taskListVOList.length; i++) {
+          const element = taskListVOList[i];
           if (element.type == "DAILY") {
             if (
               element.abbreviation != "PURCHASE" &&
@@ -283,9 +425,12 @@ export default defineComponent({
             } else {
               linkTask.push(element);
             }
+          } else if (element.type == "OFFICIAL") {
+            element.loading = false;
+            this.officialTask.push(element);
           } else {
             element.loading = false;
-            this.explore.push(element);
+            this.exploreTask.push(element);
           }
           element.loading = false;
           element.timer = false;
@@ -686,6 +831,51 @@ export default defineComponent({
 
   .finished {
     color: #fff;
+  }
+}
+
+.task_tab_box {
+  display: flex;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  padding-bottom: 8px;
+
+  .tab_btn + .tab_btn {
+    margin-left: 32px;
+  }
+
+  .tab_btn {
+    position: relative;
+  }
+
+  .dot {
+    position: absolute;
+    right: -14px;
+    top: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid white;
+    background-color: red;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 400;
+    display: flex;
+    line-height: 1;
+    align-items: center;
+    justify-content: center;
+    color: white;
+  }
+
+  .tab_btn_text {
+    box-sizing: border-box;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s;
+
+    &.active {
+      border-color: white;
+    }
   }
 }
 </style>
