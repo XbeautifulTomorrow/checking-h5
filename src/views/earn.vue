@@ -338,7 +338,7 @@ import PURCHASE from "@/assets/images/svg/earn/purchase.svg";
 import CHAIN_CHECKIN from "@/assets/images/svg/earn/link_check_in.svg";
 import PLAYMULTIPLIER from "@/assets/images/earn/icon_roller.jpg";
 import PLAY_REFLECTION from "@/assets/images/earn/PLAY_REFLECTION.png";
-import EXPLORE_TWITTON from "@/assets/images/earn/EXPLORE_TWITTON.png";
+import JOIN_BUBBLECOIN from "@/assets/images/earn/JOIN_BUBBLECOIN.png";
 import PLAY_TELLUCKY from "@/assets/images/earn/PLAY_TELLUCKY.png";
 
 import { TonConnectUI, ConnectedWallet } from "@tonconnect/ui";
@@ -371,7 +371,7 @@ export default defineComponent({
         PLAYMULTIPLIER,
         // 换量任务
         PLAY_REFLECTION,
-        EXPLORE_TWITTON,
+        JOIN_BUBBLECOIN,
         PLAY_TELLUCKY,
       },
     };
@@ -578,9 +578,9 @@ export default defineComponent({
       } else if (abbreviation == "PLAY_REFLECTION") {
         // 换量
         openUrl("https://t.me/RectCoinBot/app?startapp=ref_dMrd5d");
-      } else if (abbreviation == "EXPLORE_TWITTON") {
+      } else if (abbreviation == "JOIN_BUBBLECOIN") {
         // 换量
-        openUrl("https://t.me/twitton_bot/app?startapp=ZLMFVA");
+        openUrl("https://t.me/bubbles_coin_bot/start?startapp=82b8a76a870f");
       } else if (abbreviation == "PLAY_TELLUCKY") {
         // 换量
         openUrl(
